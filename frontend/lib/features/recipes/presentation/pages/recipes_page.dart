@@ -9,8 +9,9 @@ import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
 import 'package:frontend/features/home/presentation/widgets/recipe_card.dart';
-import 'package:frontend/features/recipes/data/recipe_catalog.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
@@ -81,7 +82,8 @@ class _RecipesPageState extends State<RecipesPage> {
   _TimeFilter _timeFilter = _TimeFilter.any;
   _RecipeSort _sort = _RecipeSort.featured;
   bool _savedOnly = false;
-  List<RecipeModel> _recipes = RecipeCatalog.items;
+  List<RecipeModel> _recipes = const [];
+  late final RecipeCollectionController _recipesController;
   late _RecipeQueryIndex _recipeIndex;
   _RecipeFilterCacheKey? _visibleRecipesCacheKey;
   List<RecipeModel> _visibleRecipesCache = const [];
@@ -90,6 +92,9 @@ class _RecipesPageState extends State<RecipesPage> {
   @override
   void initState() {
     super.initState();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipeCollectionChanged);
     _recipeIndex = _RecipeQueryIndex(_recipes);
     _selectedCategoryIds = _normalizedInitialCategoryIds(
       widget.initialCategoryIds,
@@ -98,14 +103,15 @@ class _RecipesPageState extends State<RecipesPage> {
     _selectedAuthorIds = _normalizedAuthorIds(widget.initialAuthorIds);
     _query = widget.initialQuery?.trim() ?? '';
     _searchController.text = _query;
-    _loadRecipes();
+    unawaited(_recipesController.load());
   }
 
   @override
   void didUpdateWidget(covariant RecipesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.recipeRepository != widget.recipeRepository) {
-      _loadRecipes();
+      _recipesController.replaceRepository(widget.recipeRepository);
+      unawaited(_recipesController.load());
     }
     if (!_sameCategoryIds(
       oldWidget.initialCategoryIds,
@@ -136,19 +142,24 @@ class _RecipesPageState extends State<RecipesPage> {
 
   @override
   void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipeCollectionChanged)
+      ..dispose();
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadRecipes() async {
-    final recipes = await widget.recipeRepository.fetchRecipes();
-    if (!mounted || _sameRecipeLists(_recipes, recipes)) {
+  void _handleRecipeCollectionChanged() {
+    if (!mounted) {
       return;
     }
 
     setState(() {
-      _replaceRecipes(recipes);
+      final recipes = _recipesController.recipes;
+      if (!_sameRecipeLists(_recipes, recipes)) {
+        _replaceRecipes(recipes);
+      }
     });
   }
 
@@ -249,7 +260,22 @@ class _RecipesPageState extends State<RecipesPage> {
                     ],
                   ),
                 ),
-                if (recipes.isEmpty)
+                if (_recipesController.isLoading && _recipes.isEmpty)
+                  _RecipesContentSliver(
+                    topPadding: AppSpacing.lg,
+                    bottomPadding: bottomPadding,
+                    child: const RecipeCollectionLoading(),
+                  )
+                else if (_recipesController.hasError && _recipes.isEmpty)
+                  _RecipesContentSliver(
+                    topPadding: AppSpacing.lg,
+                    bottomPadding: bottomPadding,
+                    child: RecipeCollectionError(
+                      error: _recipesController.error,
+                      onRetry: () => unawaited(_recipesController.load()),
+                    ),
+                  )
+                else if (recipes.isEmpty)
                   _RecipesContentSliver(
                     topPadding: AppSpacing.lg,
                     bottomPadding: bottomPadding,

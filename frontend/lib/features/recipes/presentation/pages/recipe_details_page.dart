@@ -8,6 +8,8 @@ import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
 import 'package:frontend/shared/bookmarks/bookmark_button.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 import 'package:frontend/shared/models/home_models.dart';
@@ -65,14 +67,18 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   final Set<String> _likedRecipeIds = <String>{};
   final Map<String, List<_RecipeReview>> _reviewsByRecipeId =
       <String, List<_RecipeReview>>{};
-  bool _isLoading = false;
+  final Map<String, int> _likeMutationVersions = <String, int>{};
+  late final RecipeCollectionController _recipesController;
 
   @override
   void initState() {
     super.initState();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipeCollectionChanged);
     _recipe = widget.initialRecipe;
     if (_recipe == null) {
-      _loadRecipe();
+      unawaited(_recipesController.load());
     }
   }
 
@@ -82,26 +88,31 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     if (oldWidget.recipeId != widget.recipeId ||
         oldWidget.recipeRepository != widget.recipeRepository ||
         oldWidget.initialRecipe != widget.initialRecipe) {
+      if (oldWidget.recipeRepository != widget.recipeRepository) {
+        _recipesController.replaceRepository(widget.recipeRepository);
+      }
       _recipe = widget.initialRecipe;
       if (_recipe == null) {
-        _loadRecipe();
+        unawaited(_recipesController.load());
       }
     }
   }
 
-  Future<void> _loadRecipe() async {
-    setState(() {
-      _isLoading = true;
-    });
+  @override
+  void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipeCollectionChanged)
+      ..dispose();
+    super.dispose();
+  }
 
-    final recipes = await widget.recipeRepository.fetchRecipes();
+  void _handleRecipeCollectionChanged() {
     if (!mounted) {
       return;
     }
 
     setState(() {
-      _recipe = _findRecipe(recipes, widget.recipeId);
-      _isLoading = false;
+      _recipe = _findRecipe(_recipesController.recipes, widget.recipeId);
     });
   }
 
@@ -134,8 +145,13 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                   bottomPadding: bottomPadding,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 180),
-                    child: _isLoading
-                        ? const _RecipeDetailsLoading()
+                    child: _recipesController.isLoading && recipe == null
+                        ? const RecipeCollectionLoading()
+                        : _recipesController.hasError && recipe == null
+                        ? RecipeCollectionError(
+                            error: _recipesController.error,
+                            onRetry: () => unawaited(_recipesController.load()),
+                          )
                         : recipe == null
                         ? _RecipeNotFound(recipeId: widget.recipeId)
                         : _RecipeDetailsContent(
@@ -218,12 +234,41 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       }
     });
 
-    unawaited(
-      widget.recipeRepository.updateRecipeLike(
+    final mutationVersion = (_likeMutationVersions[recipe.id] ?? 0) + 1;
+    _likeMutationVersions[recipe.id] = mutationVersion;
+    unawaited(_persistRecipeLike(recipe, willLike, mutationVersion));
+  }
+
+  Future<void> _persistRecipeLike(
+    RecipeModel recipe,
+    bool isLiked,
+    int mutationVersion,
+  ) async {
+    try {
+      await widget.recipeRepository.updateRecipeLike(
         recipeId: recipe.id,
-        isLiked: willLike,
-      ),
-    );
+        isLiked: isLiked,
+      );
+    } on Object {
+      if (!mounted || _likeMutationVersions[recipe.id] != mutationVersion) {
+        return;
+      }
+
+      setState(() {
+        if (isLiked) {
+          _likedRecipeIds.remove(recipe.id);
+        } else {
+          _likedRecipeIds.add(recipe.id);
+        }
+      });
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Could not update the recipe like. Please retry.'),
+          ),
+        );
+    }
   }
 
   List<_RecipeReview> _reviewsFor(RecipeModel recipe) {
@@ -1479,30 +1524,6 @@ class _RecipeCategoryChip extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _RecipeDetailsLoading extends StatelessWidget {
-  const _RecipeDetailsLoading();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-
-    return AppCard(
-      key: const ValueKey('recipe-details-loading'),
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Center(
-        child: SizedBox(
-          width: 28,
-          height: 28,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.4,
-            color: palette.activeElements,
-          ),
-        ),
       ),
     );
   }
