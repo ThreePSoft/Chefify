@@ -10,6 +10,16 @@ $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $toolingDir = Join-Path $repoRoot ".tooling"
 $configFile = Join-Path $toolingDir "flutter-sdk-path.txt"
 $localSdkRoot = Join-Path $repoRoot ".flutter-sdk"
+$versionFile = Join-Path $repoRoot "frontend\.flutter-version"
+
+if (-not (Test-Path -LiteralPath $versionFile)) {
+  throw "Pinned Flutter version file was not found at '$versionFile'."
+}
+
+$flutterVersion = (Get-Content -LiteralPath $versionFile -Raw).Trim()
+if ($flutterVersion -notmatch '^\d+\.\d+\.\d+$') {
+  throw "Invalid Flutter version '$flutterVersion' in '$versionFile'."
+}
 
 function Write-SetupInfo {
   param([string]$Message)
@@ -61,6 +71,21 @@ function Resolve-SdkCandidate {
   $binDir = Join-Path $normalized "bin"
   $flutterExe = Join-Path $binDir "flutter.bat"
   if (Test-Path -LiteralPath $flutterExe) {
+    $sdkVersionFile = Join-Path $normalized "bin\cache\flutter.version.json"
+    $sdkVersion = $null
+    if (Test-Path -LiteralPath $sdkVersionFile) {
+      try {
+        $sdkVersion = (Get-Content -LiteralPath $sdkVersionFile -Raw | ConvertFrom-Json).flutterVersion
+      }
+      catch {
+        $sdkVersion = $null
+      }
+    }
+
+    if ($sdkVersion -ne $flutterVersion) {
+      return $null
+    }
+
     return [PSCustomObject]@{
       Root = $normalized
       FlutterExe = $flutterExe
@@ -151,26 +176,45 @@ function Install-LocalFlutterSdk {
   Write-SetupInfo "Downloading Flutter release metadata..."
   $releaseIndex = Invoke-RestMethod -Uri $releaseJsonUrl
 
-  $stableHash = $releaseIndex.current_release.stable
-  $release = $releaseIndex.releases | Where-Object { $_.hash -eq $stableHash } | Select-Object -First 1
+  $release = $releaseIndex.releases | Where-Object { $_.version -eq $flutterVersion } | Select-Object -First 1
   if (-not $release) {
-    throw "Failed to resolve the current stable Flutter release."
+    throw "Failed to resolve pinned Flutter release $flutterVersion."
+  }
+
+  if ([string]::IsNullOrWhiteSpace($release.sha256)) {
+    throw "Flutter release metadata does not contain a SHA-256 checksum for $flutterVersion."
   }
 
   $archiveUrl = "https://storage.googleapis.com/flutter_infra_release/releases/{0}" -f $release.archive
-  $archivePath = Join-Path $toolingDir ("flutter_windows_{0}.zip" -f $release.version)
+  $archivePath = Join-Path $toolingDir ("flutter_windows_{0}.zip" -f $flutterVersion)
+  $expectedHash = $release.sha256.ToString().ToLowerInvariant()
 
-  Write-SetupInfo "Downloading Flutter SDK $($release.version)..."
+  Write-SetupInfo "Downloading Flutter SDK $flutterVersion..."
   if (Test-Path -LiteralPath $archivePath) {
-    curl.exe -L -C - -o "$archivePath" "$archiveUrl" | Out-Null
+    $cachedHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($cachedHash -ne $expectedHash) {
+      Remove-Item -LiteralPath $archivePath -Force
+    }
   }
-  else {
-    curl.exe -L -o "$archivePath" "$archiveUrl" | Out-Null
+
+  if (-not (Test-Path -LiteralPath $archivePath)) {
+    curl.exe -fL -o "$archivePath" "$archiveUrl" | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to download Flutter SDK $flutterVersion."
+    }
   }
 
   if (-not (Test-Path -LiteralPath $archivePath)) {
     throw "Flutter archive was not downloaded."
   }
+
+  $actualHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+  if ($actualHash -ne $expectedHash) {
+    Remove-Item -LiteralPath $archivePath -Force
+    throw "Flutter archive checksum mismatch for $flutterVersion."
+  }
+
+  Write-SetupInfo "Verified Flutter SDK archive checksum."
 
   Write-SetupInfo "Extracting Flutter SDK..."
   Expand-Archive -LiteralPath $archivePath -DestinationPath $toolingDir -Force
@@ -209,7 +253,7 @@ if (-not $sdk) {
       $manualPath = Read-Host "Enter Flutter SDK root path"
       $sdk = Resolve-SdkCandidate $manualPath
       if (-not $sdk) {
-        Write-Error "Flutter SDK was not found at the provided path. Expected: <path>\\bin\\flutter.bat"
+        Write-Error "Flutter SDK $flutterVersion was not found at the provided path. Expected: <path>\\bin\\flutter.bat"
         exit 1
       }
     }
