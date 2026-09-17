@@ -42,7 +42,7 @@ RUN git config --global --add safe.directory /opt/flutter \
 COPY --chown=flutter:flutter . .
 
 ARG CHEFIFY_API_BASE_URL=/api
-RUN flutter build web --release --no-pub --pwa-strategy=none \
+RUN flutter build web --release --no-pub \
   --dart-define=CHEFIFY_API_BASE_URL=${CHEFIFY_API_BASE_URL}
 
 FROM nginx:1.27-alpine AS runtime
