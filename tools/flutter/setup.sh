@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TOOLING_DIR="$REPO_ROOT/.tooling"
 CONFIG_FILE="$TOOLING_DIR/flutter-sdk-path.txt"
 LOCAL_SDK_ROOT="$REPO_ROOT/.flutter-sdk"
@@ -206,7 +206,7 @@ save_sdk_path() {
 }
 
 print_usage() {
-  echo "Usage: tools/setup-flutter.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive]"
+  echo "Usage: tools/flutter/setup.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive]"
 }
 
 PRINT_SDK_PATH=0
@@ -234,7 +234,7 @@ SDK_ROOT="$(resolve_installed_sdk 2>/dev/null || true)"
 
 if [ -z "$SDK_ROOT" ]; then
   if [ "$NON_INTERACTIVE" -eq 1 ]; then
-    echo "Flutter SDK was not found. Run tools/setup-flutter.sh without --non-interactive to choose manual path or local install." >&2
+    echo "Flutter SDK was not found. Run tools/flutter/setup.sh without --non-interactive to choose manual path or local install." >&2
     exit 1
   fi
 

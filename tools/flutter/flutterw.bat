@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set "SETUP_SCRIPT=%~dp0tools\setup-flutter.ps1"
+set "SETUP_SCRIPT=%~dp0setup.ps1"
 if not exist "%SETUP_SCRIPT%" (
   echo Flutter setup script was not found at "%SETUP_SCRIPT%".
   exit /b 1

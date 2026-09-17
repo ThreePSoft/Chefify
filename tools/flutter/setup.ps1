@@ -6,7 +6,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$repoRoot = Split-Path -Parent $PSScriptRoot
+$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $toolingDir = Join-Path $repoRoot ".tooling"
 $configFile = Join-Path $toolingDir "flutter-sdk-path.txt"
 $localSdkRoot = Join-Path $repoRoot ".flutter-sdk"
@@ -193,7 +193,7 @@ function Install-LocalFlutterSdk {
 $sdk = Resolve-InstalledSdk
 if (-not $sdk) {
   if ($NonInteractive) {
-    Write-Error "Flutter SDK was not found. Run tools/setup-flutter.ps1 without -NonInteractive to choose manual path or local install."
+    Write-Error "Flutter SDK was not found. Run tools/flutter/setup.ps1 without -NonInteractive to choose manual path or local install."
     exit 1
   }
 
