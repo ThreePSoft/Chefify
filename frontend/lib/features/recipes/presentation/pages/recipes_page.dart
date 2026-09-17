@@ -8,7 +8,7 @@ import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
-import 'package:frontend/features/home/presentation/widgets/recipe_card.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
 import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
 import 'package:frontend/features/recipes/presentation/controllers/recipe_query_controller.dart';

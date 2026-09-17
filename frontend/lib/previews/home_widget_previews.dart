@@ -19,7 +19,7 @@ import 'package:frontend/features/home/presentation/widgets/featured_recipe_sect
 import 'package:frontend/features/home/presentation/widgets/hero_section.dart';
 import 'package:frontend/features/home/presentation/widgets/mobile_app_promo_section.dart';
 import 'package:frontend/features/home/presentation/widgets/newsletter_section.dart';
-import 'package:frontend/features/home/presentation/widgets/recipe_card.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:frontend/features/home/presentation/widgets/stats_banner.dart';
 import 'package:frontend/features/home/presentation/widgets/testimonials_section.dart';
 import 'package:frontend/features/home/presentation/widgets/trending_recipes_section.dart';
