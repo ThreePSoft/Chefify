@@ -139,6 +139,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
 
   @override
   void dispose() {
+    releaseRecipeImageUrl(_imageUrl);
     _tagFocusNode.removeListener(_handleTagFocusChange);
     _tagController.removeListener(_handleTagTextChange);
     _titleController.dispose();
@@ -223,13 +224,19 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
 
   Future<void> _pickImage() async {
     final imageUrl = await pickRecipeHeroImageUrl();
-    if (!mounted || imageUrl == null) {
+    if (imageUrl == null) {
+      return;
+    }
+    if (!mounted) {
+      releaseRecipeImageUrl(imageUrl);
       return;
     }
 
+    final previousImageUrl = _imageUrl;
     setState(() {
       _imageUrl = imageUrl;
     });
+    releaseRecipeImageUrl(previousImageUrl);
   }
 
   void _handleTagFocusChange() {

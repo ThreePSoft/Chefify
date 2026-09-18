@@ -454,6 +454,11 @@ class _RecipeImageContentInspector extends StatelessWidget {
           values: _RecipeImageMode.values,
           labelForValue: _imageModeLabel,
           onChanged: (mode) {
+            if (mode == _RecipeImageMode.single && block.imageUrls.length > 1) {
+              for (final imageUrl in block.imageUrls.skip(1)) {
+                releaseRecipeImageUrl(imageUrl);
+              }
+            }
             final imageUrls =
                 mode == _RecipeImageMode.single && block.imageUrls.isNotEmpty
                 ? [block.imageUrls.first]
@@ -553,15 +558,20 @@ class _RecipeImageContentInspector extends StatelessWidget {
     }
     final imageUrls = [...block.imageUrls];
     if (replaceIndex != null && replaceIndex < imageUrls.length) {
+      releaseRecipeImageUrl(imageUrls[replaceIndex]);
       imageUrls[replaceIndex] = imageUrl;
     } else if (imageUrls.length < 5) {
       imageUrls.add(imageUrl);
+    } else {
+      releaseRecipeImageUrl(imageUrl);
+      return;
     }
     onBlockChanged(block.copyWith(imageUrls: imageUrls));
   }
 
   void _deleteImage(int index) {
-    final imageUrls = [...block.imageUrls]..removeAt(index);
+    final imageUrls = [...block.imageUrls];
+    releaseRecipeImageUrl(imageUrls.removeAt(index));
     onBlockChanged(block.copyWith(imageUrls: imageUrls));
   }
 

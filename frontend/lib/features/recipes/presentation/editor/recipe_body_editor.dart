@@ -367,6 +367,9 @@ class _RecipeBodyEditorState extends State<_RecipeBodyEditor> {
   @override
   void dispose() {
     widget.scrollController.removeListener(_syncOverlayVisibility);
+    for (final block in _blocks) {
+      _releaseBlockImageUrls(block);
+    }
     _hoveredBlockId.dispose();
     super.dispose();
   }
@@ -860,12 +863,27 @@ class _RecipeBodyEditorState extends State<_RecipeBodyEditor> {
   }
 
   void _deleteBlock(String blockId) {
+    final removedBlock = _findBlock(_blocks, blockId);
+    if (removedBlock == null) {
+      return;
+    }
+
     setState(() {
       _blocks = _removeBlockFromList(_blocks, blockId);
       if (_selectedBlockId == blockId) {
         _selectedBlockId = _blocks.isEmpty ? null : _blocks.first.id;
       }
     });
+    _releaseBlockImageUrls(removedBlock);
+  }
+
+  void _releaseBlockImageUrls(_RecipeEditorBlock block) {
+    for (final imageUrl in block.imageUrls) {
+      releaseRecipeImageUrl(imageUrl);
+    }
+    for (final child in block.children) {
+      _releaseBlockImageUrls(child);
+    }
   }
 
   List<_RecipeEditorBlock> _removeBlockFromList(

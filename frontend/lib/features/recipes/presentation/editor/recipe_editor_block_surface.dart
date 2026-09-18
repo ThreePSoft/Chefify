@@ -534,7 +534,11 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
 
   Future<void> _pickOrReplaceFirstImage() async {
     final imageUrl = await pickRecipeHeroImageUrl();
-    if (!mounted || imageUrl == null) {
+    if (imageUrl == null) {
+      return;
+    }
+    if (!mounted) {
+      releaseRecipeImageUrl(imageUrl);
       return;
     }
 
@@ -542,6 +546,7 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
     if (imageUrls.isEmpty) {
       imageUrls.add(imageUrl);
     } else {
+      releaseRecipeImageUrl(imageUrls.first);
       imageUrls[0] = imageUrl;
     }
     onBlockChanged(block.copyWith(imageUrls: imageUrls));

@@ -3,6 +3,12 @@
 import 'dart:async';
 import 'dart:html' as html;
 
+import 'package:frontend/features/recipes/presentation/image_upload/recipe_image_url_registry.dart';
+
+final RecipeImageUrlRegistry _objectUrls = RecipeImageUrlRegistry(
+  html.Url.revokeObjectUrl,
+);
+
 Future<String?> pickRecipeHeroImageUrl() {
   final completer = Completer<String?>();
   final input = html.FileUploadInputElement()
@@ -11,9 +17,20 @@ Future<String?> pickRecipeHeroImageUrl() {
 
   input.onChange.first.then((_) {
     final file = input.files?.isNotEmpty == true ? input.files!.first : null;
-    completer.complete(file == null ? null : html.Url.createObjectUrl(file));
+    if (file == null) {
+      completer.complete(null);
+      return;
+    }
+
+    final imageUrl = html.Url.createObjectUrl(file);
+    _objectUrls.register(imageUrl);
+    completer.complete(imageUrl);
   });
 
   input.click();
   return completer.future;
+}
+
+void releaseRecipeImageUrl(String? imageUrl) {
+  _objectUrls.release(imageUrl);
 }
