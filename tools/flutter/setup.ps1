@@ -1,7 +1,8 @@
 ﻿param(
   [switch]$PrintSdkPath,
   [switch]$PrintFlutterExecutable,
-  [switch]$NonInteractive
+  [switch]$NonInteractive,
+  [switch]$InstallLocal
 )
 
 $ErrorActionPreference = "Stop"
@@ -236,37 +237,45 @@ function Install-LocalFlutterSdk {
 
 $sdk = Resolve-InstalledSdk
 if (-not $sdk) {
-  if ($NonInteractive) {
+  if ($InstallLocal) {
+    $sdk = Install-LocalFlutterSdk
+    if (-not $sdk) {
+      Write-Error "Local Flutter SDK install failed."
+      exit 1
+    }
+  }
+  elseif ($NonInteractive) {
     Write-Error "Flutter SDK was not found. Run tools/flutter/setup.ps1 without -NonInteractive to choose manual path or local install."
     exit 1
   }
+  else {
+    Write-SetupInfo "Flutter SDK was not found automatically."
+    Write-Host "1) Enter Flutter SDK path manually"
+    Write-Host "2) Install local SDK into .flutter-sdk"
+    Write-Host "3) Exit"
 
-  Write-SetupInfo "Flutter SDK was not found automatically."
-  Write-Host "1) Enter Flutter SDK path manually"
-  Write-Host "2) Install local SDK into .flutter-sdk"
-  Write-Host "3) Exit"
+    $choice = Read-Host "Choose an option (1/2/3)"
 
-  $choice = Read-Host "Choose an option (1/2/3)"
-
-  switch ($choice) {
-    "1" {
-      $manualPath = Read-Host "Enter Flutter SDK root path"
-      $sdk = Resolve-SdkCandidate $manualPath
-      if (-not $sdk) {
-        Write-Error "Flutter SDK $flutterVersion was not found at the provided path. Expected: <path>\\bin\\flutter.bat"
+    switch ($choice) {
+      "1" {
+        $manualPath = Read-Host "Enter Flutter SDK root path"
+        $sdk = Resolve-SdkCandidate $manualPath
+        if (-not $sdk) {
+          Write-Error "Flutter SDK $flutterVersion was not found at the provided path. Expected: <path>\\bin\\flutter.bat"
+          exit 1
+        }
+      }
+      "2" {
+        $sdk = Install-LocalFlutterSdk
+        if (-not $sdk) {
+          Write-Error "Local Flutter SDK install failed."
+          exit 1
+        }
+      }
+      default {
+        Write-Error "Setup cancelled by user."
         exit 1
       }
-    }
-    "2" {
-      $sdk = Install-LocalFlutterSdk
-      if (-not $sdk) {
-        Write-Error "Local Flutter SDK install failed."
-        exit 1
-      }
-    }
-    default {
-      Write-Error "Setup cancelled by user."
-      exit 1
     }
   }
 }

@@ -46,12 +46,38 @@ Pop-Location
 
 ```powershell
 Push-Location frontend
-..\tools\flutter\flutterw.ps1 test --no-pub test\widget_test.dart
-..\tools\flutter\flutterw.ps1 test --no-pub test\widget_test.dart --plain-name "opens recipe details from recipe card"
+..\tools\flutter\flutterw.ps1 test --no-pub test\features\recipes\presentation\recipe_details_widget_test.dart
+..\tools\flutter\flutterw.ps1 test --no-pub test\features\recipes\presentation\recipe_details_widget_test.dart --plain-name "opens recipe details from recipe card"
 Pop-Location
 ```
 
-Набір містить модульні тести репозиторіїв і контролерів, а також віджет-тести адаптивної верстки, каталогу, деталей, закладок та редактора рецептів.
+Набір організовано за відповідальністю:
+
+- `test/core` — тести slug, SEO та еталонних зображень;
+- `test/features/recipes/data` — модульні тести репозиторіїв;
+- `test/features/recipes/presentation/controllers` — модульні тести контролерів;
+- `test/features/recipes/presentation` — віджет-тести каталогу, деталей і редактора;
+- `test/app` та `test/shared` — віджет-тести оболонки застосунку й закладок;
+- `integration_test` — браузерна перевірка основного сценарію каталогу.
+
+Оновлення та перевірка еталонного зображення брендового знака:
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 test --no-pub --update-goldens test\core\widgets\chefify_brand_mark_golden_test.dart
+..\tools\flutter\flutterw.ps1 test --no-pub test\core\widgets\chefify_brand_mark_golden_test.dart
+Pop-Location
+```
+
+Для браузерного інтеграційного тесту потрібен сумісний ChromeDriver на порту `4444`. Після його запуску:
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 drive -d chrome --driver test_driver/integration_test.dart --target integration_test/app_smoke_test.dart --no-pub
+Pop-Location
+```
+
+`.github/workflows/frontend.yml` запускає форматування, статичний аналіз, модульні, віджет- і golden-тести, release web build та браузерний integration smoke test для frontend pull request-ів у `dev`.
 
 ## Backend-перевірки
 

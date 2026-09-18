@@ -19,7 +19,7 @@ if [[ ! "$FLUTTER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 log() {
-  echo "[setup-flutter] $1"
+  echo "[setup-flutter] $1" >&2
 }
 
 normalize_path() {
@@ -253,18 +253,20 @@ save_sdk_path() {
 }
 
 print_usage() {
-  echo "Usage: tools/flutter/setup.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive]"
+  echo "Usage: tools/flutter/setup.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive] [--install-local]"
 }
 
 PRINT_SDK_PATH=0
 PRINT_FLUTTER_EXE=0
 NON_INTERACTIVE=0
+INSTALL_LOCAL=0
 
 for arg in "$@"; do
   case "$arg" in
     --print-sdk-path) PRINT_SDK_PATH=1 ;;
     --print-flutter-executable) PRINT_FLUTTER_EXE=1 ;;
     --non-interactive) NON_INTERACTIVE=1 ;;
+    --install-local) INSTALL_LOCAL=1 ;;
     -h|--help)
       print_usage
       exit 0
@@ -280,38 +282,44 @@ done
 SDK_ROOT="$(resolve_installed_sdk 2>/dev/null || true)"
 
 if [ -z "$SDK_ROOT" ]; then
-  if [ "$NON_INTERACTIVE" -eq 1 ]; then
+  if [ "$INSTALL_LOCAL" -eq 1 ]; then
+    SDK_ROOT="$(install_local_flutter)"
+    if [ -z "$SDK_ROOT" ]; then
+      echo "Local Flutter SDK install failed." >&2
+      exit 1
+    fi
+  elif [ "$NON_INTERACTIVE" -eq 1 ]; then
     echo "Flutter SDK was not found. Run tools/flutter/setup.sh without --non-interactive to choose manual path or local install." >&2
     exit 1
+  else
+    log "Flutter SDK was not found automatically."
+    echo "1) Enter Flutter SDK path manually"
+    echo "2) Install local SDK into .flutter-sdk"
+    echo "3) Exit"
+    read -r -p "Choose an option (1/2/3): " choice
+
+    case "$choice" in
+      1)
+        read -r -p "Enter Flutter SDK root path: " manual_path
+        SDK_ROOT="$(sdk_candidate_from_root "$manual_path" 2>/dev/null || true)"
+        if [ -z "$SDK_ROOT" ]; then
+          echo "Flutter SDK $FLUTTER_VERSION was not found at the provided path. Expected: <path>/bin/flutter" >&2
+          exit 1
+        fi
+        ;;
+      2)
+        SDK_ROOT="$(install_local_flutter)"
+        if [ -z "$SDK_ROOT" ]; then
+          echo "Local Flutter SDK install failed." >&2
+          exit 1
+        fi
+        ;;
+      *)
+        echo "Setup cancelled by user." >&2
+        exit 1
+        ;;
+    esac
   fi
-
-  log "Flutter SDK was not found automatically."
-  echo "1) Enter Flutter SDK path manually"
-  echo "2) Install local SDK into .flutter-sdk"
-  echo "3) Exit"
-  read -r -p "Choose an option (1/2/3): " choice
-
-  case "$choice" in
-    1)
-      read -r -p "Enter Flutter SDK root path: " manual_path
-      SDK_ROOT="$(sdk_candidate_from_root "$manual_path" 2>/dev/null || true)"
-      if [ -z "$SDK_ROOT" ]; then
-        echo "Flutter SDK $FLUTTER_VERSION was not found at the provided path. Expected: <path>/bin/flutter" >&2
-        exit 1
-      fi
-      ;;
-    2)
-      SDK_ROOT="$(install_local_flutter)"
-      if [ -z "$SDK_ROOT" ]; then
-        echo "Local Flutter SDK install failed." >&2
-        exit 1
-      fi
-      ;;
-    *)
-      echo "Setup cancelled by user." >&2
-      exit 1
-      ;;
-  esac
 fi
 
 save_sdk_path "$SDK_ROOT"

@@ -94,7 +94,7 @@ $env:CHEFIFY_FLUTTER_SDK='D:\Tools\flutter'
 Bash:
 
 ```bash
-export CHEFIFY_FLUTTER_SDK="$HOME/tools/flutter"
+export CHEFIFY_FLUTTER_SDK="/opt/flutter"
 ./tools/flutter/setup.sh
 ```
 
@@ -110,6 +110,20 @@ The order is the same on supported platforms:
 4. `flutter` in `PATH`.
 
 A candidate with a different version is ignored.
+
+## Non-interactive setup
+
+Automation can install the pinned SDK without a prompt:
+
+```powershell
+.\tools\flutter\setup.ps1 -InstallLocal -PrintFlutterExecutable
+```
+
+```bash
+./tools/flutter/setup.sh --install-local --print-flutter-executable
+```
+
+The GitHub Actions workflow uses this mode and caches `.flutter-sdk` by the contents of `frontend/.flutter-version`.
 
 ## Upgrade Flutter
 

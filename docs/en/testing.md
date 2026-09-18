@@ -46,12 +46,38 @@ Run a specific file or test:
 
 ```powershell
 Push-Location frontend
-..\tools\flutter\flutterw.ps1 test --no-pub test\widget_test.dart
-..\tools\flutter\flutterw.ps1 test --no-pub test\widget_test.dart --plain-name "opens recipe details from recipe card"
+..\tools\flutter\flutterw.ps1 test --no-pub test\features\recipes\presentation\recipe_details_widget_test.dart
+..\tools\flutter\flutterw.ps1 test --no-pub test\features\recipes\presentation\recipe_details_widget_test.dart --plain-name "opens recipe details from recipe card"
 Pop-Location
 ```
 
-The suite contains repository/controller unit tests and widget tests for responsive layouts, recipe catalog, details, bookmarks, and the recipe editor.
+The suite is organized by responsibility:
+
+- `test/core` — slug, SEO, and golden tests;
+- `test/features/recipes/data` — repository unit tests;
+- `test/features/recipes/presentation/controllers` — controller unit tests;
+- `test/features/recipes/presentation` — catalog, details, and editor widget tests;
+- `test/app` and `test/shared` — application shell and bookmark widget tests;
+- `integration_test` — the browser-level catalog smoke flow.
+
+Update and verify the intentional brand golden with:
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 test --no-pub --update-goldens test\core\widgets\chefify_brand_mark_golden_test.dart
+..\tools\flutter\flutterw.ps1 test --no-pub test\core\widgets\chefify_brand_mark_golden_test.dart
+Pop-Location
+```
+
+Web integration tests require a compatible ChromeDriver listening on port `4444`. With ChromeDriver running:
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 drive -d chrome --driver test_driver/integration_test.dart --target integration_test/app_smoke_test.dart --no-pub
+Pop-Location
+```
+
+`.github/workflows/frontend.yml` runs formatting, analysis, unit/widget/golden tests, the release web build, and the Chrome integration smoke test for frontend pull requests into `dev`.
 
 ## Backend checks
 

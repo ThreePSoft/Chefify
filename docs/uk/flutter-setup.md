@@ -111,6 +111,20 @@ export CHEFIFY_FLUTTER_SDK="/opt/flutter"
 
 Кандидат з іншою версією не використовується.
 
+## Неінтерактивне налаштування
+
+Автоматизація може встановити зафіксовану версію SDK без запиту:
+
+```powershell
+.\tools\flutter\setup.ps1 -InstallLocal -PrintFlutterExecutable
+```
+
+```bash
+./tools/flutter/setup.sh --install-local --print-flutter-executable
+```
+
+GitHub Actions використовує цей режим і кешує `.flutter-sdk` за вмістом `frontend/.flutter-version`.
+
 ## Оновлення Flutter
 
 Не запускай `flutter upgrade` для проєктного SDK. Оновлення має бути окремою зміною:

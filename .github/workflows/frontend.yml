@@ -1,0 +1,103 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - dev
+      - feature/frontend-quality
+    paths:
+      - frontend/**
+      - tools/flutter/**
+      - .github/workflows/frontend.yml
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - frontend/**
+      - tools/flutter/**
+      - .github/workflows/frontend.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Analyze, test, and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Restore pinned Flutter SDK
+        uses: actions/cache@v4
+        with:
+          path: .flutter-sdk
+          key: flutter-${{ runner.os }}-${{ hashFiles('frontend/.flutter-version') }}
+
+      - name: Resolve Flutter toolchain
+        id: flutter
+        shell: bash
+        run: |
+          chmod +x tools/flutter/setup.sh
+          sdk="$(./tools/flutter/setup.sh --install-local --print-sdk-path)"
+          echo "sdk=$sdk" >> "$GITHUB_OUTPUT"
+          echo "flutter=$sdk/bin/flutter" >> "$GITHUB_OUTPUT"
+          echo "dart=$sdk/bin/dart" >> "$GITHUB_OUTPUT"
+          "$sdk/bin/flutter" --version
+
+      - name: Restore pub cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-${{ hashFiles('frontend/pubspec.lock') }}
+          restore-keys: |
+            pub-${{ runner.os }}-
+
+      - name: Install locked dependencies
+        working-directory: frontend
+        run: ${{ steps.flutter.outputs.flutter }} pub get --enforce-lockfile
+
+      - name: Verify formatting
+        working-directory: frontend
+        run: ${{ steps.flutter.outputs.dart }} format --output=none --set-exit-if-changed lib test integration_test test_driver
+
+      - name: Analyze
+        working-directory: frontend
+        run: ${{ steps.flutter.outputs.flutter }} analyze --no-pub
+
+      - name: Run unit, widget, and golden tests
+        working-directory: frontend
+        run: ${{ steps.flutter.outputs.flutter }} test --no-pub
+
+      - name: Build release web application
+        working-directory: frontend
+        run: ${{ steps.flutter.outputs.flutter }} build web --release --no-pub --dart-define=CHEFIFY_API_BASE_URL=/api
+
+      - name: Run browser integration smoke test
+        working-directory: frontend
+        shell: bash
+        run: |
+          npx --yes @puppeteer/browsers install chromedriver@stable --path "$RUNNER_TEMP/chromedriver"
+          driver="$(find "$RUNNER_TEMP/chromedriver" -type f -name chromedriver -print -quit)"
+          test -n "$driver"
+          chmod +x "$driver"
+          "$driver" --port=4444 > "$RUNNER_TEMP/chromedriver.log" 2>&1 &
+          for attempt in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:4444/status > /dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4444/status > /dev/null
+          ${{ steps.flutter.outputs.flutter }} drive \
+            -d chrome \
+            --driver test_driver/integration_test.dart \
+            --target integration_test/app_smoke_test.dart \
+            --no-pub
