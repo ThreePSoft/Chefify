@@ -23,7 +23,7 @@ void main() {
     expect(find.text('Chefify'), findsWidgets);
     expect(find.text('Recipes everyone is saving'), findsOneWidget);
 
-    await tester.tap(find.widgetWithText(TextButton, 'Recipes'));
+    await tester.tap(find.byKey(const ValueKey('hero-browse-recipes')));
     await _pumpUntilFound(tester, find.text('Find your next cook'));
 
     expect(find.text('Find your next cook'), findsOneWidget);

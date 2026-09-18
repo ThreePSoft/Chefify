@@ -337,6 +337,7 @@ class HeroActions extends StatelessWidget {
       ),
     );
     final secondaryButton = OutlinedButton(
+      key: const ValueKey('hero-browse-recipes'),
       onPressed: () {
         Navigator.of(context).pushNamed(AppRouter.recipes);
       },
