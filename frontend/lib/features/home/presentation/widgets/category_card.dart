@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/images/optimized_network_image.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/shared/bookmarks/bookmark_button.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';
@@ -83,7 +84,7 @@ class CategoryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
-                      '${category.recipesCount} recipes',
+                      AppStrings.of(context).recipeCount(category.recipesCount),
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: Colors.white.withValues(alpha: 0.92),
                       ),

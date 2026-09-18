@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 
 class MobileAppPromoSection extends StatelessWidget {
@@ -74,12 +75,12 @@ class _PromoContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
     final appStoreButton = AppButton(
-      label: 'Download on App Store',
+      label: AppStrings.of(context).downloadAppStore,
       icon: Icons.apple,
       onPressed: () {},
     );
     final googlePlayButton = AppButton(
-      label: 'Get it on Google Play',
+      label: AppStrings.of(context).downloadGooglePlay,
       icon: Icons.play_arrow_rounded,
       variant: AppButtonVariant.outlined,
       onPressed: () {},
@@ -89,14 +90,14 @@ class _PromoContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Take Chefify wherever you cook',
+          AppStrings.of(context).takeChefifyWithYou,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium?.copyWith(color: palette.mainText),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'Sync shopping lists, watch guided steps, and track your progress from phone to desktop.',
+          AppStrings.of(context).mobileAppSubtitle,
           style: Theme.of(
             context,
           ).textTheme.bodyLarge?.copyWith(color: palette.secondaryText),
@@ -109,14 +110,14 @@ class _PromoContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppButton(
-                    label: 'Download on App Store',
+                    label: AppStrings.of(context).downloadAppStore,
                     icon: Icons.apple,
                     isExpanded: true,
                     onPressed: () {},
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   AppButton(
-                    label: 'Get it on Google Play',
+                    label: AppStrings.of(context).downloadGooglePlay,
                     icon: Icons.play_arrow_rounded,
                     variant: AppButtonVariant.outlined,
                     isExpanded: true,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/shared/models/home_models.dart';
@@ -130,7 +131,7 @@ class FeaturedRecipeInfo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'FEATURED RECIPE',
+          AppStrings.of(context).featuredRecipe,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: palette.categoryTags,
             letterSpacing: 1.1,
@@ -145,7 +146,7 @@ class FeaturedRecipeInfo extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          'A bright and savory dinner packed with herbs, citrus, and texture. Perfect for guests or a premium weeknight meal.',
+          AppStrings.of(context).featuredRecipeDescription,
           style: Theme.of(
             context,
           ).textTheme.bodyLarge?.copyWith(color: palette.secondaryText),
@@ -168,7 +169,7 @@ class FeaturedRecipeInfo extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xl),
         AppButton(
-          label: 'Open full recipe',
+          label: AppStrings.of(context).openFullRecipe,
           icon: Icons.arrow_forward_rounded,
           onPressed: () {
             Navigator.of(context).pushNamed(

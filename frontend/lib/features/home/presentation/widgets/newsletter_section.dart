@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 
@@ -65,12 +66,12 @@ class _NewsletterTextBlock extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Weekly recipes in your inbox',
+          AppStrings.of(context).newsletterTitle,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'No spam. Just fresh ideas and practical kitchen tips every Thursday.',
+          AppStrings.of(context).newsletterSubtitle,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ],
@@ -92,7 +93,7 @@ class _NewsletterForm extends StatelessWidget {
         children: [
           TextField(
             decoration: InputDecoration(
-              hintText: 'Enter your email',
+              hintText: AppStrings.of(context).enterEmail,
               filled: true,
               fillColor: palette.searchBarBackground,
               contentPadding: const EdgeInsets.symmetric(
@@ -110,7 +111,11 @@ class _NewsletterForm extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          AppButton(label: 'Subscribe', isExpanded: true, onPressed: () {}),
+          AppButton(
+            label: AppStrings.of(context).subscribe,
+            isExpanded: true,
+            onPressed: () {},
+          ),
         ],
       ),
     );

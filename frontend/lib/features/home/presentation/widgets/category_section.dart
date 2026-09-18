@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/section_header.dart';
 import 'package:frontend/core/widgets/responsive_wrap_grid.dart';
@@ -25,12 +26,11 @@ class CategorySection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SectionHeader(
-                eyebrow: 'DISCOVER',
-                title: 'Browse by category',
-                subtitle:
-                    'Pick a mood and we will find recipes that fit your day.',
+                eyebrow: AppStrings.of(context).discover,
+                title: AppStrings.of(context).browseByCategory,
+                subtitle: AppStrings.of(context).categorySectionSubtitle,
                 action: AppButton(
-                  label: 'See all',
+                  label: AppStrings.of(context).seeAll,
                   variant: AppButtonVariant.ghost,
                   onPressed: () {
                     Navigator.of(context).pushNamed(AppRouter.categories);

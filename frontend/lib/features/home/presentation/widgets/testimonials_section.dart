@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_wrap_grid.dart';
 import 'package:frontend/core/widgets/section_header.dart';
@@ -23,11 +24,10 @@ class TestimonialsSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(
-                eyebrow: 'SOCIAL PROOF',
-                title: 'Loved by cooks around the world',
-                subtitle:
-                    'Real stories from people who upgraded their daily kitchen routine.',
+              SectionHeader(
+                eyebrow: AppStrings.of(context).socialProof,
+                title: AppStrings.of(context).testimonialsTitle,
+                subtitle: AppStrings.of(context).testimonialsSubtitle,
               ),
               const SizedBox(height: AppSpacing.lg),
               ResponsiveWrapGrid<TestimonialModel>(

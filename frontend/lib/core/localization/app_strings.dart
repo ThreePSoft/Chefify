@@ -282,6 +282,108 @@ class AppStrings {
   String get recipeTitle => _value(en: 'Title', uk: 'Назва', es: 'Título');
   String get recipeDescription =>
       _value(en: 'Description', uk: 'Опис', es: 'Descripción');
+  String get whyChefify =>
+      _value(en: 'WHY CHEFIFY', uk: 'ЧОМУ CHEFIFY', es: 'POR QUÉ CHEFIFY');
+  String get benefitsTitle => _value(
+    en: 'Everything you need in one kitchen flow',
+    uk: 'Усе необхідне в одному кулінарному процесі',
+    es: 'Todo lo que necesitas en un solo flujo',
+  );
+  String get benefitsSubtitle => _value(
+    en: 'From planning to plating, Chefify removes friction at every step.',
+    uk: 'Від планування до подачі — Chefify спрощує кожен крок.',
+    es: 'Desde planificar hasta servir, Chefify simplifica cada paso.',
+  );
+  String get discover =>
+      _value(en: 'DISCOVER', uk: 'ВІДКРИВАЙТЕ', es: 'DESCUBRE');
+  String get browseByCategory => _value(
+    en: 'Browse by category',
+    uk: 'Перегляд за категоріями',
+    es: 'Explorar por categoría',
+  );
+  String get categorySectionSubtitle => _value(
+    en: 'Pick a mood and we will find recipes that fit your day.',
+    uk: 'Оберіть настрій — ми знайдемо рецепти для вашого дня.',
+    es: 'Elige un estilo y encontraremos recetas para tu día.',
+  );
+  String get seeAll =>
+      _value(en: 'See all', uk: 'Переглянути всі', es: 'Ver todo');
+  String get featuredRecipe => _value(
+    en: 'FEATURED RECIPE',
+    uk: 'РЕКОМЕНДОВАНИЙ РЕЦЕПТ',
+    es: 'RECETA DESTACADA',
+  );
+  String get featuredRecipeDescription => _value(
+    en: 'A bright and savory dinner packed with herbs, citrus, and texture. Perfect for guests or a premium weeknight meal.',
+    uk: 'Яскрава й насичена вечеря з травами, цитрусом і цікавою текстурою. Ідеально для гостей або особливого буднього вечора.',
+    es: 'Una cena sabrosa con hierbas, cítricos y textura. Ideal para invitados o una noche especial.',
+  );
+  String get openFullRecipe => _value(
+    en: 'Open full recipe',
+    uk: 'Відкрити повний рецепт',
+    es: 'Abrir receta completa',
+  );
+  String get takeChefifyWithYou => _value(
+    en: 'Take Chefify wherever you cook',
+    uk: 'Беріть Chefify всюди, де готуєте',
+    es: 'Lleva Chefify donde cocines',
+  );
+  String get mobileAppSubtitle => _value(
+    en: 'Sync shopping lists, watch guided steps, and track your progress from phone to desktop.',
+    uk: 'Синхронізуйте списки покупок, дивіться покрокові інструкції та відстежуйте прогрес на телефоні й комп’ютері.',
+    es: 'Sincroniza compras, sigue los pasos y controla tu progreso en todos tus dispositivos.',
+  );
+  String get downloadAppStore => _value(
+    en: 'Download on App Store',
+    uk: 'Завантажити в App Store',
+    es: 'Descargar en App Store',
+  );
+  String get downloadGooglePlay => _value(
+    en: 'Get it on Google Play',
+    uk: 'Завантажити з Google Play',
+    es: 'Disponible en Google Play',
+  );
+  String get newsletterTitle => _value(
+    en: 'Weekly recipes in your inbox',
+    uk: 'Щотижневі рецепти у вашій пошті',
+    es: 'Recetas semanales en tu correo',
+  );
+  String get newsletterSubtitle => _value(
+    en: 'No spam. Just fresh ideas and practical kitchen tips every Thursday.',
+    uk: 'Без спаму. Лише свіжі ідеї та практичні поради щочетверга.',
+    es: 'Sin spam. Solo ideas frescas y consejos prácticos cada jueves.',
+  );
+  String get enterEmail => _value(
+    en: 'Enter your email',
+    uk: 'Введіть електронну адресу',
+    es: 'Introduce tu correo',
+  );
+  String get subscribe =>
+      _value(en: 'Subscribe', uk: 'Підписатися', es: 'Suscribirse');
+  String get socialProof =>
+      _value(en: 'SOCIAL PROOF', uk: 'ВІДГУКИ СПІЛЬНОТИ', es: 'TESTIMONIOS');
+  String get testimonialsTitle => _value(
+    en: 'Loved by cooks around the world',
+    uk: 'Улюблений сервіс кулінарів у всьому світі',
+    es: 'Amado por cocineros de todo el mundo',
+  );
+  String get testimonialsSubtitle => _value(
+    en: 'Real stories from people who upgraded their daily kitchen routine.',
+    uk: 'Реальні історії людей, які покращили свою щоденну кухонну рутину.',
+    es: 'Historias reales de personas que mejoraron su rutina en la cocina.',
+  );
+  String get trendingNow =>
+      _value(en: 'TRENDING NOW', uk: 'ЗАРАЗ У ТРЕНДІ', es: 'TENDENCIAS');
+  String get trendingRecipesTitle => _value(
+    en: 'Recipes everyone is saving',
+    uk: 'Рецепти, які зберігають усі',
+    es: 'Recetas que todos guardan',
+  );
+  String get trendingRecipesSubtitle => _value(
+    en: 'Hand-picked weekly from the most cooked dishes in the Chefify community.',
+    uk: 'Щотижнева добірка найпопулярніших страв спільноти Chefify.',
+    es: 'Selección semanal de los platos más cocinados por la comunidad.',
+  );
 
   String get trustedBy => _value(
     en: 'Trusted by 120K+ home cooks',

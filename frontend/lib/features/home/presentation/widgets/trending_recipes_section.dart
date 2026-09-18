@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/responsive_wrap_grid.dart';
 import 'package:frontend/core/widgets/section_header.dart';
@@ -31,13 +32,12 @@ class TrendingRecipesSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SectionHeader(
-                eyebrow: 'TRENDING NOW',
-                title: 'Recipes everyone is saving',
-                subtitle:
-                    'Hand-picked weekly from the most cooked dishes in the Chefify community.',
+                eyebrow: AppStrings.of(context).trendingNow,
+                title: AppStrings.of(context).trendingRecipesTitle,
+                subtitle: AppStrings.of(context).trendingRecipesSubtitle,
                 action: AppButton(
                   key: const ValueKey('trending-see-all-button'),
-                  label: 'See all',
+                  label: AppStrings.of(context).seeAll,
                   variant: AppButtonVariant.ghost,
                   onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil(

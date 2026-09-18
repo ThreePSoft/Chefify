@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/responsive_wrap_grid.dart';
 import 'package:frontend/core/widgets/section_header.dart';
 import 'package:frontend/features/home/presentation/widgets/benefit_card.dart';
@@ -22,11 +23,10 @@ class BenefitsSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(
-                eyebrow: 'WHY CHEFIFY',
-                title: 'Everything you need in one kitchen flow',
-                subtitle:
-                    'From planning to plating, Chefify removes friction at every step.',
+              SectionHeader(
+                eyebrow: AppStrings.of(context).whyChefify,
+                title: AppStrings.of(context).benefitsTitle,
+                subtitle: AppStrings.of(context).benefitsSubtitle,
               ),
               const SizedBox(height: AppSpacing.lg),
               ResponsiveWrapGrid<BenefitModel>(
