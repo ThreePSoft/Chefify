@@ -19,6 +19,8 @@ The API is then available at `http://localhost:8080`, with Swagger at `http://lo
 
 The project uses exactly Flutter `3.41.9`. Setup scripts accept only this version and can install it into `.flutter-sdk`.
 
+See [Installing Flutter SDK](flutter-setup.md) for the complete Windows, Linux, and macOS procedure.
+
 PowerShell:
 
 ```powershell

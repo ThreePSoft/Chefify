@@ -7,6 +7,7 @@ This documentation is intended for developers, testers, and new project contribu
 ## Sections
 
 - [Getting started](getting-started.md) — requirements, first startup, service URLs, and local environment reset.
+- [Installing Flutter SDK](flutter-setup.md) — automatic or manual setup of pinned Flutter `3.41.9`.
 - [Local development](development.md) — Flutter, backend, common commands, and runtime modes.
 - [Configuration](configuration.md) — environment variables, ports, secrets, API URL, CORS, and S3.
 - [Architecture](architecture.md) — repository layout, frontend layers, backend, and data flows.

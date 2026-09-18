@@ -4,10 +4,10 @@
 
 ## Рекомендований режим
 
-Для щоденної frontend-розробки найзручніший змішаний режим:
+Для щоденної фронтенд-розробки найзручніший змішаний режим:
 
 1. PostgreSQL і API працюють у Docker.
-2. Flutter запускається локально з hot reload.
+2. Flutter запускається локально з гарячим перезавантаженням (hot reload).
 
 ```bash
 docker compose up -d db api
@@ -17,7 +17,9 @@ docker compose up -d db api
 
 ## Flutter SDK
 
-Проєкт використовує рівно Flutter `3.41.9`. Setup-скрипти приймають тільки цю версію та можуть встановити SDK у `.flutter-sdk`.
+Проєкт використовує рівно Flutter `3.41.9`. Інсталяційні скрипти приймають тільки цю версію та можуть встановити SDK у `.flutter-sdk`.
+
+Повний покроковий процес для Windows, Linux і macOS наведений у [гайді зі встановлення Flutter SDK](flutter-setup.md).
 
 PowerShell:
 
@@ -42,7 +44,7 @@ FLUTTER_BIN="$(./tools/flutter/setup.sh --print-flutter-executable | tail -n 1)"
 
 Порядок пошуку SDK: `CHEFIFY_FLUTTER_SDK`, збережений `.tooling/flutter-sdk-path.txt`, локальний `.flutter-sdk`, потім `flutter` у `PATH`. Невідповідна версія ігнорується.
 
-## Запуск frontend з hot reload
+## Запуск фронтенду з гарячим перезавантаженням
 
 PowerShell із кореня репозиторію:
 
@@ -63,11 +65,11 @@ cd frontend
   --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 ```
 
-Порт `8089` уже дозволений поточною локальною CORS-конфігурацією API. `CHEFIFY_API_BASE_URL` є compile-time значенням: після його зміни застосунок потрібно перезапустити або перебудувати.
+Порт `8089` уже дозволений поточною локальною CORS-конфігурацією API. `CHEFIFY_API_BASE_URL` задається під час компіляції: після його зміни застосунок потрібно перезапустити або перебудувати.
 
-## Основні frontend-команди
+## Основні команди фронтенду
 
-Виконувати з `frontend/` через wrapper або знайдений Flutter executable:
+Виконуй їх із `frontend/` через обгортку або знайдений виконуваний файл Flutter:
 
 ```powershell
 ..\tools\flutter\flutterw.ps1 pub get
@@ -76,9 +78,9 @@ cd frontend
 ..\tools\flutter\flutterw.ps1 build web --release --no-pub --dart-define=CHEFIFY_API_BASE_URL=/api
 ```
 
-Не запускай `flutter pub upgrade` без окремого рішення команди: це змінює lockfile і може розсинхронізувати pinned toolchain.
+Не запускай `flutter pub upgrade` без окремого рішення команди: це змінює файл блокування залежностей і може розсинхронізувати зафіксований набір інструментів.
 
-## Docker frontend
+## Фронтенд у Docker
 
 Production-подібна збірка з nginx:
 
@@ -86,9 +88,9 @@ Production-подібна збірка з nginx:
 docker compose --profile frontend up --build frontend-web api
 ```
 
-nginx віддає SPA і проксіює `/api/*` до контейнера `api`. Якщо запустити лише `frontend-web`, UI відкриється, але API-запити повернуть gateway error.
+nginx віддає SPA і проксіює `/api/*` до контейнера `api`. Якщо запустити лише `frontend-web`, UI відкриється, але API-запити повернуть помилку шлюзу.
 
-Preview уже зібраного локального `frontend/build/web`:
+Попередній перегляд уже зібраного локального `frontend/build/web`:
 
 ```powershell
 Push-Location frontend
@@ -97,11 +99,11 @@ Pop-Location
 docker compose --profile frontend-local-build up api frontend-preview
 ```
 
-Preview доступний на `http://localhost:8089` за замовчуванням.
+Попередній перегляд доступний на `http://localhost:8089` за замовчуванням.
 
 ## Backend через Docker
 
-Це рекомендований backend workflow, оскільки Compose вже передає connection string, JWT, S3 та admin settings:
+Це рекомендований бекенд-процес, оскільки Compose вже передає connection string, JWT, S3 та налаштування адміністратора:
 
 ```bash
 docker compose up --build db api
@@ -135,14 +137,14 @@ dotnet restore .\backend\backend.csproj
 dotnet run --project .\backend\backend.csproj --launch-profile http
 ```
 
-Локальний launch profile слухає `http://localhost:5294`. Не зберігай реальні credentials у shell history або репозиторії.
+Локальний профіль запуску слухає `http://localhost:5294`. Не зберігай справжні облікові дані в історії командної оболонки або репозиторії.
 
-## Database migrations
+## Міграції бази даних
 
-API виконує `Database.MigrateAsync()` під час старту. Створювати нову migration потрібно лише разом зі свідомою зміною моделі:
+API виконує `Database.MigrateAsync()` під час старту. Створювати нову міграцію потрібно лише разом зі свідомою зміною моделі:
 
 ```bash
 dotnet ef migrations add <MigrationName> --project backend --startup-project backend
 ```
 
-Не редагуй уже застосовані migration-файли заднім числом.
+Не редагуй уже застосовані файли міграцій заднім числом.

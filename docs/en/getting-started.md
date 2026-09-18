@@ -11,7 +11,7 @@ The recommended Docker workflow requires:
 - Docker Compose v2 (`docker compose version`);
 - free ports `5432`, `8080`, and `8088`, or custom values in `.env`.
 
-Local development outside the full container stack additionally requires Flutter `3.41.9`, .NET SDK 9, and Chrome or another Flutter web target. A local PostgreSQL installation is optional because the database can run as a standalone Docker service.
+Local development outside the full container stack additionally requires Flutter `3.41.9`, .NET SDK 9, and Chrome or another Flutter web target. Flutter can be installed through the project scripts described in [Installing Flutter SDK](flutter-setup.md). A local PostgreSQL installation is optional because the database can run as a standalone Docker service.
 
 ## 2. Get the repository
 

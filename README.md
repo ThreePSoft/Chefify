@@ -36,6 +36,7 @@ docker compose --profile frontend down --remove-orphans
 | --- | --- | --- |
 | Documentation index | [Відкрити](docs/uk/README.md) | [Open](docs/en/README.md) |
 | Installation and first run | [Початок роботи](docs/uk/getting-started.md) | [Getting started](docs/en/getting-started.md) |
+| Flutter SDK installation | [Встановлення Flutter](docs/uk/flutter-setup.md) | [Installing Flutter](docs/en/flutter-setup.md) |
 | Local development | [Розробка](docs/uk/development.md) | [Development](docs/en/development.md) |
 | Configuration | [Конфігурація](docs/uk/configuration.md) | [Configuration](docs/en/configuration.md) |
 | Architecture | [Архітектура](docs/uk/architecture.md) | [Architecture](docs/en/architecture.md) |
