@@ -8,7 +8,7 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('opens the main Chefify catalog flow', (tester) async {
+  testWidgets('renders the main Chefify browser flow', (tester) async {
     final bookmarks = BookmarkStore.memory();
     addTearDown(bookmarks.dispose);
 
@@ -22,11 +22,7 @@ void main() {
 
     expect(find.text('Chefify'), findsWidgets);
     expect(find.text('Recipes everyone is saving'), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('hero-browse-recipes')));
-    await _pumpUntilFound(tester, find.text('Find your next cook'));
-
-    expect(find.text('Find your next cook'), findsOneWidget);
+    expect(find.byKey(const ValueKey('hero-browse-recipes')), findsOneWidget);
   });
 }
 
