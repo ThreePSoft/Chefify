@@ -37,5 +37,5 @@ Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
       return;
     }
   }
-  throw TestFailure('Timed out waiting for ${finder.description}.');
+  throw TestFailure('Timed out waiting for the expected widget.');
 }
