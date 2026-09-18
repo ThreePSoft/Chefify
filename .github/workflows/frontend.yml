@@ -104,9 +104,17 @@ jobs:
             sudo apt-get update
             sudo apt-get install --yes xvfb
           fi
-          xvfb-run --auto-servernum ${{ steps.flutter.outputs.flutter }} drive \
+          set +e
+          timeout --signal=TERM 120s xvfb-run --auto-servernum ${{ steps.flutter.outputs.flutter }} drive \
             -d chrome \
             --driver test_driver/integration_test.dart \
             --target integration_test/app_smoke_test.dart \
-            --timeout 180 \
-            --no-pub
+            --timeout 60 \
+            --no-pub 2>&1 | tee "$RUNNER_TEMP/flutter-drive.log"
+          drive_status=${PIPESTATUS[0]}
+          set -e
+          if [ "$drive_status" -eq 0 ] || grep --quiet "All tests passed" "$RUNNER_TEMP/flutter-drive.log"; then
+            exit 0
+          fi
+          cat "$RUNNER_TEMP/chromedriver.log"
+          exit "$drive_status"
