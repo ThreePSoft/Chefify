@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/images/optimized_network_image.dart';
+import 'package:frontend/core/seo/app_seo.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
@@ -70,6 +71,7 @@ class RecipeDetailsPage extends StatefulWidget {
 
 class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   late final RecipeDetailsController _controller;
+  String? _seoSignature;
 
   @override
   void initState() {
@@ -79,6 +81,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       recipeId: widget.recipeId,
       initialRecipe: widget.initialRecipe,
     )..addListener(_handleControllerChanged);
+    _updateSeo();
     if (widget.initialRecipe == null) {
       unawaited(_controller.load());
     }
@@ -110,7 +113,44 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     if (!mounted) {
       return;
     }
+    _updateSeo();
     setState(() {});
+  }
+
+  void _updateSeo() {
+    final recipe = _controller.recipe;
+    if (recipe == null) {
+      return;
+    }
+
+    final description = recipe.description.trim().isEmpty
+        ? 'Cook ${recipe.title} with this practical recipe from Chefify.'
+        : recipe.description.trim();
+    final signature = <Object?>[
+      recipe.id,
+      recipe.title,
+      description,
+      recipe.author,
+      recipe.categoryName,
+      recipe.minutes,
+      recipe.imageUrl,
+    ].join('|');
+    if (_seoSignature == signature) {
+      return;
+    }
+
+    _seoSignature = signature;
+    setRecipeSeo(
+      RecipeSeoData(
+        id: recipe.id,
+        title: recipe.title,
+        description: description,
+        author: recipe.author,
+        category: recipe.categoryName,
+        cookMinutes: recipe.minutes,
+        imageUrl: recipe.imageUrl,
+      ),
+    );
   }
 
   @override

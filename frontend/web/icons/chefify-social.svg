@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Chefify</title>
+  <desc id="desc">Discover, create, and save recipes with Chefify.</desc>
+  <defs>
+    <linearGradient id="background" x1="80" y1="30" x2="1120" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F1E7DC"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="145" y1="124" x2="425" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E08A57"/>
+      <stop offset="1" stop-color="#B85C38"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="48" fill="url(#background)"/>
+  <circle cx="286" cy="315" r="190" fill="url(#mark)"/>
+  <path fill="#FFFDF9" d="M218 289c-25 0-45-20-45-44 0-24 19-43 43-44 11-25 35-42 63-42 29 0 54 18 64 44 5-2 11-3 17-3 24 0 44 20 44 44 0 22-17 40-38 43v25H218v-23Zm27 54h96v65c0 11-9 20-20 20h-57c-11 0-19-9-19-20v-65Zm26 17v39h17v-39h-17Zm35 0v39h17v-39h-17Z"/>
+  <text x="530" y="300" fill="#2B2623" font-family="Inter, Arial, sans-serif" font-size="108" font-weight="800">Chefify</text>
+  <text x="536" y="372" fill="#6E655F" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="500">Discover. Create. Cook.</text>
+</svg>

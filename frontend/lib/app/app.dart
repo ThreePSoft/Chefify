@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
+import 'package:frontend/core/seo/seo_navigator_observer.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 
@@ -23,11 +24,13 @@ class _ChefifyAppState extends State<ChefifyApp> {
   late final AppSettingsController _settingsController;
   late final BookmarkStore _bookmarkStore;
   late final bool _ownsBookmarkStore;
+  late final SeoNavigatorObserver _seoNavigatorObserver;
 
   @override
   void initState() {
     super.initState();
     _settingsController = AppSettingsController();
+    _seoNavigatorObserver = SeoNavigatorObserver();
     _ownsBookmarkStore = widget.bookmarkStore == null;
     _bookmarkStore = widget.bookmarkStore ?? BookmarkStore();
     _bookmarkStore.load();
@@ -57,6 +60,7 @@ class _ChefifyAppState extends State<ChefifyApp> {
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: _settingsController.themeMode,
+              navigatorObservers: [_seoNavigatorObserver],
               onGenerateRoute: (settings) => AppRouter.onGenerateRoute(
                 settings,
                 recipeRepository: widget.recipeRepository,

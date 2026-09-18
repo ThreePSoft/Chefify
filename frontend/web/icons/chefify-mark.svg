@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Chefify</title>
+  <desc id="desc">A white chef hat on a warm terracotta background.</desc>
+  <defs>
+    <linearGradient id="background" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E08A57"/>
+      <stop offset="1" stop-color="#B85C38"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#background)"/>
+  <path fill="#FFFDF9" d="M158 224c-35 0-62-27-62-61 0-33 26-60 59-61 15-35 49-58 88-58 40 0 75 25 89 61 7-3 15-4 23-4 34 0 61 27 61 61 0 31-23 56-53 60v35H158v-33Zm37 75h134v91c0 15-12 27-27 27h-80c-15 0-27-12-27-27v-91Zm37 24v54h24v-54h-24Zm48 0v54h24v-54h-24Z"/>
+</svg>
