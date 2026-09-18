@@ -525,6 +525,91 @@ class AppStrings {
     uk: 'Не вдалося оновити вподобання. Спробуйте ще раз.',
     es: 'No se pudo actualizar el Me gusta. Inténtalo de nuevo.',
   );
+  String get tag => _value(en: 'Tag', uk: 'Тег', es: 'Etiqueta');
+  String get cancelTag => _value(
+    en: 'Cancel tag',
+    uk: 'Скасувати додавання тегу',
+    es: 'Cancelar etiqueta',
+  );
+  String get templates =>
+      _value(en: 'Templates', uk: 'Шаблони', es: 'Plantillas');
+  String get blocks => _value(en: 'Blocks', uk: 'Блоки', es: 'Bloques');
+  String get expandBlockPalette => _value(
+    en: 'Expand block palette',
+    uk: 'Розгорнути панель блоків',
+    es: 'Expandir panel de bloques',
+  );
+  String get collapseBlockPalette => _value(
+    en: 'Collapse block palette',
+    uk: 'Згорнути панель блоків',
+    es: 'Contraer panel de bloques',
+  );
+  String get openBlockSettings => _value(
+    en: 'Open block settings',
+    uk: 'Відкрити налаштування блока',
+    es: 'Abrir ajustes del bloque',
+  );
+  String get collapseBlockSettings => _value(
+    en: 'Collapse block settings',
+    uk: 'Згорнути налаштування блока',
+    es: 'Contraer ajustes del bloque',
+  );
+  String get deleteBlock =>
+      _value(en: 'Delete block', uk: 'Видалити блок', es: 'Eliminar bloque');
+  String get writeHeading => _value(
+    en: 'Write a heading',
+    uk: 'Напишіть заголовок',
+    es: 'Escribe un título',
+  );
+  String get writeParagraph => _value(
+    en: 'Write a paragraph',
+    uk: 'Напишіть абзац',
+    es: 'Escribe un párrafo',
+  );
+  String get writeQuote => _value(
+    en: 'Write a quote',
+    uk: 'Напишіть цитату',
+    es: 'Escribe una cita',
+  );
+  String get noteStyle =>
+      _value(en: 'Note style', uk: 'Стиль нотатки', es: 'Estilo de nota');
+  String get textSize =>
+      _value(en: 'Text size', uk: 'Розмір тексту', es: 'Tamaño de texto');
+  String get lineStyle =>
+      _value(en: 'Line style', uk: 'Стиль лінії', es: 'Estilo de línea');
+  String get thickness => _value(en: 'Thickness', uk: 'Товщина', es: 'Grosor');
+  String get videoSize =>
+      _value(en: 'Video size', uk: 'Розмір відео', es: 'Tamaño del video');
+  String get imageMode =>
+      _value(en: 'Image mode', uk: 'Режим зображень', es: 'Modo de imagen');
+  String get mediaSize =>
+      _value(en: 'Media size', uk: 'Розмір медіа', es: 'Tamaño multimedia');
+  String get autoplayPace => _value(
+    en: 'Autoplay pace',
+    uk: 'Швидкість автопрокрутки',
+    es: 'Ritmo de reproducción',
+  );
+  String replacePhoto(int index) => _value(
+    en: 'Replace photo $index',
+    uk: 'Замінити фото $index',
+    es: 'Reemplazar foto $index',
+  );
+  String deletePhoto(int index) => _value(
+    en: 'Delete photo $index',
+    uk: 'Видалити фото $index',
+    es: 'Eliminar foto $index',
+  );
+  String get width => _value(en: 'Width', uk: 'Ширина', es: 'Ancho');
+  String get alignment =>
+      _value(en: 'Alignment', uk: 'Вирівнювання', es: 'Alineación');
+  String get spacing => _value(en: 'Spacing', uk: 'Відступи', es: 'Espaciado');
+  String get variant => _value(en: 'Variant', uk: 'Варіант', es: 'Variante');
+  String get block => _value(en: 'Block', uk: 'Блок', es: 'Bloque');
+  String get content => _value(en: 'Content', uk: 'Вміст', es: 'Contenido');
+  String get youtubeVideo =>
+      _value(en: 'YouTube video', uk: 'Відео YouTube', es: 'Video de YouTube');
+  String get youtubeUrl =>
+      _value(en: 'YouTube URL', uk: 'Посилання YouTube', es: 'URL de YouTube');
 
   String get trustedBy => _value(
     en: 'Trusted by 120K+ home cooks',

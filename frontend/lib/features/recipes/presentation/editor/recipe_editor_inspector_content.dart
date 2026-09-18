@@ -185,7 +185,7 @@ class _RecipeNoteContentInspector extends StatelessWidget {
       children: [
         _RecipeInspectorDropdown<_RecipeNoteTone>(
           controlKey: 'recipe-note-tone-${block.noteTone.name}',
-          label: 'Note style',
+          label: AppStrings.of(context).noteStyle,
           value: block.noteTone,
           values: _RecipeNoteTone.values,
           labelForValue: (tone) => switch (tone) {
@@ -225,7 +225,7 @@ class _RecipeNoteContentInspector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _RecipeInspectorDropdown<_RecipeTextSize>(
           controlKey: 'recipe-note-size-${block.textSize.name}',
-          label: 'Text size',
+          label: AppStrings.of(context).textSize,
           value: block.textSize,
           values: _RecipeTextSize.values,
           labelForValue: (size) => switch (size) {
@@ -261,7 +261,7 @@ class _RecipeDividerContentInspector extends StatelessWidget {
       children: [
         _RecipeInspectorDropdown<_RecipeDividerStyle>(
           controlKey: 'recipe-divider-style-${block.dividerStyle.name}',
-          label: 'Line style',
+          label: AppStrings.of(context).lineStyle,
           value: block.dividerStyle,
           values: _RecipeDividerStyle.values,
           labelForValue: (style) => switch (style) {
@@ -277,7 +277,7 @@ class _RecipeDividerContentInspector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _RecipeInspectorDropdown<_RecipeDividerThickness>(
           controlKey: 'recipe-divider-thickness-${block.dividerThickness.name}',
-          label: 'Thickness',
+          label: AppStrings.of(context).thickness,
           value: block.dividerThickness,
           values: _RecipeDividerThickness.values,
           labelForValue: (thickness) => switch (thickness) {
@@ -390,7 +390,7 @@ class _RecipeVideoContentInspector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _RecipeInspectorDropdown<_RecipeMediaSize>(
           controlKey: 'recipe-video-size-${block.mediaSize.name}',
-          label: 'Video size',
+          label: AppStrings.of(context).videoSize,
           value: block.mediaSize,
           values: _RecipeMediaSize.values,
           labelForValue: _mediaSizeLabel,
@@ -449,7 +449,7 @@ class _RecipeImageContentInspector extends StatelessWidget {
       children: [
         _RecipeInspectorDropdown<_RecipeImageMode>(
           controlKey: 'recipe-image-mode-${block.imageMode.name}',
-          label: 'Image mode',
+          label: AppStrings.of(context).imageMode,
           value: block.imageMode,
           values: _RecipeImageMode.values,
           labelForValue: _imageModeLabel,
@@ -477,7 +477,7 @@ class _RecipeImageContentInspector extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _RecipeInspectorDropdown<_RecipeMediaSize>(
           controlKey: 'recipe-media-size-${block.mediaSize.name}',
-          label: 'Media size',
+          label: AppStrings.of(context).mediaSize,
           value: block.mediaSize,
           values: _RecipeMediaSize.values,
           labelForValue: _mediaSizeLabel,
@@ -505,7 +505,7 @@ class _RecipeImageContentInspector extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             _RecipeInspectorDropdown<_RecipeSliderPace>(
               controlKey: 'recipe-slider-pace-${block.sliderPace.name}',
-              label: 'Autoplay pace',
+              label: AppStrings.of(context).autoplayPace,
               value: block.sliderPace,
               values: _RecipeSliderPace.values,
               labelForValue: _sliderPaceLabel,
@@ -646,13 +646,13 @@ class _RecipeInspectorImageRow extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Replace photo ${index + 1}',
+            tooltip: AppStrings.of(context).replacePhoto(index + 1),
             onPressed: onReplace,
             icon: const Icon(Icons.refresh_rounded),
             visualDensity: VisualDensity.compact,
           ),
           IconButton(
-            tooltip: 'Delete photo ${index + 1}',
+            tooltip: AppStrings.of(context).deletePhoto(index + 1),
             onPressed: onDelete,
             icon: const Icon(Icons.delete_outline_rounded),
             visualDensity: VisualDensity.compact,

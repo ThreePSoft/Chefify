@@ -470,7 +470,7 @@ class _RecipeCreateTagInputChip extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
               decoration: InputDecoration(
-                hintText: 'Tag',
+                hintText: AppStrings.of(context).tag,
                 hintStyle: TextStyle(color: palette.secondaryText),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -481,7 +481,7 @@ class _RecipeCreateTagInputChip extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Cancel tag',
+            tooltip: AppStrings.of(context).cancelTag,
             onPressed: onCancel,
             icon: const Icon(Icons.remove_rounded),
             iconSize: 16,

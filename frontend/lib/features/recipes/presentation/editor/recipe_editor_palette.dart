@@ -48,7 +48,7 @@ class _RecipeEditorPalette extends StatelessWidget {
             children: [
               Expanded(
                 child: _RecipeEditorTabButton(
-                  label: 'Templates',
+                  label: AppStrings.of(context).templates,
                   selected: activeTab == _RecipeEditorTab.templates,
                   onPressed: () => onTabChanged(_RecipeEditorTab.templates),
                 ),
@@ -56,7 +56,7 @@ class _RecipeEditorPalette extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: _RecipeEditorTabButton(
-                  label: 'Blocks',
+                  label: AppStrings.of(context).blocks,
                   selected: activeTab == _RecipeEditorTab.blocks,
                   onPressed: () => onTabChanged(_RecipeEditorTab.blocks),
                 ),

@@ -290,7 +290,9 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
                                           right: deleteButtonInset,
                                         ),
                                         child: IconButton(
-                                          tooltip: 'Delete block',
+                                          tooltip: AppStrings.of(
+                                            context,
+                                          ).deleteBlock,
                                           onPressed: () =>
                                               onDeleteBlock(block.id),
                                           icon: const Icon(
@@ -386,7 +388,7 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
       _RecipeBlockKind.heading => _buildTextContentField(
         context,
         palette,
-        hintText: 'Write a heading',
+        hintText: AppStrings.of(context).writeHeading,
         style: TextStyle(
           color: palette.mainText,
           fontSize: _textFontSize,
@@ -397,7 +399,7 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
       _RecipeBlockKind.paragraph => _buildTextContentField(
         context,
         palette,
-        hintText: 'Write a paragraph',
+        hintText: AppStrings.of(context).writeParagraph,
         style: TextStyle(
           color: palette.mainText.withValues(alpha: 0.9),
           fontSize: _textFontSize,
@@ -493,7 +495,7 @@ class _RecipeEditorBlockSurfaceState extends State<_RecipeEditorBlockSurface> {
           _buildTextContentField(
             context,
             palette,
-            hintText: 'Write a quote',
+            hintText: AppStrings.of(context).writeQuote,
             style: TextStyle(
               color: palette.mainText,
               fontSize: _textFontSize,

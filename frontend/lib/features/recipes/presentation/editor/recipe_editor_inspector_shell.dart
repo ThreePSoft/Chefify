@@ -97,7 +97,7 @@ class _RecipeEditorInspectorState extends State<_RecipeEditorInspector> {
                 const SizedBox(height: AppSpacing.md),
                 if (_activeTab == _RecipeInspectorTab.block) ...[
                   _RecipePresetSelector<_RecipeBlockWidth>(
-                    label: 'Width',
+                    label: AppStrings.of(context).width,
                     values: _RecipeBlockWidth.values,
                     selected: selectedBlock.width,
                     labelForValue: _widthLabel,
@@ -105,7 +105,7 @@ class _RecipeEditorInspectorState extends State<_RecipeEditorInspector> {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _RecipePresetSelector<_RecipeBlockAlignment>(
-                    label: 'Alignment',
+                    label: AppStrings.of(context).alignment,
                     values: _RecipeBlockAlignment.values,
                     selected: selectedBlock.alignment,
                     labelForValue: _alignmentLabel,
@@ -113,7 +113,7 @@ class _RecipeEditorInspectorState extends State<_RecipeEditorInspector> {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _RecipePresetSelector<_RecipeBlockSpacing>(
-                    label: 'Spacing',
+                    label: AppStrings.of(context).spacing,
                     values: _RecipeBlockSpacing.values,
                     selected: selectedBlock.spacing,
                     labelForValue: _spacingLabel,
@@ -121,7 +121,7 @@ class _RecipeEditorInspectorState extends State<_RecipeEditorInspector> {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _RecipePresetSelector<_RecipeBlockVariant>(
-                    label: 'Variant',
+                    label: AppStrings.of(context).variant,
                     values: _RecipeBlockVariant.values,
                     selected: selectedBlock.variant,
                     labelForValue: _variantLabel,
@@ -190,7 +190,7 @@ class _RecipeInspectorTabs extends StatelessWidget {
       children: [
         Expanded(
           child: _RecipeInspectorTabButton(
-            label: 'Block',
+            label: AppStrings.of(context).block,
             icon: Icons.crop_free_rounded,
             selected: selected == _RecipeInspectorTab.block,
             onPressed: () => onSelected(_RecipeInspectorTab.block),
@@ -199,7 +199,7 @@ class _RecipeInspectorTabs extends StatelessWidget {
         const SizedBox(width: AppSpacing.xs),
         Expanded(
           child: _RecipeInspectorTabButton(
-            label: 'Content',
+            label: AppStrings.of(context).content,
             icon: Icons.text_fields_rounded,
             selected: selected == _RecipeInspectorTab.content,
             onPressed: () => onSelected(_RecipeInspectorTab.content),

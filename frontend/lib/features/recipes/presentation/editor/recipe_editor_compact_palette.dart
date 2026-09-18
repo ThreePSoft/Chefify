@@ -31,19 +31,19 @@ class _RecipeCompactPalette extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _RecipeCompactTabButton(
-                tooltip: 'Templates',
+                tooltip: AppStrings.of(context).templates,
                 icon: Icons.dashboard_customize_rounded,
                 selected: activeTab == _RecipeEditorTab.templates,
                 onPressed: () => onTabChanged(_RecipeEditorTab.templates),
               ),
               _RecipeCompactTabButton(
-                tooltip: 'Blocks',
+                tooltip: AppStrings.of(context).blocks,
                 icon: Icons.widgets_rounded,
                 selected: activeTab == _RecipeEditorTab.blocks,
                 onPressed: () => onTabChanged(_RecipeEditorTab.blocks),
               ),
               _RecipeCompactTabButton(
-                tooltip: 'Expand block palette',
+                tooltip: AppStrings.of(context).expandBlockPalette,
                 icon: Icons.chevron_right_rounded,
                 selected: false,
                 onPressed: onExpanded,

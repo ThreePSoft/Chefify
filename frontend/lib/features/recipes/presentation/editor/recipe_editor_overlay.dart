@@ -228,7 +228,7 @@ class _RecipePaletteDockState extends State<_RecipePaletteDock>
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
-                  tooltip: 'Collapse block palette',
+                  tooltip: AppStrings.of(context).collapseBlockPalette,
                   onPressed: () => onExpandedChanged(false),
                   icon: const Icon(Icons.chevron_left_rounded),
                 ),
@@ -319,7 +319,7 @@ class _RecipeInspectorDock extends StatelessWidget {
           if (!showExpandedContent) {
             return Center(
               child: IconButton(
-                tooltip: 'Open block settings',
+                tooltip: AppStrings.of(context).openBlockSettings,
                 onPressed: () => onExpandedChanged(true),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints.tightFor(
@@ -336,7 +336,7 @@ class _RecipeInspectorDock extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  tooltip: 'Collapse block settings',
+                  tooltip: AppStrings.of(context).collapseBlockSettings,
                   onPressed: () => onExpandedChanged(false),
                   icon: const Icon(Icons.chevron_right_rounded),
                 ),

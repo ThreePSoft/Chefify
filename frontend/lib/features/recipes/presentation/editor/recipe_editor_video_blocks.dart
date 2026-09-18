@@ -199,7 +199,7 @@ class _RecipeYoutubeUrlDialogState extends State<_RecipeYoutubeUrlDialog> {
     return AlertDialog(
       key: const ValueKey('recipe-youtube-url-dialog'),
       backgroundColor: palette.cardsSurface,
-      title: const Text('YouTube video'),
+      title: Text(AppStrings.of(context).youtubeVideo),
       content: SizedBox(
         width: 480,
         child: TextField(
@@ -208,7 +208,7 @@ class _RecipeYoutubeUrlDialogState extends State<_RecipeYoutubeUrlDialog> {
           autofocus: true,
           onSubmitted: (_) => _submit(),
           decoration: InputDecoration(
-            labelText: 'YouTube URL',
+            labelText: AppStrings.of(context).youtubeUrl,
             hintText: 'https://www.youtube.com/watch?v=...',
             errorText: _errorText,
           ),
@@ -217,9 +217,12 @@ class _RecipeYoutubeUrlDialogState extends State<_RecipeYoutubeUrlDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(AppStrings.of(context).cancel),
         ),
-        FilledButton(onPressed: _submit, child: const Text('Apply')),
+        FilledButton(
+          onPressed: _submit,
+          child: Text(AppStrings.of(context).apply),
+        ),
       ],
     );
   }
