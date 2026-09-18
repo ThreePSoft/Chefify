@@ -21,6 +21,7 @@ class RecipeSeoData {
     return <String, Object>{
       '@context': 'https://schema.org',
       '@type': 'Recipe',
+      'identifier': id,
       'name': title,
       'description': description,
       'author': <String, Object>{'@type': 'Person', 'name': author},

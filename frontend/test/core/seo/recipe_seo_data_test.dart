@@ -18,6 +18,7 @@ void main() {
       <String, Object>{
         '@context': 'https://schema.org',
         '@type': 'Recipe',
+        'identifier': 'syrnyky',
         'name': 'Сирники з вишнею',
         'description': 'Ніжні сирники для сніданку.',
         'author': <String, Object>{'@type': 'Person', 'name': 'Марія Іваненко'},
