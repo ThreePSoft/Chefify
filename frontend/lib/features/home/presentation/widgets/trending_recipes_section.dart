@@ -5,7 +5,7 @@ import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/responsive_wrap_grid.dart';
 import 'package:frontend/core/widgets/section_header.dart';
-import 'package:frontend/features/home/presentation/widgets/recipe_card.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
 class TrendingRecipesSection extends StatelessWidget {

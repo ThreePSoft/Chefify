@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
@@ -7,8 +9,9 @@ import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
 import 'package:frontend/features/home/presentation/widgets/category_card.dart';
-import 'package:frontend/features/recipes/data/recipe_catalog.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
@@ -28,40 +31,48 @@ class _CategoriesPageState extends State<CategoriesPage> {
   final TextEditingController _searchController = TextEditingController();
   String _query = '';
   bool _savedOnly = false;
-  List<RecipeModel> _recipes = RecipeCatalog.items;
-  List<CategoryModel> _categories = CategoryCatalog.withRecipeCounts(
-    RecipeCatalog.items,
-  );
+  List<RecipeModel> _recipes = const [];
+  List<CategoryModel> _categories = const [];
+  late final RecipeCollectionController _recipesController;
 
   @override
   void initState() {
     super.initState();
-    _loadRecipes();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipeCollectionChanged);
+    unawaited(_recipesController.load());
   }
 
   @override
   void didUpdateWidget(covariant CategoriesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.recipeRepository != widget.recipeRepository) {
-      _loadRecipes();
+      _recipesController.replaceRepository(widget.recipeRepository);
+      unawaited(_recipesController.load());
     }
   }
 
   @override
   void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipeCollectionChanged)
+      ..dispose();
     _searchController.dispose();
     super.dispose();
   }
 
-  Future<void> _loadRecipes() async {
-    final recipes = await widget.recipeRepository.fetchRecipes();
-    if (!mounted || _sameRecipeLists(_recipes, recipes)) {
+  void _handleRecipeCollectionChanged() {
+    if (!mounted) {
       return;
     }
 
     setState(() {
-      _recipes = recipes;
-      _categories = CategoryCatalog.withRecipeCounts(recipes);
+      final recipes = _recipesController.recipes;
+      if (!_sameRecipeLists(_recipes, recipes)) {
+        _recipes = recipes;
+        _categories = CategoryCatalog.withRecipeCounts(recipes);
+      }
     });
   }
 
@@ -118,7 +129,22 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     ],
                   ),
                 ),
-                if (categories.isEmpty)
+                if (_recipesController.isLoading && _recipes.isEmpty)
+                  _CategoriesContentSliver(
+                    topPadding: AppSpacing.lg,
+                    bottomPadding: bottomPadding,
+                    child: const RecipeCollectionLoading(),
+                  )
+                else if (_recipesController.hasError && _recipes.isEmpty)
+                  _CategoriesContentSliver(
+                    topPadding: AppSpacing.lg,
+                    bottomPadding: bottomPadding,
+                    child: RecipeCollectionError(
+                      error: _recipesController.error,
+                      onRetry: () => unawaited(_recipesController.load()),
+                    ),
+                  )
+                else if (categories.isEmpty)
                   _CategoriesContentSliver(
                     topPadding: AppSpacing.lg,
                     bottomPadding: bottomPadding,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -17,8 +18,9 @@ import 'package:frontend/features/home/presentation/widgets/newsletter_section.d
 import 'package:frontend/features/home/presentation/widgets/stats_banner.dart';
 import 'package:frontend/features/home/presentation/widgets/testimonials_section.dart';
 import 'package:frontend/features/home/presentation/widgets/trending_recipes_section.dart';
-import 'package:frontend/features/recipes/data/recipe_catalog.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,45 +36,54 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<RecipeModel> _trendingRecipes = RecipeCatalog.popular(take: 4);
-  List<CategoryModel> _popularCategories = CategoryCatalog.popularForRecipes(
-    RecipeCatalog.items,
-    take: 4,
-  );
+  List<RecipeModel> _trendingRecipes = const [];
+  List<CategoryModel> _popularCategories = const [];
+  late final RecipeCollectionController _recipesController;
 
   @override
   void initState() {
     super.initState();
-    _loadHomeRecipeData();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipeCollectionChanged);
+    unawaited(_recipesController.load());
   }
 
   @override
   void didUpdateWidget(covariant HomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.recipeRepository != widget.recipeRepository) {
-      _loadHomeRecipeData();
+      _recipesController.replaceRepository(widget.recipeRepository);
+      unawaited(_recipesController.load());
     }
   }
 
-  Future<void> _loadHomeRecipeData() async {
-    final recipes = await widget.recipeRepository.fetchRecipes();
+  @override
+  void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipeCollectionChanged)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _handleRecipeCollectionChanged() {
     if (!mounted) {
       return;
     }
 
+    final recipes = _recipesController.recipes;
     final nextTrendingRecipes = _popularRecipesFor(recipes, take: 4);
     final nextPopularCategories = CategoryCatalog.popularForRecipes(
       recipes,
       take: 4,
     );
-    if (_sameRecipeList(_trendingRecipes, nextTrendingRecipes) &&
-        _sameCategoryList(_popularCategories, nextPopularCategories)) {
-      return;
-    }
-
     setState(() {
-      _trendingRecipes = nextTrendingRecipes;
-      _popularCategories = nextPopularCategories;
+      if (!_sameRecipeList(_trendingRecipes, nextTrendingRecipes)) {
+        _trendingRecipes = nextTrendingRecipes;
+      }
+      if (!_sameCategoryList(_popularCategories, nextPopularCategories)) {
+        _popularCategories = nextPopularCategories;
+      }
     });
   }
 
@@ -111,8 +122,25 @@ class _HomePageState extends State<HomePage> {
                         subtitle: strings.heroSubtitle,
                         featuredRecipe: heroRecipe,
                       ),
-                      CategorySection(categories: _popularCategories),
-                      TrendingRecipesSection(recipes: _trendingRecipes),
+                      if (_recipesController.isLoading &&
+                          _trendingRecipes.isEmpty)
+                        const RecipeCollectionLoading()
+                      else if (_recipesController.hasError &&
+                          _trendingRecipes.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xl,
+                            vertical: AppSpacing.lg,
+                          ),
+                          child: RecipeCollectionError(
+                            error: _recipesController.error,
+                            onRetry: () => unawaited(_recipesController.load()),
+                          ),
+                        )
+                      else ...[
+                        CategorySection(categories: _popularCategories),
+                        TrendingRecipesSection(recipes: _trendingRecipes),
+                      ],
                       BenefitsSection(benefits: content.benefits),
                       FeaturedRecipeSection(recipe: content.featuredRecipe),
                       StatsBanner(stats: content.stats),

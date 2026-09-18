@@ -2,7 +2,6 @@
 
 FROM debian:bookworm-slim AS build
 
-ARG FLUTTER_VERSION=3.41.9
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
@@ -11,27 +10,41 @@ RUN apt-get update \
     curl \
     git \
     libglu1-mesa \
+    python3 \
     unzip \
     xz-utils \
-  && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /opt
-RUN curl -fsSL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz" \
-  && tar -xf flutter.tar.xz \
-  && rm flutter.tar.xz
-
-ENV PATH="/opt/flutter/bin:${PATH}"
-RUN useradd --create-home --shell /bin/bash flutter \
-  && chown -R flutter:flutter /opt/flutter
+  && rm -rf /var/lib/apt/lists/* \
+  && useradd --create-home --shell /bin/bash flutter \
+  && chown flutter:flutter /opt
 
 USER flutter
+WORKDIR /opt
+COPY --chown=flutter:flutter .flutter-version /tmp/flutter-version
+RUN flutter_version="$(tr -d '\r\n' < /tmp/flutter-version)" \
+  && curl -fsSL -o flutter-releases.json "https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json" \
+  && release_data="$(python3 -c 'import json, sys; data = json.load(open(sys.argv[1], encoding="utf-8")); release = next((item for item in data["releases"] if item.get("version") == sys.argv[2]), None); assert release, f"Flutter {sys.argv[2]} was not found"; print(release["archive"], release["sha256"])' flutter-releases.json "$flutter_version")" \
+  && archive_path="${release_data%% *}" \
+  && archive_sha256="${release_data##* }" \
+  && curl -fsSL -o flutter.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/${archive_path}" \
+  && printf '%s  %s\n' "$archive_sha256" flutter.tar.xz | sha256sum -c - \
+  && tar --no-same-owner -xf flutter.tar.xz \
+  && rm flutter.tar.xz flutter-releases.json /tmp/flutter-version
+
+ENV PATH="/opt/flutter/bin:${PATH}"
+
 WORKDIR /app
+COPY --chown=flutter:flutter pubspec.yaml pubspec.lock ./
+
+RUN flutter --disable-analytics \
+  && git config --global --add safe.directory /opt/flutter \
+  && flutter config --enable-web \
+  && flutter pub get --enforce-lockfile
+
 COPY --chown=flutter:flutter . .
 
-RUN git config --global --add safe.directory /opt/flutter \
-  && flutter config --enable-web \
-  && flutter pub get \
-  && flutter build web --release --pwa-strategy=none
+ARG CHEFIFY_API_BASE_URL=/api
+RUN flutter build web --release --no-pub \
+  --dart-define=CHEFIFY_API_BASE_URL=${CHEFIFY_API_BASE_URL}
 
 FROM nginx:1.27-alpine AS runtime
 

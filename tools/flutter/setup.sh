@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 TOOLING_DIR="$REPO_ROOT/.tooling"
 CONFIG_FILE="$TOOLING_DIR/flutter-sdk-path.txt"
 LOCAL_SDK_ROOT="$REPO_ROOT/.flutter-sdk"
+VERSION_FILE="$REPO_ROOT/frontend/.flutter-version"
+
+if [ ! -f "$VERSION_FILE" ]; then
+  echo "Pinned Flutter version file was not found at '$VERSION_FILE'." >&2
+  exit 1
+fi
+
+FLUTTER_VERSION="$(tr -d '\r\n' < "$VERSION_FILE")"
+if [[ ! "$FLUTTER_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Invalid Flutter version '$FLUTTER_VERSION' in '$VERSION_FILE'." >&2
+  exit 1
+fi
 
 log() {
   echo "[setup-flutter] $1"
@@ -36,6 +48,15 @@ sdk_candidate_from_root() {
 
   local flutter_exe="$normalized/bin/flutter"
   if [ -f "$flutter_exe" ]; then
+    local sdk_version_file="$normalized/bin/cache/flutter.version.json"
+    local sdk_version=""
+    if [ -f "$sdk_version_file" ]; then
+      sdk_version="$(sed -n 's/.*"flutterVersion"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$sdk_version_file" | head -n 1)"
+    fi
+    if [ "$sdk_version" != "$FLUTTER_VERSION" ]; then
+      return 1
+    fi
+
     echo "$normalized"
     return 0
   fi
@@ -142,25 +163,27 @@ install_local_flutter() {
   curl -fsSL "$release_json_url" -o "$release_json_path"
 
   local release_data
-  release_data="$(python3 - <<'PY' "$release_json_path"
+  release_data="$(python3 - "$release_json_path" "$FLUTTER_VERSION" <<'PY'
 import json, sys
 with open(sys.argv[1], 'r', encoding='utf-8') as f:
     payload = json.load(f)
-stable_hash = payload["current_release"]["stable"]
-release = next((r for r in payload["releases"] if r.get("hash") == stable_hash), None)
+version = sys.argv[2]
+release = next((r for r in payload["releases"] if r.get("version") == version), None)
 if not release:
     raise SystemExit(1)
 print(release["version"])
 print(release["archive"])
+print(release["sha256"])
 PY
 )"
 
-  local version archive_rel
+  local version archive_rel expected_sha256
   version="$(echo "$release_data" | sed -n '1p')"
   archive_rel="$(echo "$release_data" | sed -n '2p')"
+  expected_sha256="$(echo "$release_data" | sed -n '3p')"
 
-  if [ -z "$version" ] || [ -z "$archive_rel" ]; then
-    log "Failed to parse stable release metadata."
+  if [ -z "$version" ] || [ -z "$archive_rel" ] || [ -z "$expected_sha256" ]; then
+    log "Failed to parse metadata for pinned Flutter release $FLUTTER_VERSION."
     return 1
   fi
 
@@ -169,10 +192,34 @@ PY
 
   log "Downloading Flutter SDK $version..."
   if [ -f "$archive_file" ]; then
-    curl -fL -C - "$archive_url" -o "$archive_file"
-  else
+    if ! python3 - "$archive_file" "$expected_sha256" <<'PY'
+import hashlib, sys
+with open(sys.argv[1], 'rb') as f:
+    actual = hashlib.file_digest(f, 'sha256').hexdigest()
+raise SystemExit(0 if actual.lower() == sys.argv[2].lower() else 1)
+PY
+    then
+      rm -f "$archive_file"
+    fi
+  fi
+
+  if [ ! -f "$archive_file" ]; then
     curl -fL "$archive_url" -o "$archive_file"
   fi
+
+  if ! python3 - "$archive_file" "$expected_sha256" <<'PY'
+import hashlib, sys
+with open(sys.argv[1], 'rb') as f:
+    actual = hashlib.file_digest(f, 'sha256').hexdigest()
+raise SystemExit(0 if actual.lower() == sys.argv[2].lower() else 1)
+PY
+  then
+    rm -f "$archive_file"
+    log "Flutter archive checksum mismatch for $version."
+    return 1
+  fi
+
+  log "Verified Flutter SDK archive checksum."
 
   rm -rf "$TOOLING_DIR/flutter"
 
@@ -206,7 +253,7 @@ save_sdk_path() {
 }
 
 print_usage() {
-  echo "Usage: tools/setup-flutter.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive]"
+  echo "Usage: tools/flutter/setup.sh [--print-sdk-path] [--print-flutter-executable] [--non-interactive]"
 }
 
 PRINT_SDK_PATH=0
@@ -234,7 +281,7 @@ SDK_ROOT="$(resolve_installed_sdk 2>/dev/null || true)"
 
 if [ -z "$SDK_ROOT" ]; then
   if [ "$NON_INTERACTIVE" -eq 1 ]; then
-    echo "Flutter SDK was not found. Run tools/setup-flutter.sh without --non-interactive to choose manual path or local install." >&2
+    echo "Flutter SDK was not found. Run tools/flutter/setup.sh without --non-interactive to choose manual path or local install." >&2
     exit 1
   fi
 
@@ -249,7 +296,7 @@ if [ -z "$SDK_ROOT" ]; then
       read -r -p "Enter Flutter SDK root path: " manual_path
       SDK_ROOT="$(sdk_candidate_from_root "$manual_path" 2>/dev/null || true)"
       if [ -z "$SDK_ROOT" ]; then
-        echo "Flutter SDK was not found at the provided path. Expected: <path>/bin/flutter" >&2
+        echo "Flutter SDK $FLUTTER_VERSION was not found at the provided path. Expected: <path>/bin/flutter" >&2
         exit 1
       fi
       ;;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
@@ -5,8 +7,10 @@ import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
-import 'package:frontend/features/home/presentation/widgets/recipe_card.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
 class AuthorProfilePageArguments {
@@ -52,12 +56,15 @@ class AuthorProfilePage extends StatefulWidget {
 
 class _AuthorProfilePageState extends State<AuthorProfilePage> {
   List<RecipeModel> _recipes = const [];
-  bool _isLoading = true;
+  late final RecipeCollectionController _recipesController;
 
   @override
   void initState() {
     super.initState();
-    _loadRecipes();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipeCollectionChanged);
+    unawaited(_recipesController.load());
   }
 
   @override
@@ -65,25 +72,35 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.authorSlug != widget.authorSlug ||
         oldWidget.recipeRepository != widget.recipeRepository) {
-      _loadRecipes();
+      if (oldWidget.recipeRepository != widget.recipeRepository) {
+        _recipesController.replaceRepository(widget.recipeRepository);
+      }
+      if (oldWidget.authorSlug != widget.authorSlug &&
+          _recipesController.status == RecipeCollectionStatus.success) {
+        _handleRecipeCollectionChanged();
+      } else {
+        unawaited(_recipesController.load());
+      }
     }
   }
 
-  Future<void> _loadRecipes() async {
-    setState(() {
-      _isLoading = true;
-    });
+  @override
+  void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipeCollectionChanged)
+      ..dispose();
+    super.dispose();
+  }
 
-    final recipes = await widget.recipeRepository.fetchRecipes();
+  void _handleRecipeCollectionChanged() {
     if (!mounted) {
       return;
     }
 
     setState(() {
-      _recipes = recipes
+      _recipes = _recipesController.recipes
           .where((recipe) => _slug(recipe.author) == widget.authorSlug)
           .toList(growable: false);
-      _isLoading = false;
     });
   }
 
@@ -119,11 +136,20 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
                     recipeCount: _recipes.length,
                   ),
                 ),
-                if (_isLoading)
+                if (_recipesController.isLoading && _recipes.isEmpty)
                   _AuthorContentSliver(
                     topPadding: AppSpacing.lg,
                     bottomPadding: bottomPadding,
-                    child: const _AuthorLoadingState(),
+                    child: const RecipeCollectionLoading(),
+                  )
+                else if (_recipesController.hasError && _recipes.isEmpty)
+                  _AuthorContentSliver(
+                    topPadding: AppSpacing.lg,
+                    bottomPadding: bottomPadding,
+                    child: RecipeCollectionError(
+                      error: _recipesController.error,
+                      onRetry: () => unawaited(_recipesController.load()),
+                    ),
                   )
                 else if (_recipes.isEmpty)
                   _AuthorContentSliver(
@@ -235,29 +261,6 @@ class _AuthorAvatar extends StatelessWidget {
         style: Theme.of(context).textTheme.titleLarge?.copyWith(
           color: palette.primaryButtons,
           fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _AuthorLoadingState extends StatelessWidget {
-  const _AuthorLoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-
-    return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Center(
-        child: SizedBox(
-          width: 28,
-          height: 28,
-          child: CircularProgressIndicator(
-            strokeWidth: 2.4,
-            color: palette.activeElements,
-          ),
         ),
       ),
     );
