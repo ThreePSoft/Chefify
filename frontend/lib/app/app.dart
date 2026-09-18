@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
@@ -30,6 +31,7 @@ class _ChefifyAppState extends State<ChefifyApp> {
   void initState() {
     super.initState();
     _settingsController = AppSettingsController();
+    _settingsController.load();
     _seoNavigatorObserver = SeoNavigatorObserver();
     _ownsBookmarkStore = widget.bookmarkStore == null;
     _bookmarkStore = widget.bookmarkStore ?? BookmarkStore();
@@ -60,6 +62,15 @@ class _ChefifyAppState extends State<ChefifyApp> {
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: _settingsController.themeMode,
+              locale: _settingsController.locale,
+              supportedLocales: AppLanguage.values.map(
+                (language) => language.locale,
+              ),
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
               navigatorObservers: [_seoNavigatorObserver],
               onGenerateRoute: (settings) => AppRouter.onGenerateRoute(
                 settings,
