@@ -4,6 +4,7 @@ import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
+import 'package:frontend/core/widgets/chefify_brand_mark.dart';
 
 class AppHeader extends StatelessWidget {
   const AppHeader({super.key});
@@ -96,7 +97,6 @@ class _Logo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.palette;
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () => _openRoute(context, AppRouter.home),
@@ -106,22 +106,7 @@ class _Logo extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.xxs),
           child: Row(
             children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [palette.primaryButtons, palette.activeElements],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.soup_kitchen_rounded,
-                  color: Colors.white,
-                ),
-              ),
+              const ChefifyBrandMark(),
               const SizedBox(width: AppSpacing.sm),
               Flexible(
                 child: Text(

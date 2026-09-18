@@ -3,6 +3,7 @@ import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
+import 'package:frontend/core/widgets/chefify_brand_mark.dart';
 
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
@@ -99,18 +100,7 @@ class _FooterBrandAndLinks extends StatelessWidget {
       children: [
         Row(
           children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: palette.primaryButtons,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(
-                Icons.soup_kitchen_rounded,
-                color: Colors.white,
-              ),
-            ),
+            const ChefifyBrandMark(size: 38, borderRadius: 12),
             const SizedBox(width: AppSpacing.sm),
             Text(
               'Chefify',
