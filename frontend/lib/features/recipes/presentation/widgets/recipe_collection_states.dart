@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/recipes/domain/repositories/recipe_repository.dart';
 
@@ -31,6 +32,7 @@ class RecipeCollectionError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return AppCard(
       key: const ValueKey('recipe-collection-error'),
@@ -41,13 +43,13 @@ class RecipeCollectionError extends StatelessWidget {
           Icon(Icons.cloud_off_rounded, size: 40, color: palette.categoryTags),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Could not load recipes',
+            strings.couldNotLoadRecipes,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            _messageFor(error),
+            _messageFor(strings, error),
             textAlign: TextAlign.center,
             style: Theme.of(
               context,
@@ -58,27 +60,24 @@ class RecipeCollectionError extends StatelessWidget {
             key: const ValueKey('retry-recipe-collection'),
             onPressed: onRetry,
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Try again'),
+            label: Text(strings.tryAgain),
           ),
         ],
       ),
     );
   }
 
-  String _messageFor(Object? error) {
+  String _messageFor(AppStrings strings, Object? error) {
     if (error is! RecipeRepositoryFailure) {
-      return 'An unexpected error occurred. Please try again.';
+      return strings.unexpectedError;
     }
 
     return switch (error.kind) {
-      RecipeRepositoryFailureKind.network =>
-        'Check your connection and try again.',
-      RecipeRepositoryFailureKind.timeout =>
-        'The server took too long to respond. Please retry.',
-      RecipeRepositoryFailureKind.server =>
-        'The recipes service is temporarily unavailable.',
+      RecipeRepositoryFailureKind.network => strings.connectionError,
+      RecipeRepositoryFailureKind.timeout => strings.requestTimeout,
+      RecipeRepositoryFailureKind.server => strings.recipesUnavailable,
       RecipeRepositoryFailureKind.invalidResponse =>
-        'The server returned data Chefify could not read.',
+        strings.invalidRecipesResponse,
     };
   }
 }

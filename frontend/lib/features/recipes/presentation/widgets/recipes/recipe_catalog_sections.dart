@@ -8,12 +8,13 @@ class _RecipesHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'RECIPES',
+          strings.recipesEyebrow,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: palette.categoryTags,
             letterSpacing: 0.8,
@@ -25,7 +26,7 @@ class _RecipesHeader extends StatelessWidget {
             final compact = constraints.maxWidth < 760;
 
             final title = Text(
-              'Find your next cook',
+              strings.findYourNextCook,
               style: compact
                   ? Theme.of(context).textTheme.headlineMedium
                   : Theme.of(context).textTheme.displayMedium,
@@ -56,7 +57,7 @@ class _RecipesHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'Browse every Chefify recipe and narrow the list by taste, time, saved items, or rating.',
+          strings.recipesSubtitle,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ],
@@ -72,6 +73,7 @@ class _RecipeCountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -84,7 +86,7 @@ class _RecipeCountBadge extends StatelessWidget {
         border: Border.all(color: palette.borders.withValues(alpha: 0.72)),
       ),
       child: Text(
-        '$totalCount recipes',
+        strings.recipeCount(totalCount),
         style: Theme.of(context).textTheme.labelLarge,
       ),
     );
@@ -329,6 +331,7 @@ class _EmptyRecipesState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -339,13 +342,13 @@ class _EmptyRecipesState extends StatelessWidget {
             Icon(Icons.manage_search_rounded, size: 40, color: palette.icons),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'No recipes match these filters',
+              strings.noRecipesMatch,
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Try a different search term, category, or cook time.',
+              strings.tryDifferentRecipeFilters,
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),

@@ -47,6 +47,7 @@ class _RecipeControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: LayoutBuilder(
@@ -117,14 +118,14 @@ class _RecipeControls extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'Categories',
+                      strings.categories,
                       style: Theme.of(context).textTheme.labelLarge,
                     ),
                   ),
                   if (selectedCategoryIds.isNotEmpty)
                     TextButton(
                       onPressed: onClearCategories,
-                      child: const Text('Clear'),
+                      child: Text(strings.clear),
                     ),
                 ],
               ),
@@ -135,32 +136,35 @@ class _RecipeControls extends StatelessWidget {
                 onCategoryToggled: onCategoryToggled,
               ),
               const SizedBox(height: AppSpacing.md),
-              Text('Cook time', style: Theme.of(context).textTheme.labelLarge),
+              Text(
+                strings.cookTime,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
               const SizedBox(height: AppSpacing.xs),
               Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
                 children: [
                   _RecipeTimeFilterChip(
-                    label: 'Any',
+                    label: strings.any,
                     filter: RecipeTimeFilter.any,
                     selectedFilter: timeFilter,
                     onSelected: onTimeFilterChanged,
                   ),
                   _RecipeTimeFilterChip(
-                    label: '20 min or less',
+                    label: strings.upTo20Minutes,
                     filter: RecipeTimeFilter.under20,
                     selectedFilter: timeFilter,
                     onSelected: onTimeFilterChanged,
                   ),
                   _RecipeTimeFilterChip(
-                    label: '30 min or less',
+                    label: strings.upTo30Minutes,
                     filter: RecipeTimeFilter.under30,
                     selectedFilter: timeFilter,
                     onSelected: onTimeFilterChanged,
                   ),
                   _RecipeTimeFilterChip(
-                    label: 'Over 30 min',
+                    label: strings.over30Minutes,
                     filter: RecipeTimeFilter.over30,
                     selectedFilter: timeFilter,
                     onSelected: onTimeFilterChanged,
@@ -248,6 +252,7 @@ class _RecipeSearchBoxState extends State<_RecipeSearchBox> {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
     final focused = _focusNode.hasFocus;
     final hasQuery = widget.controller.text.trim().isNotEmpty;
     final hasActiveSearch =
@@ -319,7 +324,7 @@ class _RecipeSearchBoxState extends State<_RecipeSearchBox> {
                                   hintText:
                                       widget.selectedAuthors.isEmpty &&
                                           widget.selectedTags.isEmpty
-                                      ? 'Search recipes'
+                                      ? strings.searchRecipes
                                       : '',
                                   border: InputBorder.none,
                                   enabledBorder: InputBorder.none,
@@ -344,7 +349,7 @@ class _RecipeSearchBoxState extends State<_RecipeSearchBox> {
                   ),
                   if (hasActiveSearch)
                     IconButton(
-                      tooltip: 'Clear search',
+                      tooltip: strings.clearSearch,
                       onPressed: _clearSearch,
                       icon: const Icon(Icons.close_rounded),
                     ),
@@ -699,10 +704,11 @@ class _SearchTokenRemoveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return SizedBox.square(
       dimension: 24,
       child: IconButton(
-        tooltip: 'Remove filter',
+        tooltip: strings.removeFilter,
         onPressed: onPressed,
         icon: const Icon(Icons.close_rounded, size: 15),
         padding: EdgeInsets.zero,

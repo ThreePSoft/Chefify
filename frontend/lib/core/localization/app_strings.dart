@@ -131,6 +131,158 @@ class AppStrings {
     es: 'Inicia sesión para abrir tu perfil',
   );
 
+  String get categories =>
+      _value(en: 'Categories', uk: 'Категорії', es: 'Categorías');
+  String get categoriesEyebrow =>
+      _value(en: 'CATEGORIES', uk: 'КАТЕГОРІЇ', es: 'CATEGORÍAS');
+  String get exploreEveryCategory => _value(
+    en: 'Explore every category',
+    uk: 'Перегляньте всі категорії',
+    es: 'Explora todas las categorías',
+  );
+  String get categoriesSubtitle => _value(
+    en: 'From quick dinners to baking projects, every Chefify lane is here.',
+    uk: 'Від швидких вечерь до випічки — у Chefify є все.',
+    es: 'Desde cenas rápidas hasta repostería: todo está en Chefify.',
+  );
+  String categoryCount(int count) => _value(
+    en: '$count categories',
+    uk: '$count категорій',
+    es: '$count categorías',
+  );
+  String get searchCategories => _value(
+    en: 'Search categories',
+    uk: 'Пошук категорій',
+    es: 'Buscar categorías',
+  );
+  String get clearCategorySearch => _value(
+    en: 'Clear category search',
+    uk: 'Очистити пошук категорій',
+    es: 'Limpiar búsqueda de categorías',
+  );
+  String get savedOnly =>
+      _value(en: 'Saved only', uk: 'Лише збережені', es: 'Solo guardadas');
+  String get noCategoriesFound => _value(
+    en: 'No categories found',
+    uk: 'Категорій не знайдено',
+    es: 'No se encontraron categorías',
+  );
+  String get recipesEyebrow =>
+      _value(en: 'RECIPES', uk: 'РЕЦЕПТИ', es: 'RECETAS');
+  String get findYourNextCook => _value(
+    en: 'Find your next cook',
+    uk: 'Знайдіть наступний рецепт',
+    es: 'Encuentra tu próxima receta',
+  );
+  String get recipesSubtitle => _value(
+    en: 'Browse every Chefify recipe and narrow the list by taste, time, saved items, or rating.',
+    uk: 'Переглядайте рецепти Chefify та фільтруйте їх за смаком, часом, збереженнями чи рейтингом.',
+    es: 'Explora las recetas y filtra por sabor, tiempo, guardados o valoración.',
+  );
+  String recipeCount(int count) =>
+      _value(en: '$count recipes', uk: '$count рецептів', es: '$count recetas');
+  String get noRecipesMatch => _value(
+    en: 'No recipes match these filters',
+    uk: 'Жоден рецепт не відповідає фільтрам',
+    es: 'Ninguna receta coincide con los filtros',
+  );
+  String get tryDifferentRecipeFilters => _value(
+    en: 'Try a different search term, category, or cook time.',
+    uk: 'Спробуйте інший запит, категорію або час приготування.',
+    es: 'Prueba otro término, categoría o tiempo de cocción.',
+  );
+  String get sortBy =>
+      _value(en: 'Sort by', uk: 'Сортувати', es: 'Ordenar por');
+  String get featured =>
+      _value(en: 'Featured', uk: 'Рекомендовані', es: 'Destacadas');
+  String get highestRated => _value(
+    en: 'Highest rated',
+    uk: 'Найвищий рейтинг',
+    es: 'Mejor valoradas',
+  );
+  String get quickest =>
+      _value(en: 'Quickest', uk: 'Найшвидші', es: 'Más rápidas');
+  String get clear => _value(en: 'Clear', uk: 'Очистити', es: 'Limpiar');
+  String get cookTime =>
+      _value(en: 'Cook time', uk: 'Час приготування', es: 'Tiempo');
+  String get any => _value(en: 'Any', uk: 'Будь-який', es: 'Cualquiera');
+  String get upTo20Minutes =>
+      _value(en: '20 min or less', uk: 'До 20 хв', es: '20 min o menos');
+  String get upTo30Minutes =>
+      _value(en: '30 min or less', uk: 'До 30 хв', es: '30 min o menos');
+  String get over30Minutes =>
+      _value(en: 'Over 30 min', uk: 'Понад 30 хв', es: 'Más de 30 min');
+  String get searchRecipes =>
+      _value(en: 'Search recipes', uk: 'Пошук рецептів', es: 'Buscar recetas');
+  String get clearSearch =>
+      _value(en: 'Clear search', uk: 'Очистити пошук', es: 'Limpiar búsqueda');
+  String get removeFilter =>
+      _value(en: 'Remove filter', uk: 'Прибрати фільтр', es: 'Quitar filtro');
+  String get couldNotLoadRecipes => _value(
+    en: 'Could not load recipes',
+    uk: 'Не вдалося завантажити рецепти',
+    es: 'No se pudieron cargar las recetas',
+  );
+  String get tryAgain =>
+      _value(en: 'Try again', uk: 'Спробувати ще раз', es: 'Reintentar');
+  String get unexpectedError => _value(
+    en: 'An unexpected error occurred. Please try again.',
+    uk: 'Сталася неочікувана помилка. Спробуйте ще раз.',
+    es: 'Ocurrió un error inesperado. Inténtalo de nuevo.',
+  );
+  String get connectionError => _value(
+    en: 'Check your connection and try again.',
+    uk: 'Перевірте з’єднання та спробуйте ще раз.',
+    es: 'Comprueba tu conexión e inténtalo de nuevo.',
+  );
+  String get requestTimeout => _value(
+    en: 'The server took too long to respond. Please retry.',
+    uk: 'Сервер надто довго не відповідає. Спробуйте ще раз.',
+    es: 'El servidor tardó demasiado. Inténtalo de nuevo.',
+  );
+  String get recipesUnavailable => _value(
+    en: 'The recipes service is temporarily unavailable.',
+    uk: 'Сервіс рецептів тимчасово недоступний.',
+    es: 'El servicio de recetas no está disponible.',
+  );
+  String get invalidRecipesResponse => _value(
+    en: 'The server returned data Chefify could not read.',
+    uk: 'Сервер повернув дані, які Chefify не вдалося прочитати.',
+    es: 'El servidor devolvió datos que Chefify no pudo leer.',
+  );
+  String get category =>
+      _value(en: 'Category', uk: 'Категорія', es: 'Categoría');
+  String get searchCategory => _value(
+    en: 'Search category',
+    uk: 'Пошук категорії',
+    es: 'Buscar categoría',
+  );
+  String get difficulty =>
+      _value(en: 'Difficulty', uk: 'Складність', es: 'Dificultad');
+  String get setCookingTime => _value(
+    en: 'Set cooking time',
+    uk: 'Вкажіть час приготування',
+    es: 'Indica el tiempo de cocción',
+  );
+  String get days => _value(en: 'Days', uk: 'Дні', es: 'Días');
+  String get hours => _value(en: 'Hours', uk: 'Години', es: 'Horas');
+  String get minutes => _value(en: 'Minutes', uk: 'Хвилини', es: 'Minutos');
+  String get cancel => _value(en: 'Cancel', uk: 'Скасувати', es: 'Cancelar');
+  String get apply => _value(en: 'Apply', uk: 'Застосувати', es: 'Aplicar');
+  String decrease(String label) => _value(
+    en: 'Decrease $label',
+    uk: 'Зменшити: $label',
+    es: 'Disminuir: $label',
+  );
+  String increase(String label) => _value(
+    en: 'Increase $label',
+    uk: 'Збільшити: $label',
+    es: 'Aumentar: $label',
+  );
+  String get recipeTitle => _value(en: 'Title', uk: 'Назва', es: 'Título');
+  String get recipeDescription =>
+      _value(en: 'Description', uk: 'Опис', es: 'Descripción');
+
   String get trustedBy => _value(
     en: 'Trusted by 120K+ home cooks',
     uk: 'Нам довіряють 120K+ кухарів',

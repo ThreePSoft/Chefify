@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
@@ -191,12 +192,13 @@ class _CategoriesHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'CATEGORIES',
+          strings.categoriesEyebrow,
           style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: palette.categoryTags,
             letterSpacing: 0.8,
@@ -207,7 +209,7 @@ class _CategoriesHeader extends StatelessWidget {
           builder: (context, constraints) {
             final compact = constraints.maxWidth < 760;
             final title = Text(
-              'Explore every category',
+              strings.exploreEveryCategory,
               style: compact
                   ? Theme.of(context).textTheme.headlineMedium
                   : Theme.of(context).textTheme.displayMedium,
@@ -237,7 +239,7 @@ class _CategoriesHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          'From quick dinners to baking projects, every Chefify lane is here.',
+          strings.categoriesSubtitle,
           style: Theme.of(context).textTheme.bodyLarge,
         ),
       ],
@@ -253,6 +255,7 @@ class _CategoryCountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -265,7 +268,7 @@ class _CategoryCountBadge extends StatelessWidget {
         border: Border.all(color: palette.borders.withValues(alpha: 0.72)),
       ),
       child: Text(
-        '$totalCount categories',
+        strings.categoryCount(totalCount),
         style: Theme.of(context).textTheme.labelLarge,
       ),
     );
@@ -289,6 +292,7 @@ class _CategorySearch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.md),
       child: LayoutBuilder(
@@ -300,12 +304,12 @@ class _CategorySearch extends StatelessWidget {
             onChanged: onChanged,
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              labelText: 'Search categories',
+              labelText: strings.searchCategories,
               prefixIcon: const Icon(Icons.search_rounded),
               suffixIcon: controller.text.isEmpty
                   ? null
                   : IconButton(
-                      tooltip: 'Clear category search',
+                      tooltip: strings.clearCategorySearch,
                       onPressed: onClear,
                       icon: const Icon(Icons.close_rounded),
                     ),
@@ -348,11 +352,12 @@ class _SavedOnlyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     final icon = selected
         ? Icons.bookmark_rounded
         : Icons.bookmark_border_rounded;
     final label = Text(
-      'Saved only',
+      strings.savedOnly,
       overflow: TextOverflow.ellipsis,
       softWrap: false,
     );
@@ -481,6 +486,7 @@ class _EmptyCategoriesState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -491,7 +497,7 @@ class _EmptyCategoriesState extends StatelessWidget {
             Icon(Icons.category_rounded, size: 40, color: palette.icons),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'No categories found',
+              strings.noCategoriesFound,
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),

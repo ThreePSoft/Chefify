@@ -196,6 +196,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         final compact = constraints.maxWidth < 720;
@@ -216,7 +217,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
                     _RecipeHeroTextField(
                       key: const ValueKey('recipe-create-title-field'),
                       controller: titleController,
-                      hintText: 'Title',
+                      hintText: strings.recipeTitle,
                       style: Theme.of(context).textTheme.displayMedium
                           ?.copyWith(fontSize: compact ? 34 : 46),
                       minLines: 1,
@@ -226,7 +227,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
                     _RecipeHeroTextField(
                       key: const ValueKey('recipe-create-description-field'),
                       controller: descriptionController,
-                      hintText: 'Description',
+                      hintText: strings.recipeDescription,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         fontSize: compact ? 16 : 18,
                         height: 1.45,

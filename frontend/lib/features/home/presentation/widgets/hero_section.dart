@@ -88,7 +88,7 @@ class _DesktopHeroLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
-    final heroHeight = width < 1280 ? 540.0 : 580.0;
+    const heroHeight = 620.0;
 
     return SizedBox(
       height: heroHeight,

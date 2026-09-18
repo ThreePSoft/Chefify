@@ -21,6 +21,7 @@ class _RecipeCategoryDialogState extends State<_RecipeCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
     final query = RecipeFormOptions.slug(_controller.text);
     final categories = RecipeFormOptions.categories
         .where((category) {
@@ -45,12 +46,15 @@ class _RecipeCategoryDialogState extends State<_RecipeCategoryDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Category', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                strings.category,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: AppSpacing.md),
               TextField(
                 key: const ValueKey('recipe-create-category-search'),
                 controller: _controller,
-                decoration: const InputDecoration(hintText: 'Search category'),
+                decoration: InputDecoration(hintText: strings.searchCategory),
                 onChanged: (_) => setState(() {}),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -127,6 +131,7 @@ class _RecipeDifficultyDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -140,7 +145,10 @@ class _RecipeDifficultyDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Difficulty', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                strings.difficulty,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: AppSpacing.lg),
               for (final option in _options)
                 _RecipeDifficultyOption(
@@ -212,6 +220,7 @@ class _RecipeDurationPickerDialogState
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -226,7 +235,7 @@ class _RecipeDurationPickerDialogState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Set cooking time',
+                strings.setCookingTime,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -235,7 +244,7 @@ class _RecipeDurationPickerDialogState
                   final stacked = constraints.maxWidth < 380;
                   final steppers = [
                     _RecipeDurationStepper(
-                      label: 'Days',
+                      label: strings.days,
                       value: _value.days,
                       onIncrement: () =>
                           _setDays(_nextCyclic(_value.days, 0, 30)),
@@ -243,7 +252,7 @@ class _RecipeDurationPickerDialogState
                           _setDays(_previousCyclic(_value.days, 0, 30)),
                     ),
                     _RecipeDurationStepper(
-                      label: 'Hours',
+                      label: strings.hours,
                       value: _value.hours,
                       onIncrement: () =>
                           _setHours(_nextCyclic(_value.hours, 0, 23)),
@@ -251,7 +260,7 @@ class _RecipeDurationPickerDialogState
                           _setHours(_previousCyclic(_value.hours, 0, 23)),
                     ),
                     _RecipeDurationStepper(
-                      label: 'Minutes',
+                      label: strings.minutes,
                       value: _value.minutes,
                       onIncrement: () => _setMinutes(
                         _nextCyclic(_value.minutes, 0, 55, step: 5),
@@ -293,12 +302,12 @@ class _RecipeDurationPickerDialogState
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(strings.cancel),
                   ),
                   const SizedBox(width: AppSpacing.sm),
                   FilledButton(
                     onPressed: () => Navigator.of(context).pop(_value),
-                    child: const Text('Apply'),
+                    child: Text(strings.apply),
                   ),
                 ],
               ),
@@ -354,6 +363,7 @@ class _RecipeDurationStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    final strings = AppStrings.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -380,7 +390,7 @@ class _RecipeDurationStepper extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                tooltip: 'Decrease $label',
+                tooltip: strings.decrease(label),
                 onPressed: onDecrement,
                 icon: const Icon(Icons.remove_rounded),
                 iconSize: 18,
@@ -400,7 +410,7 @@ class _RecipeDurationStepper extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: 'Increase $label',
+                tooltip: strings.increase(label),
                 onPressed: onIncrement,
                 icon: const Icon(Icons.add_rounded),
                 iconSize: 18,

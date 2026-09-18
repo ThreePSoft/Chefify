@@ -8,18 +8,22 @@ class _SortDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return DropdownMenu<RecipeSort>(
       key: const ValueKey('recipes-sort-dropdown'),
       initialSelection: sort,
       expandedInsets: EdgeInsets.zero,
       requestFocusOnTap: false,
-      label: const Text('Sort by'),
+      label: Text(strings.sortBy),
       menuHeight: 216,
-      dropdownMenuEntries: const [
-        DropdownMenuEntry(value: RecipeSort.featured, label: 'Featured'),
-        DropdownMenuEntry(value: RecipeSort.rating, label: 'Highest rated'),
-        DropdownMenuEntry(value: RecipeSort.quickest, label: 'Quickest'),
-        DropdownMenuEntry(value: RecipeSort.title, label: 'A-Z'),
+      dropdownMenuEntries: [
+        DropdownMenuEntry(value: RecipeSort.featured, label: strings.featured),
+        DropdownMenuEntry(
+          value: RecipeSort.rating,
+          label: strings.highestRated,
+        ),
+        DropdownMenuEntry(value: RecipeSort.quickest, label: strings.quickest),
+        const DropdownMenuEntry(value: RecipeSort.title, label: 'A-Z'),
       ],
       onSelected: (value) {
         if (value == null) {
@@ -39,11 +43,12 @@ class _SavedOnlyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     final icon = selected
         ? Icons.bookmark_rounded
         : Icons.bookmark_border_rounded;
     final label = Text(
-      'Saved only',
+      strings.savedOnly,
       overflow: TextOverflow.ellipsis,
       softWrap: false,
     );
