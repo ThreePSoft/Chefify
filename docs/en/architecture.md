@@ -50,7 +50,10 @@ The frontend is a Flutter web application with path URL strategy. Main routes:
 - `/recipes/create`;
 - `/recipes/:id`;
 - `/categories`;
-- `/authors/:slug`.
+- `/authors/:slug`;
+- `/login`;
+- `/register`;
+- `/profile`.
 
 `frontend/lib/features/recipes` uses these layers:
 
@@ -66,6 +69,8 @@ Large editor modules are `part` files of one Dart library, preserving a private 
 The API URL is a compile-time value. `ApiRecipeRepository` does not replace network or server failures with mock data: failures become explicit UI state with retry. `MockRecipeRepository` is opt-in and mainly used in widget tests.
 
 Bookmarks are stored locally through `shared_preferences`. Some home marketing content and seeded review data remain local rather than backend-provided.
+
+`frontend/lib/features/auth` separates the HTTP repository, persisted session storage, controller, and route-level UI. Registration calls `POST /api/Auth/register` and then signs in through `POST /api/Auth/login`. The profile is populated from JWT identity claims. Access and refresh tokens are persisted through `shared_preferences`; passwords are never persisted. Locale and light/dark theme selections use the same storage abstraction and are restored on startup.
 
 ## Backend
 
@@ -92,6 +97,7 @@ Swagger is available only when `ASPNETCORE_ENVIRONMENT=Development`.
 - Frontend recipe lists come from `GET /api/Recipes`.
 - The recipe creation editor does not yet submit its document to the backend.
 - The frontend like action expects `/api/Recipes/{id}/likes`, which the current backend does not provide. The UI rolls back the optimistic change and reports the failure.
-- Reviews, authentication, and file flows exist in the backend, but not all have completed frontend flows.
+- Login, registration, local session restoration, profile display, and sign-out have frontend flows. Automatic token refresh, remote profile editing, password recovery, and profile-picture upload are not yet connected.
+- Review submission remains local frontend state, and file flows do not yet have completed frontend UI.
 
 QA should account for these boundaries instead of treating a known unfinished integration flow as an incidental regression.

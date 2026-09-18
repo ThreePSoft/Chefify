@@ -139,10 +139,14 @@ Test at least `320`, `390`, `768`, `1024`, and `1440` px widths.
 - No horizontal overflow occurs.
 - Header, docks, dialogs, and popovers remain accessible.
 - Recipe and category bookmarks survive reload in the same browser profile.
-- Light, dark, and system themes keep text readable.
+- Selected interface language and light/dark theme survive reload in the same browser profile.
+- English, Ukrainian, and Spanish UI copy does not overflow at supported widths.
 
 ### API and permissions
 
+- Register through `/register`, confirm the app signs in, and verify name, email, and role on `/profile`.
+- Sign out from `/profile`, refresh the browser, and confirm the guest header is restored.
+- Invalid credentials and duplicate email responses produce an inline localized error without losing form input.
 - Register → login → refresh works through Swagger.
 - Public read endpoints work without a token.
 - Protected endpoints without a token return `401`.
@@ -154,7 +158,8 @@ Test at least `320`, `390`, `768`, `1024`, and `1440` px widths.
 
 - The recipe creation editor is not connected to the create API.
 - The frontend like endpoint is not implemented by the backend; rollback is expected.
-- Not every auth, review, or file backend flow has a completed frontend UI.
+- Automatic token refresh, remote profile editing, password recovery, and profile-picture upload do not yet have completed frontend UI.
+- Review submission remains local frontend state, and file flows are not connected to frontend UI.
 - Some home content and review data are local.
 
 Before filing a defect, confirm the scenario is not listed here. A known boundary can still be filed as a product task.
