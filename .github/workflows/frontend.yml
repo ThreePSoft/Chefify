@@ -33,10 +33,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Restore pinned Flutter SDK
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .flutter-sdk
           key: flutter-${{ runner.os }}-${{ hashFiles('frontend/.flutter-version') }}
@@ -53,7 +53,7 @@ jobs:
           "$sdk/bin/flutter" --version
 
       - name: Restore pub cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.pub-cache
           key: pub-${{ runner.os }}-${{ hashFiles('frontend/pubspec.lock') }}
@@ -96,7 +96,11 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:4444/status > /dev/null
-          ${{ steps.flutter.outputs.flutter }} drive \
+          if ! command -v xvfb-run > /dev/null; then
+            sudo apt-get update
+            sudo apt-get install --yes xvfb
+          fi
+          xvfb-run --auto-servernum ${{ steps.flutter.outputs.flutter }} drive \
             -d chrome \
             --driver test_driver/integration_test.dart \
             --target integration_test/app_smoke_test.dart \
