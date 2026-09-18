@@ -1,42 +1,42 @@
 part of '../../pages/recipe_details_page.dart';
 
-String _descriptionFor(RecipeModel recipe) {
+String _descriptionFor(RecipeModel recipe, AppStrings strings) {
   final description = recipe.description.trim();
   if (description.isNotEmpty) {
     return description;
   }
 
-  return 'A practical Chefify recipe built for repeat cooking, balanced flavor, and a clean weeknight workflow.';
+  return strings.defaultRecipeDescription;
 }
 
-String _difficultyLabel(RecipeModel recipe) {
+String _difficultyLabel(RecipeModel recipe, AppStrings strings) {
   final difficulty = recipe.difficulty.clamp(1, 5);
 
   if (difficulty <= 2) {
-    return 'Easy';
+    return strings.easy;
   }
   if (difficulty == 3) {
-    return 'Medium';
+    return strings.medium;
   }
   if (difficulty == 4) {
-    return 'Hard';
+    return strings.hard;
   }
-  return 'Expert';
+  return strings.expert;
 }
 
-String _difficultyText(RecipeModel recipe) {
+String _difficultyText(RecipeModel recipe, AppStrings strings) {
   final difficulty = recipe.difficulty.clamp(1, 5);
 
   if (difficulty <= 2) {
-    return 'Quick and low-friction for busy days.';
+    return strings.easyDifficultyDescription;
   }
   if (difficulty == 3) {
-    return 'Comfortable weeknight cooking with a few focused steps.';
+    return strings.mediumDifficultyDescription;
   }
   if (difficulty == 4) {
-    return 'Best when you have a little more room for prep and finishing.';
+    return strings.hardDifficultyDescription;
   }
-  return 'A more involved cook for confident, detail-focused sessions.';
+  return strings.expertDifficultyDescription;
 }
 
 String _formatCount(int value) {

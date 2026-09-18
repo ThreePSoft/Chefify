@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
@@ -213,7 +214,7 @@ class _AuthorHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'AUTHOR',
+                  AppStrings.of(context).author,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                     color: palette.categoryTags,
                     letterSpacing: 0.9,
@@ -226,7 +227,7 @@ class _AuthorHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  '$recipeCount recipes by this author',
+                  AppStrings.of(context).recipesByAuthor(recipeCount),
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
@@ -286,7 +287,7 @@ class _AuthorEmptyState extends StatelessWidget {
             Icon(Icons.person_search_rounded, size: 44, color: palette.icons),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'No recipes from $authorName yet',
+              AppStrings.of(context).noAuthorRecipes(authorName),
               style: Theme.of(context).textTheme.titleMedium,
               textAlign: TextAlign.center,
             ),

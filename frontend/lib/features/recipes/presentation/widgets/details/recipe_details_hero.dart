@@ -271,7 +271,7 @@ class _RecipeHeroDetails extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      _descriptionFor(recipe),
+                      _descriptionFor(recipe, AppStrings.of(context)),
                       maxLines: compact ? 3 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: descriptionStyle,
@@ -388,7 +388,7 @@ class _RecipeHeroMetrics extends StatelessWidget {
         );
         final difficultyChip = _RecipeMetaChip(
           icon: Icons.local_fire_department_rounded,
-          label: _difficultyLabel(recipe),
+          label: _difficultyLabel(recipe, AppStrings.of(context)),
         );
         final categoryChip = category == null
             ? _RecipeMetaChip(

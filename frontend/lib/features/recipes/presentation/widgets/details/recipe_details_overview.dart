@@ -47,24 +47,27 @@ class _RecipeOverviewColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return _RecipeTextSection(
-      eyebrow: 'OVERVIEW',
-      title: 'Cook profile',
+      eyebrow: strings.overview,
+      title: strings.cookProfile,
       children: [
         _RecipeDetailRow(
           icon: Icons.timer_rounded,
-          title: 'Time',
-          text: '${recipe.minutes} minutes from prep to plate.',
+          title: strings.time,
+          text: strings.recipeTimeDescription(recipe.minutes),
         ),
         _RecipeDetailRow(
           icon: Icons.local_fire_department_rounded,
-          title: 'Difficulty',
-          text: _difficultyText(recipe),
+          title: strings.difficulty,
+          text: _difficultyText(recipe, strings),
         ),
         _RecipeDetailRow(
           icon: Icons.insights_rounded,
-          title: 'Rating',
-          text: '${recipe.rating.toStringAsFixed(1)} average community rating.',
+          title: strings.rating,
+          text: strings.recipeRatingDescription(
+            recipe.rating.toStringAsFixed(1),
+          ),
         ),
       ],
     );
@@ -78,20 +81,20 @@ class _RecipeNotesColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = AppStrings.of(context);
     return _RecipeTextSection(
-      eyebrow: 'NOTES',
-      title: 'What to expect',
+      eyebrow: strings.notes,
+      title: strings.whatToExpect,
       children: [
         _RecipeDetailRow(
           icon: Icons.restaurant_menu_rounded,
           title: recipe.categoryName,
-          text: _descriptionFor(recipe),
+          text: _descriptionFor(recipe, strings),
         ),
         _RecipeDetailRow(
           icon: Icons.bookmark_added_rounded,
-          title: 'Save for later',
-          text:
-              'Use the bookmark button to keep this recipe in your saved list.',
+          title: strings.saveForLater,
+          text: strings.bookmarkHint,
         ),
       ],
     );

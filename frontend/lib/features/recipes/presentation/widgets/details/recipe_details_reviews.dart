@@ -44,7 +44,7 @@ class _RecipeReviewsSectionState extends State<_RecipeReviewsSection> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'REVIEWS',
+            AppStrings.of(context).reviews,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
               color: palette.categoryTags,
               letterSpacing: 0.9,
@@ -52,19 +52,21 @@ class _RecipeReviewsSectionState extends State<_RecipeReviewsSection> {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Community rating',
+            AppStrings.of(context).communityRating,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '${widget.reviews.length} cooks reviewed this recipe.',
+            AppStrings.of(context).reviewsCount(widget.reviews.length),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: AppSpacing.lg),
           _RecipeReviewComposer(onSubmitted: widget.onReviewSubmitted),
           const SizedBox(height: AppSpacing.lg),
           Text(
-            'Showing ${startIndex + 1}-$endIndex of ${widget.reviews.length}',
+            AppStrings.of(
+              context,
+            ).reviewRange(startIndex + 1, endIndex, widget.reviews.length),
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -111,7 +113,7 @@ class _RecipeReviewsPagination extends StatelessWidget {
       runSpacing: AppSpacing.xs,
       children: [
         IconButton(
-          tooltip: 'Previous review page',
+          tooltip: AppStrings.of(context).previousReviewPage,
           onPressed: pageIndex > 0 ? () => onChanged(pageIndex - 1) : null,
           icon: const Icon(Icons.chevron_left_rounded),
         ),
@@ -147,7 +149,7 @@ class _RecipeReviewsPagination extends StatelessWidget {
             ),
           ),
         IconButton(
-          tooltip: 'Next review page',
+          tooltip: AppStrings.of(context).nextReviewPage,
           onPressed: pageIndex < pageCount - 1
               ? () => onChanged(pageIndex + 1)
               : null,
@@ -308,7 +310,7 @@ class _RecipeReviewComposerState extends State<_RecipeReviewComposer> {
     final palette = context.palette;
     final canSubmit = _commentController.text.trim().isNotEmpty;
     final ratingLabel = Text(
-      'Leave your review',
+      AppStrings.of(context).leaveReview,
       style: Theme.of(context).textTheme.titleMedium,
     );
     final ratingPicker = _RecipeReviewRatingPicker(
@@ -366,7 +368,7 @@ class _RecipeReviewComposerState extends State<_RecipeReviewComposer> {
                 maxLines: 6,
                 textInputAction: TextInputAction.newline,
                 decoration: InputDecoration(
-                  hintText: 'Share what worked, what changed, or who loved it.',
+                  hintText: AppStrings.of(context).reviewHint,
                   fillColor: palette.searchBarBackground.withValues(
                     alpha: 0.74,
                   ),
@@ -389,7 +391,7 @@ class _RecipeReviewComposerState extends State<_RecipeReviewComposer> {
                 bottom: AppSpacing.md,
                 child: IconButton.filled(
                   key: const ValueKey('recipe-review-submit-button'),
-                  tooltip: 'Post review',
+                  tooltip: AppStrings.of(context).postReview,
                   onPressed: canSubmit ? _submit : null,
                   iconSize: 24,
                   style: IconButton.styleFrom(
@@ -445,10 +447,10 @@ class _RecipeReviewRatingPicker extends StatelessWidget {
       children: [
         for (var value = 1; value <= 5; value++)
           Tooltip(
-            message: '$value star rating',
+            message: AppStrings.of(context).starRating(value),
             child: Semantics(
               button: true,
-              label: '$value star rating',
+              label: AppStrings.of(context).starRating(value),
               child: InkResponse(
                 key: ValueKey('recipe-review-rating-$value'),
                 onTap: () => onChanged(value),

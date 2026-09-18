@@ -19,13 +19,13 @@ class _RecipeNotFound extends StatelessWidget {
             Icon(Icons.search_off_rounded, size: 44, color: palette.icons),
             const SizedBox(height: AppSpacing.sm),
             Text(
-              'Recipe not found',
+              AppStrings.of(context).recipeNotFound,
               style: Theme.of(context).textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'This recipe is not available in the current catalog.',
+              AppStrings.of(context).recipeUnavailable,
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -37,7 +37,7 @@ class _RecipeNotFound extends StatelessWidget {
                 ).pushNamedAndRemoveUntil('/recipes', (route) => false);
               },
               icon: const Icon(Icons.arrow_back_rounded),
-              label: const Text('Browse recipes'),
+              label: Text(AppStrings.of(context).browseRecipes),
             ),
           ],
         ),

@@ -384,6 +384,147 @@ class AppStrings {
     uk: 'Щотижнева добірка найпопулярніших страв спільноти Chefify.',
     es: 'Selección semanal de los platos más cocinados por la comunidad.',
   );
+  String get overview => _value(en: 'OVERVIEW', uk: 'ОГЛЯД', es: 'RESUMEN');
+  String get cookProfile => _value(
+    en: 'Cook profile',
+    uk: 'Профіль приготування',
+    es: 'Perfil de preparación',
+  );
+  String get time => _value(en: 'Time', uk: 'Час', es: 'Tiempo');
+  String recipeTimeDescription(int value) => _value(
+    en: '$value minutes from prep to plate.',
+    uk: '$value хвилин від підготовки до подачі.',
+    es: '$value minutos desde la preparación hasta servir.',
+  );
+  String get rating => _value(en: 'Rating', uk: 'Рейтинг', es: 'Valoración');
+  String recipeRatingDescription(String value) => _value(
+    en: '$value average community rating.',
+    uk: '$value — середня оцінка спільноти.',
+    es: '$value de valoración media de la comunidad.',
+  );
+  String get notes => _value(en: 'NOTES', uk: 'НОТАТКИ', es: 'NOTAS');
+  String get whatToExpect =>
+      _value(en: 'What to expect', uk: 'Чого очікувати', es: 'Qué esperar');
+  String get saveForLater => _value(
+    en: 'Save for later',
+    uk: 'Зберегти на потім',
+    es: 'Guardar para después',
+  );
+  String get bookmarkHint => _value(
+    en: 'Use the bookmark button to keep this recipe in your saved list.',
+    uk: 'Натисніть кнопку закладки, щоб додати рецепт до збережених.',
+    es: 'Usa el marcador para guardar esta receta en tu lista.',
+  );
+  String get defaultRecipeDescription => _value(
+    en: 'A practical Chefify recipe built for repeat cooking, balanced flavor, and a clean weeknight workflow.',
+    uk: 'Практичний рецепт Chefify зі збалансованим смаком для зручного щоденного приготування.',
+    es: 'Una receta práctica de Chefify, equilibrada y pensada para repetir.',
+  );
+  String get expert => _value(en: 'Expert', uk: 'Експертно', es: 'Experto');
+  String get easyDifficultyDescription => _value(
+    en: 'Quick and low-friction for busy days.',
+    uk: 'Швидко й просто для завантажених днів.',
+    es: 'Rápido y sencillo para días ocupados.',
+  );
+  String get mediumDifficultyDescription => _value(
+    en: 'Comfortable weeknight cooking with a few focused steps.',
+    uk: 'Зручне буденне приготування з кількома важливими кроками.',
+    es: 'Cocina cómoda entre semana con unos pasos clave.',
+  );
+  String get hardDifficultyDescription => _value(
+    en: 'Best when you have a little more room for prep and finishing.',
+    uk: 'Підійде, коли є трохи більше часу на підготовку та завершення.',
+    es: 'Ideal cuando tienes más tiempo para preparar y terminar.',
+  );
+  String get expertDifficultyDescription => _value(
+    en: 'A more involved cook for confident, detail-focused sessions.',
+    uk: 'Складніший рецепт для впевненого й уважного приготування.',
+    es: 'Una preparación más exigente y centrada en los detalles.',
+  );
+  String get reviews => _value(en: 'REVIEWS', uk: 'ВІДГУКИ', es: 'RESEÑAS');
+  String get communityRating => _value(
+    en: 'Community rating',
+    uk: 'Оцінка спільноти',
+    es: 'Valoración de la comunidad',
+  );
+  String reviewsCount(int count) => _value(
+    en: '$count cooks reviewed this recipe.',
+    uk: '$count користувачів оцінили цей рецепт.',
+    es: '$count cocineros valoraron esta receta.',
+  );
+  String reviewRange(int start, int end, int total) => _value(
+    en: 'Showing $start-$end of $total',
+    uk: 'Показано $start–$end із $total',
+    es: 'Mostrando $start-$end de $total',
+  );
+  String get previousReviewPage => _value(
+    en: 'Previous review page',
+    uk: 'Попередня сторінка відгуків',
+    es: 'Página anterior de reseñas',
+  );
+  String get nextReviewPage => _value(
+    en: 'Next review page',
+    uk: 'Наступна сторінка відгуків',
+    es: 'Página siguiente de reseñas',
+  );
+  String get leaveReview => _value(
+    en: 'Leave your review',
+    uk: 'Залиште свій відгук',
+    es: 'Deja tu reseña',
+  );
+  String get reviewHint => _value(
+    en: 'Share what worked, what changed, or who loved it.',
+    uk: 'Розкажіть, що вдалося, що ви змінили та кому сподобалося.',
+    es: 'Comparte qué funcionó, qué cambiaste o a quién le gustó.',
+  );
+  String get postReview => _value(
+    en: 'Post review',
+    uk: 'Опублікувати відгук',
+    es: 'Publicar reseña',
+  );
+  String starRating(int value) => _value(
+    en: '$value star rating',
+    uk: 'Оцінка: $value зірок',
+    es: 'Valoración de $value estrellas',
+  );
+  String get recipeNotFound => _value(
+    en: 'Recipe not found',
+    uk: 'Рецепт не знайдено',
+    es: 'Receta no encontrada',
+  );
+  String get recipeUnavailable => _value(
+    en: 'This recipe is not available in the current catalog.',
+    uk: 'Цей рецепт недоступний у поточному каталозі.',
+    es: 'Esta receta no está disponible en el catálogo actual.',
+  );
+  String get author => _value(en: 'AUTHOR', uk: 'АВТОР', es: 'AUTOR');
+  String recipesByAuthor(int count) => _value(
+    en: '$count recipes by this author',
+    uk: '$count рецептів цього автора',
+    es: '$count recetas de este autor',
+  );
+  String noAuthorRecipes(String name) => _value(
+    en: 'No recipes from $name yet',
+    uk: 'У $name поки немає рецептів',
+    es: '$name todavía no tiene recetas',
+  );
+  String get likeRecipe => _value(
+    en: 'Like recipe',
+    uk: 'Вподобати рецепт',
+    es: 'Me gusta la receta',
+  );
+  String get removeRecipeLike => _value(
+    en: 'Remove recipe like',
+    uk: 'Прибрати вподобання',
+    es: 'Quitar Me gusta',
+  );
+  String get editRecipe =>
+      _value(en: 'Edit recipe', uk: 'Редагувати рецепт', es: 'Editar receta');
+  String get updateLikeFailed => _value(
+    en: 'Could not update the recipe like. Please retry.',
+    uk: 'Не вдалося оновити вподобання. Спробуйте ще раз.',
+    es: 'No se pudo actualizar el Me gusta. Inténtalo de nuevo.',
+  );
 
   String get trustedBy => _value(
     en: 'Trusted by 120K+ home cooks',

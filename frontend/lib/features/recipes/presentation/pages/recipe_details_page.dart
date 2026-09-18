@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/images/optimized_network_image.dart';
+import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/seo/app_seo.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
@@ -219,8 +220,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                       ? Icons.favorite_rounded
                       : Icons.favorite_border_rounded,
                   tooltip: _controller.isLiked
-                      ? 'Remove recipe like'
-                      : 'Like recipe',
+                      ? AppStrings.of(context).removeRecipeLike
+                      : AppStrings.of(context).likeRecipe,
                   isActive: _controller.isLiked,
                   onPressed: () => unawaited(_toggleRecipeLike()),
                 ),
@@ -231,7 +232,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                 bottom: AppSpacing.lg,
                 child: _RecipeStickyActionButton(
                   icon: Icons.edit_rounded,
-                  tooltip: 'Edit recipe',
+                  tooltip: AppStrings.of(context).editRecipe,
                   onPressed: () {},
                 ),
               ),
@@ -250,9 +251,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text('Could not update the recipe like. Please retry.'),
-        ),
+        SnackBar(content: Text(AppStrings.of(context).updateLikeFailed)),
       );
   }
 }
