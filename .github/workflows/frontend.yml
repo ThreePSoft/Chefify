@@ -81,6 +81,7 @@ jobs:
         run: ${{ steps.flutter.outputs.flutter }} build web --release --no-pub --dart-define=CHEFIFY_API_BASE_URL=/api
 
       - name: Run browser integration smoke test
+        timeout-minutes: 6
         working-directory: frontend
         shell: bash
         run: |
@@ -91,6 +92,7 @@ jobs:
           test -n "$driver"
           chmod +x "$driver"
           "$driver" --port=4444 > "$RUNNER_TEMP/chromedriver.log" 2>&1 &
+          trap 'cat "$RUNNER_TEMP/chromedriver.log"' ERR
           for attempt in {1..20}; do
             if curl --fail --silent http://127.0.0.1:4444/status > /dev/null; then
               break
@@ -106,4 +108,5 @@ jobs:
             -d chrome \
             --driver test_driver/integration_test.dart \
             --target integration_test/app_smoke_test.dart \
+            --timeout 180 \
             --no-pub

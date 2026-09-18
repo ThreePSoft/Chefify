@@ -18,14 +18,24 @@ void main() {
         recipeRepository: const MockRecipeRepository(),
       ),
     );
-    await tester.pumpAndSettle();
+    await _pumpUntilFound(tester, find.text('Recipes everyone is saving'));
 
     expect(find.text('Chefify'), findsWidgets);
     expect(find.text('Recipes everyone is saving'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(TextButton, 'Recipes'));
-    await tester.pumpAndSettle();
+    await _pumpUntilFound(tester, find.text('Find your next cook'));
 
     expect(find.text('Find your next cook'), findsOneWidget);
   });
+}
+
+Future<void> _pumpUntilFound(WidgetTester tester, Finder finder) async {
+  for (var attempt = 0; attempt < 60; attempt++) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (finder.evaluate().isNotEmpty) {
+      return;
+    }
+  }
+  throw TestFailure('Timed out waiting for ${finder.description}.');
 }
