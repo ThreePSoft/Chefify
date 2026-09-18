@@ -5,6 +5,7 @@ import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/chefify_brand_mark.dart';
+import 'package:frontend/features/auth/presentation/auth_controller.dart';
 
 class AppHeader extends StatelessWidget {
   const AppHeader({super.key});
@@ -32,6 +33,7 @@ class AppHeader extends StatelessWidget {
               );
               final actionGap = compact ? AppSpacing.xs : AppSpacing.md;
               final showSearchAction = constraints.maxWidth >= 360;
+              final auth = AuthScope.maybeOf(context);
 
               return Row(
                 children: [
@@ -52,6 +54,23 @@ class AppHeader extends StatelessWidget {
                         icon: const Icon(Icons.search_rounded),
                         color: palette.icons,
                       ),
+                    IconButton(
+                      tooltip: auth?.isAuthenticated == true
+                          ? strings.profile
+                          : strings.logIn,
+                      onPressed: () => _openRoute(
+                        context,
+                        auth?.isAuthenticated == true
+                            ? AppRouter.profile
+                            : AppRouter.login,
+                      ),
+                      icon: Icon(
+                        auth?.isAuthenticated == true
+                            ? Icons.account_circle_rounded
+                            : Icons.login_rounded,
+                      ),
+                      color: palette.icons,
+                    ),
                     IconButton(
                       onPressed: () {},
                       icon: const Icon(Icons.menu_rounded),
@@ -75,18 +94,34 @@ class _DesktopHeaderActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = AuthScope.maybeOf(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         const _MainNavigation(),
         const SizedBox(width: AppSpacing.lg),
-        AppButton(
-          label: strings.logIn,
-          variant: AppButtonVariant.ghost,
-          onPressed: () {},
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        AppButton(label: strings.getStarted, onPressed: () {}),
+        if (auth?.isAuthenticated == true)
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 180),
+            child: AppButton(
+              label: auth!.user!.name,
+              icon: Icons.account_circle_rounded,
+              variant: AppButtonVariant.ghost,
+              onPressed: () => _openRoute(context, AppRouter.profile),
+            ),
+          )
+        else ...[
+          AppButton(
+            label: strings.logIn,
+            variant: AppButtonVariant.ghost,
+            onPressed: () => _openRoute(context, AppRouter.login),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          AppButton(
+            label: strings.getStarted,
+            onPressed: () => _openRoute(context, AppRouter.register),
+          ),
+        ],
       ],
     );
   }

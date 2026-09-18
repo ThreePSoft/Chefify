@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/routing/slug.dart';
+import 'package:frontend/features/auth/presentation/pages/auth_pages.dart';
+import 'package:frontend/features/auth/presentation/pages/profile_page.dart';
 import 'package:frontend/features/authors/presentation/pages/author_profile_page.dart';
 import 'package:frontend/features/categories/presentation/pages/categories_page.dart';
 import 'package:frontend/features/home/presentation/pages/home_page.dart';
@@ -15,6 +17,9 @@ class AppRouter {
   static const String recipeCreate = '/recipes/create';
   static const String categories = '/categories';
   static const String authors = '/authors';
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String profile = '/profile';
 
   static String recipeDetailsPath(String recipeId) {
     return '$recipes/${Uri.encodeComponent(recipeId)}';
@@ -90,6 +95,21 @@ class AppRouter {
       case categories:
         return MaterialPageRoute<void>(
           builder: (_) => CategoriesPage(recipeRepository: recipeRepository),
+          settings: settings,
+        );
+      case login:
+        return MaterialPageRoute<void>(
+          builder: (_) => const LoginPage(),
+          settings: settings,
+        );
+      case register:
+        return MaterialPageRoute<void>(
+          builder: (_) => const RegisterPage(),
+          settings: settings,
+        );
+      case profile:
+        return MaterialPageRoute<void>(
+          builder: (_) => const ProfilePage(),
           settings: settings,
         );
       default:

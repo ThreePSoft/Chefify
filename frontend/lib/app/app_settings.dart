@@ -50,15 +50,16 @@ abstract class AppSettingsStorage {
 
 class SharedPreferencesAppSettingsStorage implements AppSettingsStorage {
   SharedPreferencesAppSettingsStorage({SharedPreferencesAsync? preferences})
-    : _preferences = preferences ?? SharedPreferencesAsync();
+    : _preferences = preferences;
 
-  final SharedPreferencesAsync _preferences;
+  final SharedPreferencesAsync? _preferences;
+  SharedPreferencesAsync get _store => _preferences ?? SharedPreferencesAsync();
 
   @override
   Future<AppSettingsSnapshot> load() async {
     final values = await Future.wait<String?>([
-      _preferences.getString(_themeModeKey),
-      _preferences.getString(_languageKey),
+      _store.getString(_themeModeKey),
+      _store.getString(_languageKey),
     ]);
     return AppSettingsSnapshot(
       themeMode: values.first == ThemeMode.light.name
@@ -71,8 +72,8 @@ class SharedPreferencesAppSettingsStorage implements AppSettingsStorage {
   @override
   Future<void> save(AppSettingsSnapshot snapshot) async {
     await Future.wait<void>([
-      _preferences.setString(_themeModeKey, snapshot.themeMode.name),
-      _preferences.setString(_languageKey, snapshot.language.code),
+      _store.setString(_themeModeKey, snapshot.themeMode.name),
+      _store.setString(_languageKey, snapshot.language.code),
     ]);
   }
 }
@@ -112,10 +113,14 @@ class AppSettingsController extends ChangeNotifier {
   Future<void> load() => _loadFuture ??= _load();
 
   Future<void> _load() async {
-    final snapshot = await _storage.load();
-    _themeMode = snapshot.themeMode;
-    _language = snapshot.language;
-    notifyListeners();
+    try {
+      final snapshot = await _storage.load();
+      _themeMode = snapshot.themeMode;
+      _language = snapshot.language;
+      notifyListeners();
+    } on Object {
+      // Keep in-memory defaults when persistent storage is unavailable.
+    }
   }
 
   void setThemeMode(ThemeMode themeMode) {
@@ -139,10 +144,14 @@ class AppSettingsController extends ChangeNotifier {
     unawaited(_persist());
   }
 
-  Future<void> _persist() {
-    return _storage.save(
-      AppSettingsSnapshot(themeMode: _themeMode, language: _language),
-    );
+  Future<void> _persist() async {
+    try {
+      await _storage.save(
+        AppSettingsSnapshot(themeMode: _themeMode, language: _language),
+      );
+    } on Object {
+      // The selected value still applies for the current session.
+    }
   }
 }
 
