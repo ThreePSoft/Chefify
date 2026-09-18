@@ -104,6 +104,9 @@ class _RecipeDurationValue {
     }
     return parts.join(' ');
   }
+
+  int get activeUnitCount =>
+      [days, hours, minutes].where((value) => value > 0).length;
 }
 
 class RecipeCreatePage extends StatefulWidget {

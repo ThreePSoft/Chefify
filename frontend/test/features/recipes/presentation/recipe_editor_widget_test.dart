@@ -56,6 +56,28 @@ void main() {
     expect(find.byTooltip('Open block settings'), findsOneWidget);
   });
 
+  testWidgets('keeps multi-unit cooking time visible without overflow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const PageTestApp(child: RecipeCreatePage()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('recipe-duration-chip')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Increase Days'));
+    await tester.tap(find.byTooltip('Increase Hours'));
+    await tester.tap(find.text('Apply'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1d 1h 20 min'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('adds recipe body blocks from create editor palette', (
     tester,
   ) async {

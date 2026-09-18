@@ -19,32 +19,38 @@ class _RecipeCreateMetaPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasMultiUnitDuration = duration.activeUnitCount > 1;
+    final durationChip = _RecipeCreateMetaChip(
+      key: const ValueKey('recipe-duration-chip'),
+      icon: Icons.schedule_rounded,
+      label: duration.label,
+      onPressed: onEditDuration,
+      isEditable: true,
+    );
+    final difficultyChip = _RecipeCreateMetaChip(
+      icon: Icons.local_fire_department_rounded,
+      label: difficulty,
+      onPressed: onEditDifficulty,
+      isEditable: true,
+    );
+
     return SizedBox(
       width: 320,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: _RecipeCreateMetaChip(
-                  icon: Icons.schedule_rounded,
-                  label: duration.label,
-                  onPressed: onEditDuration,
-                  isEditable: true,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: _RecipeCreateMetaChip(
-                  icon: Icons.local_fire_department_rounded,
-                  label: difficulty,
-                  onPressed: onEditDifficulty,
-                  isEditable: true,
-                ),
-              ),
-            ],
-          ),
+          if (hasMultiUnitDuration) ...[
+            SizedBox(width: double.infinity, child: durationChip),
+            const SizedBox(height: AppSpacing.xs),
+            SizedBox(width: double.infinity, child: difficultyChip),
+          ] else
+            Row(
+              children: [
+                Expanded(child: durationChip),
+                const SizedBox(width: AppSpacing.xs),
+                Expanded(child: difficultyChip),
+              ],
+            ),
           const SizedBox(height: AppSpacing.xs),
           SizedBox(
             width: double.infinity,
@@ -82,6 +88,7 @@ class _RecipeCreateMetaPanel extends StatelessWidget {
 
 class _RecipeCreateMetaChip extends StatelessWidget {
   const _RecipeCreateMetaChip({
+    super.key,
     required this.icon,
     required this.label,
     this.onPressed,
@@ -110,7 +117,7 @@ class _RecipeCreateMetaChip extends StatelessWidget {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
+            horizontal: AppSpacing.sm,
             vertical: AppSpacing.sm,
           ),
           decoration: BoxDecoration(
@@ -126,7 +133,7 @@ class _RecipeCreateMetaChip extends StatelessWidget {
           ),
           child: Row(
             children: [
-              if (isEditable) const SizedBox(width: 17),
+              if (isEditable) const SizedBox(width: 15),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -150,7 +157,7 @@ class _RecipeCreateMetaChip extends StatelessWidget {
               ),
               if (isEditable)
                 SizedBox(
-                  width: 17,
+                  width: 15,
                   child: Icon(
                     Icons.edit_rounded,
                     size: 13,
