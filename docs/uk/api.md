@@ -13,7 +13,7 @@ Swagger є джерелом актуальних request/response schemas. Це�
 
 ## Авторизація
 
-Захищені endpoint-и очікують header:
+Захищені кінцеві точки очікують заголовок:
 
 ```http
 Authorization: Bearer <access-token>
@@ -25,23 +25,23 @@ Authorization: Bearer <access-token>
 
 | Method | Path | Доступ | Призначення |
 | --- | --- | --- | --- |
-| `POST` | `/api/Auth/register` | Public | Реєстрація |
-| `POST` | `/api/Auth/login` | Public | Access/refresh tokens |
-| `POST` | `/api/Auth/refresh` | Public | Оновлення token pair |
-| `GET` | `/api/Recipes` | Public | Список рецептів |
-| `GET` | `/api/Recipes/{id}` | Public | Деталі рецепта |
+| `POST` | `/api/Auth/register` | Публічний | Реєстрація |
+| `POST` | `/api/Auth/login` | Публічний | Токени доступу й оновлення |
+| `POST` | `/api/Auth/refresh` | Публічний | Оновлення пари token-ів |
+| `GET` | `/api/Recipes` | Публічний | Список рецептів |
+| `GET` | `/api/Recipes/{id}` | Публічний | Деталі рецепта |
 | `POST` | `/api/Recipes` | User/Admin | Створення рецепта |
 | `PATCH` | `/api/Recipes/{id}` | Author User/Admin | Часткове оновлення |
 | `DELETE` | `/api/Recipes/{id}` | Author User/Admin | Видалення |
 | `POST` | `/api/Recipes/{id}/review` | User/Admin | Rating/review |
-| `GET` | `/api/Category` | Public | Список категорій |
-| `GET` | `/api/Category/{id}` | Public | Категорія |
-| `GET` | `/api/Users` | Public | Список користувачів |
-| `GET` | `/api/Users/{id}` | Public | Профіль користувача |
-| `GET` | `/api/Users/{id}/recipes` | Public | Рецепти користувача |
+| `GET` | `/api/Category` | Публічний | Список категорій |
+| `GET` | `/api/Category/{id}` | Публічний | Категорія |
+| `GET` | `/api/Users` | Публічний | Список користувачів |
+| `GET` | `/api/Users/{id}` | Публічний | Профіль користувача |
+| `GET` | `/api/Users/{id}/recipes` | Публічний | Рецепти користувача |
 | `POST` | `/api/Files/pfp` | User/Admin | Upload profile image |
 | `POST` | `/api/Files/recipe/{recipeId}` | Recipe author | Upload recipe image |
-| `GET` | `/api/Files/presigned-url?key=...` | Public | Тимчасовий S3 URL |
+| `GET` | `/api/Files/presigned-url?key=...` | Публічний | Тимчасовий S3 URL |
 | `POST` | `/api/admin/AdminCategory` | Admin | Створення категорії |
 | `POST` | `/api/admin/AdminRecipe` | Admin | Створення рецепта від admin |
 | `PUT` | `/api/admin/AdminRecipe/{id}` | Admin | Повне admin-оновлення |
@@ -64,8 +64,8 @@ Authorization: Bearer <access-token>
 
 ## Files і S3
 
-Upload endpoint-и приймають `multipart/form-data` з полем `file`. Recipe upload також очікує form field `type`. Поточний request size limit — 10 MiB. Для реального тесту потрібні валідні S3 bucket, region і credentials.
+Кінцеві точки завантаження приймають `multipart/form-data` з полем `file`. Завантаження зображення рецепта також очікує поле форми `type`. Поточний ліміт запиту — 10 MiB. Для реального тесту потрібні чинні бакет, регіон та облікові дані S3.
 
 ## Відомі розбіжності
 
-Frontend currently викликає `POST /api/Recipes/{id}/likes`, але такого endpoint-а в backend немає. Це очікувано завершується помилкою, після чого frontend відкочує optimistic like. До узгодження контракту цей flow не слід вважати успішно інтегрованим.
+Фронтенд наразі викликає `POST /api/Recipes/{id}/likes`, але такої кінцевої точки в бекенді немає. Запит очікувано завершується помилкою, після чого фронтенд відкочує оптимістичну зміну. До узгодження контракту цей сценарій не слід вважати успішно інтегрованим.

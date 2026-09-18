@@ -4,7 +4,7 @@
 
 ## Огляд
 
-Chefify — monorepo з трьома runtime-компонентами:
+Chefify — монорепозиторій із трьома компонентами, що виконуються:
 
 ```text
 Browser
@@ -14,7 +14,7 @@ Browser
                        └─ AWS S3 для файлів
 ```
 
-У локальному Docker-середовищі nginx, API та PostgreSQL працюють в одній Compose network. Browser звертається лише до frontend host-порту; `/api` проксіюється nginx без CORS round trip.
+У локальному Docker-середовищі nginx, API та PostgreSQL працюють в одній мережі Compose. Браузер звертається лише до зовнішнього порту фронтенду; nginx проксіює `/api` без окремого CORS-запиту.
 
 ## Структура репозиторію
 
@@ -32,7 +32,7 @@ frontend/lib/
   app/                App composition, theme, route generation
   core/               Shared constants, images, localization, widgets
   features/           Feature-oriented code
-  shared/             Cross-feature models and bookmark state
+  shared/             Спільні моделі та стан закладок
 
 docs/
   uk/                 Українська документація
@@ -55,17 +55,17 @@ Frontend — Flutter web application із path URL strategy. Основні ма
 `frontend/lib/features/recipes` використовує шарування:
 
 - `domain/` — repository contract і route arguments;
-- `data/` — API та mock repository implementations;
-- `presentation/controllers/` — async collection, query і details state;
-- `presentation/pages/` — route-level composition;
-- `presentation/widgets/` — повторно використовуваний UI;
-- `presentation/editor/` — модулі recipe editor: models, tree state, drag-and-drop, canvas, palette, inspector, media та dialogs.
+- `data/` — реалізації репозиторіїв для API та тестових даних;
+- `presentation/controllers/` — стан асинхронних колекцій, запитів і деталей;
+- `presentation/pages/` — компонування сторінок маршрутів;
+- `presentation/widgets/` — повторно використовуваний інтерфейс;
+- `presentation/editor/` — модулі редактора рецептів: моделі, дерево стану, перетягування, полотно, палітра, інспектор, медіа та діалоги.
 
-Великі editor-модулі є `part` однієї Dart library, щоб зберігати приватний API між тісно пов’язаними компонентами. Це внутрішня implementation boundary, а не загальнодоступний feature API.
+Великі модулі редактора є `part` однієї бібліотеки Dart, щоб зберігати приватний API між тісно пов’язаними компонентами. Це внутрішня межа реалізації, а не загальнодоступний API функціональності.
 
-API URL визначається на compile time. `ApiRecipeRepository` не підмінює network/server errors mock-даними: помилки переходять у явний UI state з retry. `MockRecipeRepository` використовується лише явно, переважно у widget tests.
+URL API визначається під час компіляції. `ApiRecipeRepository` не підмінює мережеві або серверні помилки тестовими даними: інтерфейс показує окремий стан помилки та повторну спробу. `MockRecipeRepository` використовується лише явно, переважно у віджет-тестах.
 
-Bookmarks зберігаються локально через `shared_preferences`. Частина home marketing content і review seed data поки локальна й не є backend-даними.
+Закладки зберігаються локально через `shared_preferences`. Частина вмісту головної сторінки та початкових даних відгуків поки локальна й не надходить із бекенду.
 
 ## Backend
 
@@ -84,14 +84,14 @@ Swagger доступний лише коли `ASPNETCORE_ENVIRONMENT=Development
 
 - `db` — `postgres:17` із persistent volume `postgres_data`;
 - `api` — multi-stage .NET 9 image;
-- `frontend-web` — pinned Flutter build і nginx runtime, profile `frontend`;
-- `frontend-preview` — nginx для локального `build/web`, profile `frontend-local-build`.
+- `frontend-web` — збірка на зафіксованій версії Flutter та nginx, профіль `frontend`;
+- `frontend-preview` — nginx для локального `build/web`, профіль `frontend-local-build`.
 
 ## Поточні інтеграційні межі
 
-- Список рецептів frontend отримує з `GET /api/Recipes`.
-- Recipe creation editor ще не надсилає створений документ у backend.
-- Frontend like action очікує endpoint `/api/Recipes/{id}/likes`, якого поточний backend не має; UI коректно відкочує optimistic change і показує помилку.
-- Reviews, auth та file flows реалізовані в backend, але не всі мають завершений frontend flow.
+- Список рецептів фронтенд отримує з `GET /api/Recipes`.
+- Редактор створення рецепта ще не надсилає створений документ у бекенд.
+- Дія «подобається» очікує кінцеву точку `/api/Recipes/{id}/likes`, якої поточний бекенд не має; інтерфейс коректно відкочує оптимістичну зміну й показує помилку.
+- Відгуки, автентифікація та файлові операції реалізовані в бекенді, але не всі мають завершені сценарії у фронтенді.
 
-Ці межі потрібно враховувати під час QA, щоб не реєструвати відомий незавершений integration flow як випадковий regression.
+Ці межі потрібно враховувати під час QA, щоб не реєструвати відомий незавершений інтеграційний сценарій як випадкову регресію.

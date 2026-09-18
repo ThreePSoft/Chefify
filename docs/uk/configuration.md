@@ -6,9 +6,9 @@
 
 - `.env.example` — шаблон для Docker Compose.
 - `.env` — локальні значення; файл ігнорується Git.
-- `backend/appsettings.json` — несекретні backend defaults і CORS origins.
+- `backend/appsettings.json` — несекретні значення бекенду за замовчуванням і дозволені джерела CORS.
 - `backend/Properties/launchSettings.json` — локальні URL для `dotnet run`.
-- `frontend/.flutter-version` — pinned Flutter SDK.
+- `frontend/.flutter-version` — зафіксована версія Flutter SDK.
 - `global.json` — .NET SDK policy.
 
 Docker Compose автоматично читає лише `.env` у корені. Flutter отримує API URL під час компіляції через `--dart-define`.
@@ -21,50 +21,50 @@ Docker Compose автоматично читає лише `.env` у корені
 | `POSTGRES_USER` | `postgres` | Користувач PostgreSQL |
 | `POSTGRES_PASSWORD` | `postgres` | Локальний пароль PostgreSQL |
 | `BACKEND_HTTP_PORT` | `8080` | Host-порт API |
-| `ASPNETCORE_ENVIRONMENT` | `Development` | ASP.NET Core environment; вмикає Swagger |
-| `ASPNETCORE_URLS` | `http://+:8080` | URL усередині API container |
-| `CONNECTION_STRING` | `Host=db;...` | EF Core connection string у Compose network |
+| `ASPNETCORE_ENVIRONMENT` | `Development` | Середовище ASP.NET Core; вмикає Swagger |
+| `ASPNETCORE_URLS` | `http://+:8080` | URL усередині API-контейнера |
+| `CONNECTION_STRING` | `Host=db;...` | Рядок підключення EF Core у мережі Compose |
 | `JWT_KEY` | довгий secret | Підпис access token; обов’язковий |
 | `JWT_ISSUER` | `ChefifyAPI` | JWT issuer |
 | `JWT_AUDIENCE` | `ChefifyClient` | JWT audience |
-| `S3_BUCKET_NAME` | `chefify-files` | S3 bucket; обов’язковий для старту API |
+| `S3_BUCKET_NAME` | `chefify-files` | Бакет S3; обов’язковий для старту API |
 | `S3_REGION` | `eu-north-1` | AWS region; обов’язковий для старту API |
-| `AWS_ACCESS_KEY_ID` | test key | Передається як `S3__AccessKey` |
-| `AWS_SECRET_ACCESS_KEY` | test secret | Передається як `S3__SecretKey` |
+| `AWS_ACCESS_KEY_ID` | тестовий ключ | Передається як `S3__AccessKey` |
+| `AWS_SECRET_ACCESS_KEY` | тестовий секрет | Передається як `S3__SecretKey` |
 | `S3_PRESIGNED_URL_MINUTES` | `15` | Строк presigned URL |
-| `S3_MAX_UPLOAD_BYTES` | `10485760` | Ліміт upload у bytes; endpoint також має 10 MiB limit |
-| `ADMIN_EMAIL` | local email | Email автоматично створеного admin |
-| `ADMIN_PASSWORD` | local password | Пароль автоматично створеного admin |
-| `FRONTEND_HTTP_PORT` | `8088` | Host-порт production-like frontend |
-| `FRONTEND_PREVIEW_PORT` | `8089` | Host-порт local-build preview |
+| `S3_MAX_UPLOAD_BYTES` | `10485760` | Ліміт завантаження у байтах; кінцева точка також обмежена 10 MiB |
+| `ADMIN_EMAIL` | local email | Email автоматично створеного адміністратора |
+| `ADMIN_PASSWORD` | local password | Пароль автоматично створеного адміністратора |
+| `FRONTEND_HTTP_PORT` | `8088` | Зовнішній порт фронтенду, подібного до виробничого |
+| `FRONTEND_PREVIEW_PORT` | `8089` | Host-порт preview локальної збірки |
 | `CHEFIFY_API_BASE_URL` | `/api` | Compile-time API URL Flutter web build |
 
-## API URL у frontend
+## API URL у фронтенді
 
-У локальному Flutter запуску default дорівнює `http://localhost:8080/api`. Рекомендовано передавати його явно:
+У локальному Flutter-запуску значення за замовчуванням дорівнює `http://localhost:8080/api`. Рекомендовано передавати його явно:
 
 ```bash
 flutter run -d chrome --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 ```
 
-Docker web build використовує `/api`; nginx проксіює цей шлях на `http://api:8080`. Не використовуй `localhost` у container-oriented web build: для браузера це буде машина користувача, а не Compose service.
+Docker web build використовує `/api`; nginx проксіює цей шлях на `http://api:8080`. Не використовуй `localhost` у контейнерній web-збірці: для браузера це буде машина користувача, а не Compose-сервіс.
 
 ## CORS
 
-Поточні origins у `backend/appsettings.json`:
+Поточні дозволені джерела у `backend/appsettings.json`:
 
 - `http://localhost:8088`;
 - `http://localhost:8089`;
 - `http://localhost:8090`.
 
-При запуску Flutter на іншому порту додай origin до конфігурації backend або використовуй один із дозволених портів. Значення має містити scheme, host і port без path.
+При запуску Flutter на іншому порту додай джерело до конфігурації бекенду або використовуй один із дозволених портів. Значення має містити протокол, хост і порт без шляху.
 
 ## Secrets
 
-- Ніколи не коміть `.env`, JWT key, AWS credentials або production admin password.
-- Для shared test environment використовуй окремі обмежені credentials.
+- Ніколи не коміть `.env`, ключ JWT, облікові дані AWS або пароль адміністратора виробничого середовища.
+- Для спільного тестового середовища використовуй окремі облікові дані з мінімальними правами.
 - Після випадкового витоку credential недостатньо видалити його з Git: credential потрібно відкликати або rotate.
-- Значення з `.env.example` є прикладами, а не production defaults.
+- Значення з `.env.example` є прикладами, а не налаштуваннями виробничого середовища.
 
 ## Перевизначення портів
 
@@ -76,4 +76,4 @@ FRONTEND_HTTP_PORT=8188
 FRONTEND_PREVIEW_PORT=8189
 ```
 
-Після зміни backend host-порту локальний Flutter build має отримати відповідний `CHEFIFY_API_BASE_URL`. Container frontend із `/api` не залежить від host-порту API.
+Після зміни зовнішнього порту бекенду локальна Flutter-збірка має отримати відповідний `CHEFIFY_API_BASE_URL`. Контейнерний фронтенд із `/api` не залежить від зовнішнього порту API.
