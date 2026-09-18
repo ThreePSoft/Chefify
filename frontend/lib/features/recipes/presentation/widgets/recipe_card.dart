@@ -3,6 +3,7 @@ import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/images/optimized_network_image.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/recipes/domain/recipes_page_arguments.dart';
 import 'package:frontend/shared/bookmarks/bookmark_button.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/routing/slug.dart';
 
 class CategoryModel {
   const CategoryModel({
@@ -74,7 +75,7 @@ class RecipeModel {
     );
 
     return RecipeModel(
-      id: _stringValue(_jsonValue(json, 'id'), fallback: _slugFromTitle(title)),
+      id: _stringValue(_jsonValue(json, 'id'), fallback: createSlug(title)),
       title: title,
       description: _stringValue(_jsonValue(json, 'description')),
       categoryId: categoryId,
@@ -160,7 +161,7 @@ class RecipeModel {
     if (category is Map) {
       final name = _stringValue(category['name'] ?? category['Name']);
       if (name.isNotEmpty) {
-        return _slugFromTitle(name);
+        return createSlug(name);
       }
 
       final id = _stringValue(category['id'] ?? category['Id']);
@@ -171,15 +172,15 @@ class RecipeModel {
 
     final categoryName = _stringValue(_jsonValue(json, 'categoryName'));
     if (categoryName.isNotEmpty) {
-      return _slugFromTitle(categoryName);
+      return createSlug(categoryName);
     }
 
     final categoryId = _stringValue(_jsonValue(json, 'categoryId'));
     if (categoryId.isNotEmpty) {
-      return _slugFromTitle(categoryId);
+      return createSlug(categoryId);
     }
 
-    return _slugFromTitle(fallbackCategoryName);
+    return createSlug(fallbackCategoryName);
   }
 
   static List<String> _tagsValue(
@@ -187,7 +188,7 @@ class RecipeModel {
     required String categoryName,
   }) {
     final values = <String>[];
-    final categorySlug = _slugFromTitle(categoryName);
+    final categorySlug = createSlug(categoryName);
     final tags = _jsonValue(json, 'tags');
 
     if (tags is String) {
@@ -242,7 +243,7 @@ class RecipeModel {
       return;
     }
 
-    if (_slugFromTitle(value) == categorySlug) {
+    if (createSlug(value) == categorySlug) {
       return;
     }
 
@@ -290,13 +291,6 @@ class RecipeModel {
       const Color(0xFF7A4E68),
     ];
     return palette[fallback.hashCode.abs() % palette.length];
-  }
-
-  static String _slugFromTitle(String title) {
-    return title
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
   }
 }
 

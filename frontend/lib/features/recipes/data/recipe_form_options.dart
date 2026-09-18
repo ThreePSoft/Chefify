@@ -1,3 +1,4 @@
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/features/categories/data/category_catalog.dart';
 import 'package:frontend/features/recipes/data/recipe_catalog.dart';
 import 'package:frontend/shared/models/home_models.dart';
@@ -23,11 +24,7 @@ class RecipeFormOptions {
   }
 
   static String slug(String value) {
-    return value
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
+    return createSlug(value);
   }
 
   static String _readableLabel(String value) {

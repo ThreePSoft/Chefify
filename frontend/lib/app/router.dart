@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/features/authors/presentation/pages/author_profile_page.dart';
 import 'package:frontend/features/categories/presentation/pages/categories_page.dart';
 import 'package:frontend/features/home/presentation/pages/home_page.dart';
@@ -20,7 +21,7 @@ class AppRouter {
   }
 
   static String authorProfilePath(String authorName) {
-    return '$authors/${Uri.encodeComponent(_slug(authorName))}';
+    return '$authors/${Uri.encodeComponent(createSlug(authorName))}';
   }
 
   static Route<dynamic> onGenerateRoute(
@@ -125,12 +126,5 @@ class AppRouter {
     }
 
     return Uri.decodeComponent(authorSlug);
-  }
-
-  static String _slug(String value) {
-    return value
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
   }
 }

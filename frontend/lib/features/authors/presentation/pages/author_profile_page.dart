@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/core/widgets/responsive_sliver_grid.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
@@ -408,8 +409,5 @@ String _readableAuthorName(String slug) {
 }
 
 String _slug(String value) {
-  return value
-      .toLowerCase()
-      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-      .replaceAll(RegExp(r'^-+|-+$'), '');
+  return createSlug(value);
 }

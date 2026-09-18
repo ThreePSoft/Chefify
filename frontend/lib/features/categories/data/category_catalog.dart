@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
 class CategoryCatalog {
@@ -349,10 +350,7 @@ class CategoryCatalog {
   }
 
   static String slug(String value) {
-    return value
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
+    return createSlug(value);
   }
 
   static List<RecipeModel> _recipesFor(

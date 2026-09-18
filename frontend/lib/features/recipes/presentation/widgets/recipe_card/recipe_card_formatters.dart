@@ -64,8 +64,5 @@ void _openRecipeTagFilter(BuildContext context, String tag) {
 }
 
 String _tagKey(String tag) {
-  return tag
-      .toLowerCase()
-      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-      .replaceAll(RegExp(r'^-+|-+$'), '');
+  return createSlug(tag);
 }
