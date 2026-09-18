@@ -78,12 +78,22 @@ class AppPalette extends ThemeExtension<AppPalette> {
       mainText: Color.lerp(mainText, other.mainText, t)!,
       secondaryText: Color.lerp(secondaryText, other.secondaryText, t)!,
       borders: Color.lerp(borders, other.borders, t)!,
-      navbarBackground: Color.lerp(navbarBackground, other.navbarBackground, t)!,
+      navbarBackground: Color.lerp(
+        navbarBackground,
+        other.navbarBackground,
+        t,
+      )!,
       buttonHover: Color.lerp(buttonHover, other.buttonHover, t)!,
-      searchBarBackground:
-          Color.lerp(searchBarBackground, other.searchBarBackground, t)!,
-      recipeCardBackground:
-          Color.lerp(recipeCardBackground, other.recipeCardBackground, t)!,
+      searchBarBackground: Color.lerp(
+        searchBarBackground,
+        other.searchBarBackground,
+        t,
+      )!,
+      recipeCardBackground: Color.lerp(
+        recipeCardBackground,
+        other.recipeCardBackground,
+        t,
+      )!,
       activeElements: Color.lerp(activeElements, other.activeElements, t)!,
       icons: Color.lerp(icons, other.icons, t)!,
     );

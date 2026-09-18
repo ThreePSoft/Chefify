@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/widgets/app_card.dart';
@@ -29,10 +29,12 @@ class BenefitCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Text(benefit.title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: AppSpacing.xs),
-          Text(benefit.description, style: Theme.of(context).textTheme.bodyMedium),
+          Text(
+            benefit.description,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ],
       ),
     );
   }
 }
-
