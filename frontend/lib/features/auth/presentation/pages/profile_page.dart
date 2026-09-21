@@ -200,9 +200,9 @@ class _ProfilePageState extends State<ProfilePage> {
       context: context,
       builder: (context) => _EditProfileDialog(user: auth.user!),
     );
-    if (name == null || !mounted) return;
+    if (name == null || !context.mounted) return;
     final updated = await auth.updateProfile(name: name);
-    if (!updated && mounted) {
+    if (!updated && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(AppStrings.of(context).authServerError)),
       );
