@@ -15,6 +15,7 @@ public static class DatabaseInitializer
         await context.Database.MigrateAsync();
 
         await SeedAdminAsync(context, config);
+        await SynchronizeUserIdentitySequenceAsync(context);
     }
 
     private static async Task SeedAdminAsync(AppDbContext context, IConfiguration config)
@@ -37,7 +38,6 @@ public static class DatabaseInitializer
 
         context.Users.Add(new User
         {
-            Id = 1,
             Username = "admin",
             Email = adminEmail,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword),
@@ -45,5 +45,17 @@ public static class DatabaseInitializer
         });
 
         await context.SaveChangesAsync();
+    }
+
+    private static async Task SynchronizeUserIdentitySequenceAsync(AppDbContext context)
+    {
+        await context.Database.ExecuteSqlRawAsync(
+            """
+            SELECT setval(
+                pg_get_serial_sequence('"Users"', 'Id')::regclass,
+                COALESCE((SELECT MAX("Id") FROM "Users"), 1),
+                EXISTS (SELECT 1 FROM "Users")
+            );
+            """);
     }
 }
