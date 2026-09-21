@@ -67,15 +67,15 @@ cd frontend
 
 Порт `8089` уже дозволений поточною локальною CORS-конфігурацією API. `CHEFIFY_API_BASE_URL` задається під час компіляції: після його зміни застосунок потрібно перезапустити або перебудувати.
 
-### Тестовий режим без бекенду
+### Тестовий режим з API, БД і mock-даними
 
 ```powershell
 Push-Location frontend
-..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=mock
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=test --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 Pop-Location
 ```
 
-Звичайний запуск використовує `api` і ніколи не підміняє помилку сервера демо-даними. `mock` потрібно вказувати явно; він повертає повний локальний демо-каталог і автономну тестову авторизацію.
+Звичайний запуск використовує лише `api`. Режим `test` також звертається до API та БД, але додає до отриманих рецептів локальний демо-каталог. Авторизація в обох режимах справжня. Якщо API недоступний, test mode показує помилку замість переходу в автономний mock-only стан.
 
 ## Основні команди фронтенду
 

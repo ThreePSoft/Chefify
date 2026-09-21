@@ -18,12 +18,12 @@ Push-Location frontend
 Pop-Location
 ```
 
-Backend-free mock mode for UI and QA work:
+Test mode with the API, database, and additional mock records:
 
 ```powershell
 Push-Location frontend
-..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=mock
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=test --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 Pop-Location
 ```
 
-The default mode is `api`; it never silently substitutes demo data when the backend is unavailable.
+Authentication uses the real API in both modes. The default mode is `api`; `test` merges API recipes with demo records and never hides backend failures.
