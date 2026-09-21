@@ -64,12 +64,12 @@ class AppHeader extends StatelessWidget {
                             ? AppRouter.profile
                             : AppRouter.login,
                       ),
-                      icon: Icon(
-                        auth?.isAuthenticated == true
-                            ? Icons.account_circle_rounded
-                            : Icons.login_rounded,
-                      ),
-                      color: palette.icons,
+                      icon: auth?.isAuthenticated == true
+                          ? const _ProfileMark(size: 34)
+                          : const Icon(Icons.login_rounded),
+                      color: auth?.isAuthenticated == true
+                          ? null
+                          : palette.icons,
                     ),
                     IconButton(
                       onPressed: () {},
@@ -102,11 +102,9 @@ class _DesktopHeaderActions extends StatelessWidget {
         const SizedBox(width: AppSpacing.lg),
         if (auth?.isAuthenticated == true)
           ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 180),
-            child: AppButton(
-              label: auth!.user!.name,
-              icon: Icons.account_circle_rounded,
-              variant: AppButtonVariant.ghost,
+            constraints: const BoxConstraints(maxWidth: 210),
+            child: _ProfileAction(
+              name: auth!.user!.name,
               onPressed: () => _openRoute(context, AppRouter.profile),
             ),
           )
@@ -123,6 +121,72 @@ class _DesktopHeaderActions extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _ProfileAction extends StatelessWidget {
+  const _ProfileAction({required this.name, required this.onPressed});
+
+  final String name;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Material(
+      color: palette.primaryButtons,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+      child: InkWell(
+        key: const ValueKey('header-profile-action'),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xs,
+            vertical: AppSpacing.xxs,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const _ProfileMark(size: 38),
+              const SizedBox(width: AppSpacing.sm),
+              Flexible(
+                child: Text(
+                  name,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: false,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileMark extends StatelessWidget {
+  const _ProfileMark({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const ValueKey('header-profile-mark'),
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: context.palette.primaryButtons,
+        borderRadius: BorderRadius.circular(size * 0.28),
+      ),
+      alignment: Alignment.center,
+      child: Icon(Icons.person_rounded, size: size * 0.58, color: Colors.white),
     );
   }
 }

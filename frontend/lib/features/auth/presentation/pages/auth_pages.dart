@@ -224,61 +224,115 @@ class _AuthPageShell extends StatelessWidget {
     final palette = context.palette;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 460),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () =>
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            AppRouter.home,
-                            (route) => false,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final horizontalPadding = AppSpacing.horizontalPaddingForWidth(
+              constraints.maxWidth,
+            );
+            const brandClearance = 82.0;
+            final centeredHeight = (constraints.maxHeight - 2 * brandClearance)
+                .clamp(0.0, double.infinity)
+                .toDouble();
+
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      horizontalPadding,
+                      brandClearance,
+                      horizontalPadding,
+                      brandClearance,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(minHeight: centeredHeight),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 460),
+                          child: Container(
+                            key: const ValueKey('auth-card'),
+                            padding: const EdgeInsets.all(AppSpacing.xl),
+                            decoration: BoxDecoration(
+                              color: palette.cardsSurface,
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.radiusLg,
+                              ),
+                              border: Border.all(color: palette.borders),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  title,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium
+                                      ?.copyWith(fontWeight: FontWeight.w800),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                Text(
+                                  subtitle,
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(color: palette.secondaryText),
+                                ),
+                                const SizedBox(height: AppSpacing.xl),
+                                child,
+                              ],
+                            ),
                           ),
-                      icon: const ChefifyBrandMark(size: 30),
-                      label: Text(
-                        'Chefify',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
-                  Container(
-                    padding: const EdgeInsets.all(AppSpacing.xl),
-                    decoration: BoxDecoration(
-                      color: palette.cardsSurface,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                      border: Border.all(color: palette.borders),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          title,
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.w800),
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        Text(
-                          subtitle,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(color: palette.secondaryText),
-                        ),
-                        const SizedBox(height: AppSpacing.xl),
-                        child,
-                      ],
-                    ),
-                  ),
-                ],
+                ),
+                Positioned(
+                  left: horizontalPadding,
+                  top: AppSpacing.sm,
+                  child: _AuthBrand(homeRoute: AppRouter.home),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _AuthBrand extends StatelessWidget {
+  const _AuthBrand({required this.homeRoute});
+
+  final String homeRoute;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('auth-brand'),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+        onTap: () => Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil(homeRoute, (route) => false),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xxs),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ChefifyBrandMark(
+                key: ValueKey('auth-brand-mark'),
+                size: 46,
+                borderRadius: 13,
               ),
-            ),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                'Chefify',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
           ),
         ),
       ),
