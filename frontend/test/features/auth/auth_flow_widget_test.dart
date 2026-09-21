@@ -132,7 +132,7 @@ void main() {
       );
       expect(
         tester.getSize(find.byKey(const ValueKey('header-profile-mark'))),
-        const Size.square(38),
+        const Size.square(22),
       );
 
       await tester.tap(find.byKey(const ValueKey('profile-sign-out')));

@@ -143,14 +143,19 @@ class _ProfileAction extends StatelessWidget {
         onTap: onPressed,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.xs,
-            vertical: AppSpacing.xxs,
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const _ProfileMark(size: 38),
-              const SizedBox(width: AppSpacing.sm),
+              const Icon(
+                Icons.person_rounded,
+                key: ValueKey('header-profile-mark'),
+                size: 22,
+                color: Colors.white,
+              ),
+              const SizedBox(width: AppSpacing.xs),
               Flexible(
                 child: Text(
                   name,
