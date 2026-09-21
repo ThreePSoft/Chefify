@@ -65,6 +65,23 @@ final class ApiAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<AuthSession> updateProfile({
+    required AuthSession session,
+    required String name,
+  }) async {
+    final response = await _put('Users/me', {
+      'username': name.trim(),
+    }, accessToken: session.accessToken);
+    _ensureSuccess(response);
+
+    final updated = session.copyWith(
+      user: session.user.copyWith(name: name.trim()),
+    );
+    await _storage.write(updated);
+    return updated;
+  }
+
+  @override
   Future<void> signOut() => _storage.clear();
 
   Future<http.Response> _post(String path, Map<String, String> body) async {
@@ -73,6 +90,29 @@ final class ApiAuthRepository implements AuthRepository {
           .post(
             _uri(path),
             headers: const {'Content-Type': 'application/json'},
+            body: jsonEncode(body),
+          )
+          .timeout(timeout);
+    } on TimeoutException catch (error) {
+      throw AuthFailure(AuthFailureKind.timeout, cause: error);
+    } on http.ClientException catch (error) {
+      throw AuthFailure(AuthFailureKind.network, cause: error);
+    }
+  }
+
+  Future<http.Response> _put(
+    String path,
+    Map<String, String> body, {
+    required String accessToken,
+  }) async {
+    try {
+      return await _client
+          .put(
+            _uri(path),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $accessToken',
+            },
             body: jsonEncode(body),
           )
           .timeout(timeout);

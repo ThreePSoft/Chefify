@@ -1,6 +1,8 @@
 using backend.Dto;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace backend.Controllers;
 
@@ -44,5 +46,18 @@ public class UsersController(UserService service) : ControllerBase
         var recipes = service.GetUserRecipes(user);
         
         return Ok(recipes);
+    }
+
+    [Authorize]
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateCurrentUser(UpdateUserProfileDto dto)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        {
+            return Unauthorized();
+        }
+
+        var user = await service.UpdateProfile(userId, dto);
+        return user == null ? NotFound() : Ok(UserService.ToDto(user));
     }
 }

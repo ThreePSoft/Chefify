@@ -75,6 +75,12 @@ class _FakeAuthRepository implements AuthRepository {
   }) async => _session;
 
   @override
+  Future<AuthSession> updateProfile({
+    required AuthSession session,
+    required String name,
+  }) async => session.copyWith(user: session.user.copyWith(name: name));
+
+  @override
   Future<void> signOut() async {
     didSignOut = true;
   }

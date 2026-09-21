@@ -14,6 +14,10 @@ class AuthUser {
   final String email;
   final String role;
 
+  AuthUser copyWith({String? name}) {
+    return AuthUser(id: id, name: name ?? this.name, email: email, role: role);
+  }
+
   String get initials {
     final words = name
         .trim()
@@ -36,6 +40,14 @@ class AuthSession {
   final AuthUser user;
   final String accessToken;
   final String refreshToken;
+
+  AuthSession copyWith({AuthUser? user}) {
+    return AuthSession(
+      user: user ?? this.user,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    );
+  }
 }
 
 enum AuthFailureKind {

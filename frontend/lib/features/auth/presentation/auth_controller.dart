@@ -47,6 +47,14 @@ class AuthController extends ChangeNotifier {
     );
   }
 
+  Future<bool> updateProfile({required String name}) {
+    final session = _session;
+    if (session == null) {
+      return Future<bool>.value(false);
+    }
+    return _run(() => _repository.updateProfile(session: session, name: name));
+  }
+
   Future<void> signOut() async {
     _failure = null;
     await _repository.signOut();

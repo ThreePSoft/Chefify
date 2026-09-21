@@ -11,5 +11,10 @@ abstract interface class AuthRepository {
     required String password,
   });
 
+  Future<AuthSession> updateProfile({
+    required AuthSession session,
+    required String name,
+  });
+
   Future<void> signOut();
 }

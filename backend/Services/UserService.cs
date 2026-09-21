@@ -25,6 +25,19 @@ public class UserService(AppDbContext context)
         return await context.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
+    public async Task<User?> UpdateProfile(int id, UpdateUserProfileDto dto)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        if (user == null)
+        {
+            return null;
+        }
+
+        user.Username = dto.Username.Trim();
+        await context.SaveChangesAsync();
+        return user;
+    }
+
     public static UserDto ToDto(User user)
     {
         var userDto = new UserDto
