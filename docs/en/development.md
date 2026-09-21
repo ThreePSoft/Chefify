@@ -75,7 +75,7 @@ Push-Location frontend
 Pop-Location
 ```
 
-The normal launch uses only `api`. The `test` mode also calls the API and database but adds the local demo catalog to returned recipes. Authentication is real in both modes. If the API is unavailable, test mode reports the failure instead of switching to a standalone mock-only state.
+The normal launch uses only `api`. The `test` mode also calls the API and database but adds the local demo catalog to returned recipes. If the recipe API is unavailable, mock recipes remain available. Authentication is real in both modes and still requires a reachable API.
 
 ## Common frontend commands
 

@@ -26,4 +26,4 @@ Push-Location frontend
 Pop-Location
 ```
 
-Authentication uses the real API in both modes. The default mode is `api`; `test` merges API recipes with demo records and never hides backend failures.
+Authentication uses the real API in both modes. The default mode is `api`; `test` merges API recipes with demo records and falls back to the demo catalog if recipe loading fails.

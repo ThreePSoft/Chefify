@@ -61,7 +61,7 @@ cd frontend
 ..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=test --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 ```
 
-In this mode, API recipes are merged with the complete demo catalog, with API records winning duplicate IDs. API failures are not hidden by mocks. Authentication and registration always use the real API and its database; standalone mock authentication is not available. The value is compile-time configuration, so fully restart the app after changing modes.
+In this mode, API recipes are merged with the complete demo catalog, with API records winning duplicate IDs. If the recipe API is temporarily unavailable, the frontend remains usable with mock recipes. Authentication and registration always use the real API and its database; standalone mock authentication is not available. The value is compile-time configuration, so fully restart the app after changing modes.
 
 ## CORS
 
