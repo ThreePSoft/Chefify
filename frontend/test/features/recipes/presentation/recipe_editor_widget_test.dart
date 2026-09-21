@@ -9,6 +9,7 @@ import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
 import 'package:frontend/features/categories/presentation/pages/categories_page.dart';
+import 'package:frontend/features/categories/data/category_repository.dart';
 import 'package:frontend/features/home/presentation/widgets/category_card.dart';
 import 'package:frontend/features/home/presentation/widgets/hero_section.dart';
 import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
@@ -99,6 +100,30 @@ void main() {
     await tester.pump();
     expect(find.text('00'), findsWidgets);
     expect(find.text('08'), findsNothing);
+  });
+
+  testWidgets('loads every recipe category exposed by the API', (tester) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final repository = _FiveCategoryRepository();
+    await tester.pumpWidget(
+      PageTestApp(child: RecipeCreatePage(categoryRepository: repository)),
+    );
+    await tester.pumpAndSettle();
+    expect(repository.fetchCount, 1);
+    await tester.tap(find.byKey(const ValueKey('recipe-category-chip')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('recipe-create-category-search')),
+      findsOneWidget,
+    );
+
+    for (final name in ['Breakfast', 'Lunch', 'Dinner', 'Dessert', 'Drinks']) {
+      expect(find.text(name), findsOneWidget);
+    }
   });
 
   testWidgets('creates only the selected non-empty tag with compact input', (
@@ -918,4 +943,50 @@ void main() {
       findsOneWidget,
     );
   });
+}
+
+class _FiveCategoryRepository implements CategoryRepository {
+  int fetchCount = 0;
+
+  @override
+  Future<List<CategoryModel>> fetchCategories() async {
+    fetchCount++;
+    return const [
+      CategoryModel(
+        id: '1',
+        title: 'Breakfast',
+        description: 'Breakfast recipes',
+        icon: Icons.free_breakfast_rounded,
+        recipesCount: 0,
+      ),
+      CategoryModel(
+        id: '2',
+        title: 'Lunch',
+        description: 'Lunch recipes',
+        icon: Icons.lunch_dining_rounded,
+        recipesCount: 0,
+      ),
+      CategoryModel(
+        id: '3',
+        title: 'Dinner',
+        description: 'Dinner recipes',
+        icon: Icons.dinner_dining_rounded,
+        recipesCount: 0,
+      ),
+      CategoryModel(
+        id: '4',
+        title: 'Dessert',
+        description: 'Dessert recipes',
+        icon: Icons.cake_rounded,
+        recipesCount: 0,
+      ),
+      CategoryModel(
+        id: '5',
+        title: 'Drinks',
+        description: 'Drink recipes',
+        icon: Icons.local_drink_rounded,
+        recipesCount: 0,
+      ),
+    ];
+  }
 }

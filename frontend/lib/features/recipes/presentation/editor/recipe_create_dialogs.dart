@@ -1,9 +1,13 @@
 part of '../pages/recipe_create_page.dart';
 
 class _RecipeCategoryDialog extends StatefulWidget {
-  const _RecipeCategoryDialog({required this.selected});
+  const _RecipeCategoryDialog({
+    required this.selected,
+    required this.categories,
+  });
 
   final CategoryModel? selected;
+  final List<CategoryModel> categories;
 
   @override
   State<_RecipeCategoryDialog> createState() => _RecipeCategoryDialogState();
@@ -22,8 +26,9 @@ class _RecipeCategoryDialogState extends State<_RecipeCategoryDialog> {
   Widget build(BuildContext context) {
     final palette = context.palette;
     final strings = AppStrings.of(context);
-    final query = RecipeFormOptions.slug(_controller.text);
-    final categories = RecipeFormOptions.categories
+    final rawQuery = _controller.text.trim();
+    final query = rawQuery.isEmpty ? '' : RecipeFormOptions.slug(rawQuery);
+    final categories = widget.categories
         .where((category) {
           if (query.isEmpty) {
             return true;
@@ -63,6 +68,14 @@ class _RecipeCategoryDialogState extends State<_RecipeCategoryDialog> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      if (categories.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          child: Text(
+                            strings.noCategoriesFound,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       for (final category in categories)
                         _RecipeCategoryOption(
                           category: category,

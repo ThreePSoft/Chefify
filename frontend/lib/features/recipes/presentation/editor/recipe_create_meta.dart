@@ -55,6 +55,7 @@ class _RecipeCreateMetaPanel extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: _RecipeCreateMetaChip(
+              key: const ValueKey('recipe-category-chip'),
               icon: category?.icon ?? Icons.restaurant_menu_rounded,
               label: category?.title ?? 'Category',
               onPressed: onEditCategory,

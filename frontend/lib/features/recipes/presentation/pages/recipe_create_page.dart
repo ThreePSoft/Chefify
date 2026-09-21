@@ -7,6 +7,8 @@ import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
 import 'package:frontend/core/widgets/app_card.dart';
+import 'package:frontend/features/categories/data/category_catalog.dart';
+import 'package:frontend/features/categories/data/category_repository.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
 import 'package:frontend/features/recipes/data/recipe_form_options.dart';
 import 'package:frontend/features/recipes/presentation/image_upload/recipe_image_picker.dart';
@@ -111,9 +113,14 @@ class _RecipeDurationValue {
 }
 
 class RecipeCreatePage extends StatefulWidget {
-  const RecipeCreatePage({super.key, this.usesMockData = false});
+  const RecipeCreatePage({
+    super.key,
+    this.usesMockData = false,
+    this.categoryRepository = const ApiCategoryRepository(),
+  });
 
   final bool usesMockData;
+  final CategoryRepository categoryRepository;
 
   @override
   State<RecipeCreatePage> createState() => _RecipeCreatePageState();
@@ -132,6 +139,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     minutes: 20,
   );
   String _difficulty = 'Easy';
+  List<CategoryModel> _categories = const [];
   CategoryModel? _category;
   bool _isAddingTag = false;
   String? _imageUrl;
@@ -141,6 +149,11 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     super.initState();
     _tagFocusNode.addListener(_handleTagFocusChange);
     _tagController.addListener(_handleTagTextChange);
+    if (widget.usesMockData) {
+      _categories = CategoryCatalog.items;
+    } else {
+      unawaited(_loadCategories());
+    }
   }
 
   @override
@@ -340,9 +353,14 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
   }
 
   Future<void> _editCategory() async {
+    if (!widget.usesMockData) {
+      await _loadCategories();
+      if (!mounted) return;
+    }
     final value = await showDialog<CategoryModel>(
       context: context,
-      builder: (context) => _RecipeCategoryDialog(selected: _category),
+      builder: (context) =>
+          _RecipeCategoryDialog(selected: _category, categories: _categories),
     );
     if (!mounted || value == null) {
       return;
@@ -351,6 +369,18 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     setState(() {
       _category = value;
     });
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final categories = await widget.categoryRepository.fetchCategories();
+      if (!mounted) return;
+      setState(() {
+        _categories = categories;
+      });
+    } on Object {
+      // The category dialog presents an empty state while the API is unavailable.
+    }
   }
 
   void _removeTag(String tag) {
@@ -364,7 +394,8 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
       return const [];
     }
 
-    final query = RecipeFormOptions.slug(_tagController.text);
+    final rawQuery = _tagController.text.trim();
+    final query = rawQuery.isEmpty ? '' : RecipeFormOptions.slug(rawQuery);
     final suggestions =
         RecipeFormOptions.availableTags(usesMockData: widget.usesMockData)
             .where((tag) {
