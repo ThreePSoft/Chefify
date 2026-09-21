@@ -39,16 +39,20 @@ void main() {
     );
   });
 
-  testWidgets('test mode adds the complete demo homepage', (tester) async {
+  testWidgets('test mode keeps demo recipes when the API is unavailable', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1440, 1000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      const PageTestApp(
+      PageTestApp(
         child: HomePage(
-          recipeRepository: MockRecipeRepository(),
+          recipeRepository: TestRecipeRepository(
+            apiRepository: const _FailingRecipeRepository(),
+          ),
           usesMockData: true,
         ),
       ),
@@ -58,6 +62,10 @@ void main() {
     expect(find.text('Citrus Herb Chicken with Warm Quinoa'), findsWidgets);
     expect(find.text('Sophie Lang'), findsOneWidget);
     expect(find.text('18K+'), findsOneWidget);
+    expect(
+      find.text('The recipes service is temporarily unavailable.'),
+      findsNothing,
+    );
   });
 }
 

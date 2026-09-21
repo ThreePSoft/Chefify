@@ -25,7 +25,7 @@ void main() {
     },
   );
 
-  test('keeps API failures visible instead of falling back to mocks', () {
+  test('keeps mock recipes available when the API is unavailable', () async {
     final repository = TestRecipeRepository(
       apiRepository: _RecordingRecipeRepository(
         error: const RecipeRepositoryFailure(
@@ -38,7 +38,7 @@ void main() {
       ),
     );
 
-    expect(repository.fetchRecipes(), throwsA(isA<RecipeRepositoryFailure>()));
+    expect(await repository.fetchRecipes(), [_mockOnlyRecipe]);
   });
 
   test('persists likes through API only for live records', () async {

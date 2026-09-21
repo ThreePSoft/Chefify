@@ -5,8 +5,8 @@ import 'package:frontend/shared/models/home_models.dart';
 
 /// Combines live API records with the demo catalog used by QA.
 ///
-/// API failures deliberately propagate: test mode still requires a working
-/// backend and database instead of silently degrading to mock-only behavior.
+/// The live API is preferred, while the demo catalog keeps UI testing usable
+/// when the backend is temporarily unavailable. Authentication remains API-only.
 final class TestRecipeRepository implements RecipeRepository {
   TestRecipeRepository({
     RecipeRepository? apiRepository,
@@ -20,14 +20,19 @@ final class TestRecipeRepository implements RecipeRepository {
 
   @override
   Future<List<RecipeModel>> fetchRecipes() async {
-    final apiRecipes = await _apiRepository.fetchRecipes();
     final mockRecipes = await _mockRepository.fetchRecipes();
-    _apiRecipeIds = apiRecipes.map((recipe) => recipe.id).toSet();
+    try {
+      final apiRecipes = await _apiRepository.fetchRecipes();
+      _apiRecipeIds = apiRecipes.map((recipe) => recipe.id).toSet();
 
-    return [
-      ...apiRecipes,
-      ...mockRecipes.where((recipe) => !_apiRecipeIds.contains(recipe.id)),
-    ];
+      return [
+        ...apiRecipes,
+        ...mockRecipes.where((recipe) => !_apiRecipeIds.contains(recipe.id)),
+      ];
+    } on RecipeRepositoryFailure {
+      _apiRecipeIds = const {};
+      return mockRecipes;
+    }
   }
 
   @override
