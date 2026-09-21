@@ -9,6 +9,8 @@ import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
 import 'package:frontend/features/categories/presentation/pages/categories_page.dart';
+import 'package:frontend/features/auth/domain/auth_repository.dart';
+import 'package:frontend/features/auth/domain/auth_session.dart';
 import 'package:frontend/features/home/presentation/widgets/category_card.dart';
 import 'package:frontend/features/home/presentation/widgets/hero_section.dart';
 import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
@@ -199,4 +201,109 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('opens the signed-in profile from the own author card', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final bookmarks = BookmarkStore.memory(
+      const BookmarkSnapshot(recipeIds: {'citrus-herb-chicken-quinoa'}),
+    );
+    addTearDown(bookmarks.dispose);
+    await tester.pumpWidget(
+      ChefifyApp(
+        authRepository: const _RestoredAuthRepository(),
+        bookmarkStore: bookmarks,
+        recipeRepository: const MockRecipeRepository(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(TextButton, 'Recipes').first);
+    await tester.pumpAndSettle();
+
+    final recipeCard = find.byKey(
+      const ValueKey('recipes-card-roasted-tomato-pasta'),
+    );
+    await tester.scrollUntilVisible(
+      recipeCard,
+      360,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 180));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.byKey(const ValueKey('recipe-author-chip-roasted-tomato-pasta')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('profile-header')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('profile-recipe-roasted-tomato-pasta')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('profile-recipe-citrus-herb-chicken-quinoa')),
+      findsNothing,
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-tabs')),
+        matching: find.text('Favorite recipes'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('profile-recipe-citrus-herb-chicken-quinoa')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('author-profile-page-chef-aria')),
+      findsNothing,
+    );
+  });
+}
+
+class _RestoredAuthRepository implements AuthRepository {
+  const _RestoredAuthRepository();
+
+  static const session = AuthSession(
+    accessToken: 'access',
+    refreshToken: 'refresh',
+    user: AuthUser(
+      id: '7',
+      name: 'Chef Aria',
+      email: 'aria@chefify.test',
+      role: 'User',
+    ),
+  );
+
+  @override
+  Future<AuthSession?> restoreSession() async => session;
+
+  @override
+  Future<AuthSession> signIn({
+    required String email,
+    required String password,
+  }) async => session;
+
+  @override
+  Future<AuthSession> register({
+    required String name,
+    required String email,
+    required String password,
+  }) async => session;
+
+  @override
+  Future<AuthSession> updateProfile({
+    required AuthSession session,
+    required String name,
+  }) async => session.copyWith(user: session.user.copyWith(name: name));
+
+  @override
+  Future<void> signOut() async {}
 }

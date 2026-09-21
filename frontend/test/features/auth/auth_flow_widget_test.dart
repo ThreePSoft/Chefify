@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/app/app.dart';
 import 'package:frontend/app/app_config.dart';
@@ -135,6 +136,33 @@ void main() {
         const Size.square(22),
       );
 
+      expect(find.text('My recipes'), findsWidgets);
+      expect(find.text('Favorite recipes'), findsWidgets);
+      expect(find.text('Settings'), findsOneWidget);
+
+      final createAction = find.byKey(const ValueKey('profile-create-recipe'));
+      expect(tester.getSize(createAction).width, 56);
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(mouse.removePointer);
+      await mouse.addPointer(location: Offset.zero);
+      await mouse.moveTo(tester.getCenter(createAction));
+      await tester.pumpAndSettle();
+      expect(tester.getSize(createAction).width, 184);
+      expect(find.text('Create recipe'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('profile-edit-action')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('profile-name-field')),
+        'Chef Updated',
+      );
+      await tester.tap(find.byKey(const ValueKey('profile-save-action')));
+      await tester.pumpAndSettle();
+      expect(find.text('Chef Updated'), findsWidgets);
+      expect(repository.updateProfileCount, 1);
+
+      await tester.tap(find.text('Settings'));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('profile-sign-out')));
       await tester.pumpAndSettle();
       expect(find.text('Log in'), findsOneWidget);
@@ -218,6 +246,7 @@ class _FakeAuthRepository implements AuthRepository {
   final AuthFailure? signInFailure;
   int signInCount = 0;
   int registerCount = 0;
+  int updateProfileCount = 0;
   bool didSignOut = false;
 
   @override
@@ -243,6 +272,15 @@ class _FakeAuthRepository implements AuthRepository {
   }) async {
     registerCount++;
     return _session;
+  }
+
+  @override
+  Future<AuthSession> updateProfile({
+    required AuthSession session,
+    required String name,
+  }) async {
+    updateProfileCount++;
+    return session.copyWith(user: session.user.copyWith(name: name));
   }
 
   @override

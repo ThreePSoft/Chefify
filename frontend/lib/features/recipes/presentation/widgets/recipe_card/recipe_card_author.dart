@@ -49,9 +49,16 @@ class _RecipeAuthorChipState extends State<_RecipeAuthorChip> {
           child: InkWell(
             key: ValueKey('recipe-author-chip-${widget.recipe.id}'),
             onTap: () {
+              final auth = AuthScope.maybeOf(context);
+              final isOwnProfile =
+                  auth?.isAuthenticated == true &&
+                  createSlug(auth!.user!.name) ==
+                      createSlug(widget.recipe.author);
               Navigator.of(context).pushNamed(
-                AppRouter.authorProfilePath(widget.recipe.author),
-                arguments: widget.recipe.author,
+                isOwnProfile
+                    ? AppRouter.profile
+                    : AppRouter.authorProfilePath(widget.recipe.author),
+                arguments: isOwnProfile ? null : widget.recipe.author,
               );
             },
             borderRadius: BorderRadius.circular(999),

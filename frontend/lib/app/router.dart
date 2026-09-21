@@ -114,7 +114,7 @@ class AppRouter {
         );
       case profile:
         return MaterialPageRoute<void>(
-          builder: (_) => const ProfilePage(),
+          builder: (_) => ProfilePage(recipeRepository: recipeRepository),
           settings: settings,
         );
       default:

@@ -131,6 +131,38 @@ class AppStrings {
     es: 'Inicia sesión para abrir tu perfil',
   );
 
+  String get myRecipes =>
+      _value(en: 'My recipes', uk: 'Мої рецепти', es: 'Mis recetas');
+  String get favoriteRecipes => _value(
+    en: 'Favorite recipes',
+    uk: 'Улюблені рецепти',
+    es: 'Recetas favoritas',
+  );
+  String get settings =>
+      _value(en: 'Settings', uk: 'Налаштування', es: 'Configuración');
+  String get createRecipe =>
+      _value(en: 'Create recipe', uk: 'Створити рецепт', es: 'Crear receta');
+  String get editProfile =>
+      _value(en: 'Edit profile', uk: 'Редагувати профіль', es: 'Editar perfil');
+  String get saveChanges =>
+      _value(en: 'Save changes', uk: 'Зберегти зміни', es: 'Guardar cambios');
+  String get noOwnRecipes => _value(
+    en: 'You have not published any recipes yet.',
+    uk: 'Ви ще не опублікували жодного рецепта.',
+    es: 'Aún no has publicado ninguna receta.',
+  );
+  String get noFavoriteRecipes => _value(
+    en: 'Recipes you save will appear here.',
+    uk: 'Збережені рецепти з’являться тут.',
+    es: 'Las recetas que guardes aparecerán aquí.',
+  );
+  String get appearance =>
+      _value(en: 'Appearance', uk: 'Вигляд', es: 'Apariencia');
+  String get profileDarkTheme =>
+      _value(en: 'Dark theme', uk: 'Темна тема', es: 'Tema oscuro');
+  String get profileLanguage =>
+      _value(en: 'Language', uk: 'Мова', es: 'Idioma');
+
   String get categories =>
       _value(en: 'Categories', uk: 'Категорії', es: 'Categorías');
   String get categoriesEyebrow =>

@@ -1,20 +1,106 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/app/app_settings.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_button.dart';
+import 'package:frontend/core/widgets/app_card.dart';
+import 'package:frontend/features/auth/domain/auth_session.dart';
 import 'package:frontend/features/auth/presentation/auth_controller.dart';
 import 'package:frontend/features/home/presentation/widgets/app_header.dart';
+import 'package:frontend/features/recipes/data/recipe_repository.dart';
+import 'package:frontend/features/recipes/presentation/controllers/recipe_collection_controller.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_card.dart';
+import 'package:frontend/features/recipes/presentation/widgets/recipe_collection_states.dart';
+import 'package:frontend/shared/bookmarks/bookmark_store.dart';
+import 'package:frontend/shared/models/home_models.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+part '../profile/profile_create_button.dart';
+part '../profile/profile_header.dart';
+part '../profile/profile_recipe_grid.dart';
+part '../profile/profile_settings.dart';
+part '../profile/profile_tabs.dart';
+
+enum _ProfileTab { recipes, favorites, settings }
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({
+    super.key,
+    this.recipeRepository = const ApiRecipeRepository(),
+  });
+
+  final RecipeRepository recipeRepository;
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late final RecipeCollectionController _recipesController;
+  List<RecipeModel> _allRecipes = const [];
+  _ProfileTab _selectedTab = _ProfileTab.recipes;
+
+  @override
+  void initState() {
+    super.initState();
+    _recipesController = RecipeCollectionController(
+      repository: widget.recipeRepository,
+    )..addListener(_handleRecipesChanged);
+    unawaited(_recipesController.load());
+  }
+
+  @override
+  void didUpdateWidget(covariant ProfilePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.recipeRepository != widget.recipeRepository) {
+      _recipesController.replaceRepository(widget.recipeRepository);
+      unawaited(_recipesController.load());
+    }
+  }
+
+  @override
+  void dispose() {
+    _recipesController
+      ..removeListener(_handleRecipesChanged)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _handleRecipesChanged() {
+    if (!mounted) return;
+    setState(() {
+      _allRecipes = _recipesController.recipes;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final auth = AuthScope.of(context);
     final strings = AppStrings.of(context);
+    final user = auth.user;
+    final ownRecipes = user == null
+        ? const <RecipeModel>[]
+        : _allRecipes
+              .where(
+                (recipe) => createSlug(recipe.author) == createSlug(user.name),
+              )
+              .toList(growable: false);
+    final bookmarks = BookmarkScope.of(context);
+    final favoriteRecipes = _allRecipes
+        .where(bookmarks.isRecipeSaved)
+        .toList(growable: false);
+
     return Scaffold(
+      floatingActionButton: user != null && _selectedTab == _ProfileTab.recipes
+          ? _ProfileCreateButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(AppRouter.recipeCreate),
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -23,16 +109,45 @@ class ProfilePage extends StatelessWidget {
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
                   AppSpacing.horizontalPadding(context),
-                  AppSpacing.xl,
+                  AppSpacing.lg,
                   AppSpacing.horizontalPadding(context),
                   AppSpacing.sectionGap,
                 ),
                 child: Center(
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: auth.user == null
+                    constraints: const BoxConstraints(
+                      maxWidth: AppSpacing.contentMaxWidth,
+                    ),
+                    child: user == null
                         ? _GuestProfile(strings: strings)
-                        : _SignedInProfile(strings: strings),
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _ProfileHeader(
+                                user: user,
+                                recipeCount: ownRecipes.length,
+                                favoriteCount: favoriteRecipes.length,
+                                onEdit: () =>
+                                    _showEditProfileDialog(context, auth),
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                              _ProfileTabs(
+                                selected: _selectedTab,
+                                onSelected: (tab) {
+                                  setState(() {
+                                    _selectedTab = tab;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: AppSpacing.lg),
+                              _buildSelectedContent(
+                                context,
+                                auth: auth,
+                                ownRecipes: ownRecipes,
+                                favoriteRecipes: favoriteRecipes,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ),
@@ -41,6 +156,66 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildSelectedContent(
+    BuildContext context, {
+    required AuthController auth,
+    required List<RecipeModel> ownRecipes,
+    required List<RecipeModel> favoriteRecipes,
+  }) {
+    if (_selectedTab == _ProfileTab.settings) {
+      return _ProfileSettings(
+        user: auth.user!,
+        onEditProfile: () => _showEditProfileDialog(context, auth),
+        onSignOut: () => _signOut(context, auth),
+      );
+    }
+
+    final recipes = _selectedTab == _ProfileTab.recipes
+        ? ownRecipes
+        : favoriteRecipes;
+    if (_recipesController.isLoading && _allRecipes.isEmpty) {
+      return const RecipeCollectionLoading();
+    }
+    if (_recipesController.hasError && _allRecipes.isEmpty) {
+      return RecipeCollectionError(
+        error: _recipesController.error,
+        onRetry: () => unawaited(_recipesController.load()),
+      );
+    }
+    return _ProfileRecipeGrid(
+      recipes: recipes,
+      emptyMessage: _selectedTab == _ProfileTab.recipes
+          ? AppStrings.of(context).noOwnRecipes
+          : AppStrings.of(context).noFavoriteRecipes,
+    );
+  }
+
+  Future<void> _showEditProfileDialog(
+    BuildContext context,
+    AuthController auth,
+  ) async {
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) => _EditProfileDialog(user: auth.user!),
+    );
+    if (name == null || !mounted) return;
+    final updated = await auth.updateProfile(name: name);
+    if (!updated && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppStrings.of(context).authServerError)),
+      );
+    }
+  }
+
+  Future<void> _signOut(BuildContext context, AuthController auth) async {
+    await auth.signOut();
+    if (context.mounted) {
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRouter.home, (route) => false);
+    }
   }
 }
 
@@ -51,7 +226,8 @@ class _GuestProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ProfileCard(
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         children: [
           const Icon(Icons.lock_person_rounded, size: 56),
@@ -84,157 +260,6 @@ class _GuestProfile extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _SignedInProfile extends StatelessWidget {
-  const _SignedInProfile({required this.strings});
-
-  final AppStrings strings;
-
-  @override
-  Widget build(BuildContext context) {
-    final auth = AuthScope.of(context);
-    final user = auth.user!;
-    final palette = context.palette;
-    return _ProfileCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 36,
-                backgroundColor: palette.primaryButtons,
-                foregroundColor: Colors.white,
-                child: Text(
-                  user.initials,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.lg),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      key: const ValueKey('profile-user-name'),
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text(
-                      user.email,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: palette.secondaryText,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          Text(
-            strings.accountDetails,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _ProfileDetail(
-            icon: Icons.mail_outline_rounded,
-            label: strings.emailLabel,
-            value: user.email,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _ProfileDetail(
-            icon: Icons.badge_outlined,
-            label: strings.memberRole,
-            value: user.role,
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          Align(
-            alignment: Alignment.centerRight,
-            child: AppButton(
-              key: const ValueKey('profile-sign-out'),
-              label: strings.signOut,
-              icon: Icons.logout_rounded,
-              variant: AppButtonVariant.outlined,
-              onPressed: () async {
-                await auth.signOut();
-                if (context.mounted) {
-                  Navigator.of(
-                    context,
-                  ).pushNamedAndRemoveUntil(AppRouter.home, (route) => false);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        color: palette.cardsSurface,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        border: Border.all(color: palette.borders),
-      ),
-      child: child,
-    );
-  }
-}
-
-class _ProfileDetail extends StatelessWidget {
-  const _ProfileDetail({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    return Row(
-      children: [
-        Icon(icon, color: palette.icons),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelMedium?.copyWith(color: palette.secondaryText),
-              ),
-              Text(value, style: Theme.of(context).textTheme.bodyLarge),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
