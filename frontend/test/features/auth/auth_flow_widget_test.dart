@@ -46,6 +46,49 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('clears an API error when switching auth forms', (tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final bookmarks = BookmarkStore.memory();
+    addTearDown(bookmarks.dispose);
+
+    await tester.pumpWidget(
+      ChefifyApp(
+        authRepository: _FakeAuthRepository(
+          signInFailure: const AuthFailure(AuthFailureKind.network),
+        ),
+        bookmarkStore: bookmarks,
+        recipeRepository: const MockRecipeRepository(),
+        settingsStorage: MemoryAppSettingsStorage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-email-field')),
+      'cook@example.com',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-password-field')),
+      'password',
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-login-submit')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('auth-error')), findsOneWidget);
+    expect(find.textContaining('Chefify API'), findsOneWidget);
+
+    await tester.tap(find.text('Create account'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('auth-error')), findsNothing);
+    expect(find.byKey(const ValueKey('auth-name-field')), findsOneWidget);
+  });
+
   testWidgets(
     'login opens the authenticated profile and sign out returns home',
     (tester) async {
@@ -170,6 +213,9 @@ const _session = AuthSession(
 );
 
 class _FakeAuthRepository implements AuthRepository {
+  _FakeAuthRepository({this.signInFailure});
+
+  final AuthFailure? signInFailure;
   int signInCount = 0;
   int registerCount = 0;
   bool didSignOut = false;
@@ -183,6 +229,9 @@ class _FakeAuthRepository implements AuthRepository {
     required String password,
   }) async {
     signInCount++;
+    if (signInFailure case final failure?) {
+      throw failure;
+    }
     return _session;
   }
 

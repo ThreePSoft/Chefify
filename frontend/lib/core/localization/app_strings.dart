@@ -110,9 +110,9 @@ class AppStrings {
     es: 'Ya existe una cuenta con este correo.',
   );
   String get authNetworkError => _value(
-    en: 'Chefify could not reach the server. Check your connection and try again.',
-    uk: 'Chefify не вдалося з’єднатися із сервером. Перевірте мережу та спробуйте ще раз.',
-    es: 'Chefify no pudo conectar con el servidor. Comprueba tu conexión.',
+    en: 'Could not reach the Chefify API. Make sure the backend is running and try again.',
+    uk: 'Не вдалося підключитися до API Chefify. Переконайтеся, що backend запущений, і спробуйте ще раз.',
+    es: 'No se pudo conectar con la API de Chefify. Comprueba que el backend esté activo.',
   );
   String get authServerError => _value(
     en: 'Authentication is temporarily unavailable. Please try again.',

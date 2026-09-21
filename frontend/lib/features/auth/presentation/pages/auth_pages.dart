@@ -428,7 +428,10 @@ class _AuthSwitch extends StatelessWidget {
       children: [
         Text(prompt),
         TextButton(
-          onPressed: () => Navigator.of(context).pushReplacementNamed(route),
+          onPressed: () {
+            AuthScope.of(context).clearFailure();
+            Navigator.of(context).pushReplacementNamed(route);
+          },
           child: Text(action),
         ),
       ],
@@ -443,13 +446,33 @@ class _AuthError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Semantics(
       liveRegion: true,
-      child: Text(
-        message,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-          color: Theme.of(context).colorScheme.error,
-          fontWeight: FontWeight.w600,
+      child: Container(
+        key: const ValueKey('auth-error'),
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          color: colorScheme.errorContainer.withValues(alpha: 0.34),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+          border: Border.all(color: colorScheme.error.withValues(alpha: 0.48)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.cloud_off_rounded, size: 20, color: colorScheme.error),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onErrorContainer,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
