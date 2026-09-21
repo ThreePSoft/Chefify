@@ -16,11 +16,13 @@ class HeroSection extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.featuredRecipe,
+    this.showSocialProof = false,
   });
 
   final String title;
   final String subtitle;
-  final RecipeModel featuredRecipe;
+  final RecipeModel? featuredRecipe;
+  final bool showSocialProof;
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +58,14 @@ class HeroSection extends StatelessWidget {
                         subtitle: subtitle,
                         recipe: featuredRecipe,
                         width: constraints.maxWidth,
+                        showSocialProof: showSocialProof,
                       )
                     : _DesktopHeroLayout(
                         title: title,
                         subtitle: subtitle,
                         recipe: featuredRecipe,
                         width: constraints.maxWidth,
+                        showSocialProof: showSocialProof,
                       ),
               );
             },
@@ -78,12 +82,14 @@ class _DesktopHeroLayout extends StatelessWidget {
     required this.subtitle,
     required this.recipe,
     required this.width,
+    required this.showSocialProof,
   });
 
   final String title;
   final String subtitle;
-  final RecipeModel recipe;
+  final RecipeModel? recipe;
   final double width;
+  final bool showSocialProof;
 
   @override
   Widget build(BuildContext context) {
@@ -124,17 +130,23 @@ class _DesktopHeroLayout extends StatelessWidget {
                       title: title,
                       subtitle: subtitle,
                       onDarkBackground: isDarkTheme,
+                      showTrustBadge: showSocialProof,
                     ),
                   ),
                 ),
-                const SizedBox(width: AppSpacing.xxl),
-                Expanded(
-                  flex: 4,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: _TiltedRecipeCard(recipe: recipe),
+                if (recipe != null) ...[
+                  const SizedBox(width: AppSpacing.xxl),
+                  Expanded(
+                    flex: 4,
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: _TiltedRecipeCard(
+                        recipe: recipe!,
+                        useSyntheticLikes: showSocialProof,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
@@ -150,12 +162,14 @@ class _MobileHeroLayout extends StatelessWidget {
     required this.subtitle,
     required this.recipe,
     required this.width,
+    required this.showSocialProof,
   });
 
   final String title;
   final String subtitle;
-  final RecipeModel recipe;
+  final RecipeModel? recipe;
   final double width;
+  final bool showSocialProof;
 
   @override
   Widget build(BuildContext context) {
@@ -187,6 +201,7 @@ class _MobileHeroLayout extends StatelessWidget {
             subtitle: subtitle,
             compact: true,
             onDarkBackground: isDarkTheme,
+            showTrustBadge: showSocialProof,
           ),
         ),
         SizedBox(
@@ -212,17 +227,19 @@ class _MobileHeroLayout extends StatelessWidget {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
-                  child: _TiltedRecipeCard(
-                    recipe: recipe,
-                    compact: true,
-                    maxWidth: cardMaxWidth,
+              if (recipe != null)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 18),
+                    child: _TiltedRecipeCard(
+                      recipe: recipe!,
+                      compact: true,
+                      maxWidth: cardMaxWidth,
+                      useSyntheticLikes: showSocialProof,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -238,12 +255,14 @@ class HeroTextBlock extends StatelessWidget {
     required this.subtitle,
     this.compact = false,
     this.onDarkBackground = false,
+    this.showTrustBadge = false,
   });
 
   final String title;
   final String subtitle;
   final bool compact;
   final bool onDarkBackground;
+  final bool showTrustBadge;
 
   @override
   Widget build(BuildContext context) {
@@ -257,32 +276,33 @@ class HeroTextBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.xs,
-          ),
-          decoration: BoxDecoration(
-            color: onDarkBackground
-                ? Colors.white.withValues(alpha: 0.12)
-                : palette.searchBarBackground,
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(
+        if (showTrustBadge)
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
               color: onDarkBackground
-                  ? Colors.white.withValues(alpha: 0.15)
-                  : palette.borders,
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : palette.searchBarBackground,
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: onDarkBackground
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : palette.borders,
+              ),
+            ),
+            child: Text(
+              strings.trustedBy,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: onDarkBackground
+                    ? const Color(0xFFE8C7A7)
+                    : palette.categoryTags,
+              ),
             ),
           ),
-          child: Text(
-            strings.trustedBy,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: onDarkBackground
-                  ? const Color(0xFFE8C7A7)
-                  : palette.categoryTags,
-            ),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
+        if (showTrustBadge) const SizedBox(height: AppSpacing.lg),
         Text(
           title,
           style: titleStyle?.copyWith(
@@ -389,12 +409,12 @@ class _HeroPhotoPlaceholder extends StatelessWidget {
     required this.isDarkTheme,
   });
 
-  final RecipeModel recipe;
+  final RecipeModel? recipe;
   final bool isDarkTheme;
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = recipe.imageUrl?.trim();
+    final imageUrl = recipe?.imageUrl?.trim();
     final hasImage = imageUrl != null && imageUrl.isNotEmpty;
 
     return Stack(
@@ -447,17 +467,29 @@ class _HeroPhotoPlaceholder extends StatelessWidget {
 class _HeroPhotoFallback extends StatelessWidget {
   const _HeroPhotoFallback({required this.recipe, required this.isDarkTheme});
 
-  final RecipeModel recipe;
+  final RecipeModel? recipe;
   final bool isDarkTheme;
 
   @override
   Widget build(BuildContext context) {
     final leadingColor = isDarkTheme
-        ? recipe.accentColor.withValues(alpha: 0.96)
-        : Color.lerp(recipe.accentColor, Colors.white, 0.28)!;
+        ? (recipe?.accentColor ?? const Color(0xFF5F7C67)).withValues(
+            alpha: 0.96,
+          )
+        : Color.lerp(
+            recipe?.accentColor ?? const Color(0xFF5F7C67),
+            Colors.white,
+            0.28,
+          )!;
     final middleColor = isDarkTheme
-        ? recipe.accentColor.withValues(alpha: 0.76)
-        : Color.lerp(recipe.accentColor, const Color(0xFFEDE4D7), 0.4)!;
+        ? (recipe?.accentColor ?? const Color(0xFF5F7C67)).withValues(
+            alpha: 0.76,
+          )
+        : Color.lerp(
+            recipe?.accentColor ?? const Color(0xFF5F7C67),
+            const Color(0xFFEDE4D7),
+            0.4,
+          )!;
     final trailingColor = isDarkTheme
         ? const Color(0xFF2B332A)
         : const Color(0xFF8EA79A);
@@ -529,17 +561,25 @@ class _TiltedRecipeCard extends StatelessWidget {
     required this.recipe,
     this.compact = false,
     this.maxWidth,
+    this.useSyntheticLikes = false,
   });
 
   final RecipeModel recipe;
   final bool compact;
   final double? maxWidth;
+  final bool useSyntheticLikes;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
     final strings = AppStrings.of(context);
-    final likes = _formatLikes((recipe.rating * 390).round() + 610);
+    final likes = _formatLikes(
+      recipe.likesCount > 0
+          ? recipe.likesCount
+          : useSyntheticLikes
+          ? (recipe.rating * 390).round() + 610
+          : 0,
+    );
     final baseWidth = compact ? 268.0 : 292.0;
     final cardWidth = maxWidth == null || maxWidth! > baseWidth
         ? baseWidth

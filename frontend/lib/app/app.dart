@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend/app/app_settings.dart';
+import 'package:frontend/app/app_config.dart';
 import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
 import 'package:frontend/core/seo/seo_navigator_observer.dart';
 import 'package:frontend/features/auth/data/api_auth_repository.dart';
+import 'package:frontend/features/auth/data/mock_auth_repository.dart';
 import 'package:frontend/features/auth/domain/auth_repository.dart';
 import 'package:frontend/features/auth/presentation/auth_controller.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
@@ -13,14 +15,16 @@ import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 class ChefifyApp extends StatefulWidget {
   const ChefifyApp({
     super.key,
+    this.config = const AppConfig(),
     this.bookmarkStore,
-    this.recipeRepository = const ApiRecipeRepository(),
+    this.recipeRepository,
     this.authRepository,
     this.settingsStorage,
   });
 
+  final AppConfig config;
   final BookmarkStore? bookmarkStore;
-  final RecipeRepository recipeRepository;
+  final RecipeRepository? recipeRepository;
   final AuthRepository? authRepository;
   final AppSettingsStorage? settingsStorage;
 
@@ -34,6 +38,7 @@ class _ChefifyAppState extends State<ChefifyApp> {
   late final bool _ownsBookmarkStore;
   late final SeoNavigatorObserver _seoNavigatorObserver;
   late final AuthController _authController;
+  late final RecipeRepository _recipeRepository;
 
   @override
   void initState() {
@@ -42,8 +47,17 @@ class _ChefifyAppState extends State<ChefifyApp> {
       storage: widget.settingsStorage,
     );
     _settingsController.load();
+    _recipeRepository =
+        widget.recipeRepository ??
+        (widget.config.usesMockData
+            ? const MockRecipeRepository()
+            : const ApiRecipeRepository());
     _authController = AuthController(
-      repository: widget.authRepository ?? ApiAuthRepository(),
+      repository:
+          widget.authRepository ??
+          (widget.config.usesMockData
+              ? MockAuthRepository()
+              : ApiAuthRepository()),
     );
     _authController.restore();
     _seoNavigatorObserver = SeoNavigatorObserver();
@@ -91,7 +105,8 @@ class _ChefifyAppState extends State<ChefifyApp> {
                 navigatorObservers: [_seoNavigatorObserver],
                 onGenerateRoute: (settings) => AppRouter.onGenerateRoute(
                   settings,
-                  recipeRepository: widget.recipeRepository,
+                  recipeRepository: _recipeRepository,
+                  usesMockData: widget.config.usesMockData,
                 ),
               );
             },

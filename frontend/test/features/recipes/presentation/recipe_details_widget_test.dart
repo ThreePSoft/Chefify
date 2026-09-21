@@ -122,6 +122,7 @@ void main() {
           recipeId: 'citrus-herb-chicken-quinoa',
           initialRecipe: featuredRecipe,
           recipeRepository: MockRecipeRepository(),
+          usesMockData: true,
         ),
       ),
     );

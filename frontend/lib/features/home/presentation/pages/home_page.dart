@@ -27,9 +27,11 @@ class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     this.recipeRepository = const ApiRecipeRepository(),
+    this.usesMockData = false,
   });
 
   final RecipeRepository recipeRepository;
+  final bool usesMockData;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -89,11 +91,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final content = HomeMockData.content;
+    final mockContent = widget.usesMockData ? HomeMockData.content : null;
     final palette = context.palette;
     final strings = AppStrings.of(context);
     final heroRecipe = _trendingRecipes.isEmpty
-        ? content.featuredRecipe
+        ? mockContent?.featuredRecipe
         : _trendingRecipes.first;
 
     return Scaffold(
@@ -121,6 +123,7 @@ class _HomePageState extends State<HomePage> {
                         title: strings.heroTitle,
                         subtitle: strings.heroSubtitle,
                         featuredRecipe: heroRecipe,
+                        showSocialProof: widget.usesMockData,
                       ),
                       if (_recipesController.isLoading &&
                           _trendingRecipes.isEmpty)
@@ -141,10 +144,16 @@ class _HomePageState extends State<HomePage> {
                         CategorySection(categories: _popularCategories),
                         TrendingRecipesSection(recipes: _trendingRecipes),
                       ],
-                      BenefitsSection(benefits: content.benefits),
-                      FeaturedRecipeSection(recipe: content.featuredRecipe),
-                      StatsBanner(stats: content.stats),
-                      TestimonialsSection(testimonials: content.testimonials),
+                      if (mockContent != null) ...[
+                        BenefitsSection(benefits: mockContent.benefits),
+                        FeaturedRecipeSection(
+                          recipe: mockContent.featuredRecipe,
+                        ),
+                        StatsBanner(stats: mockContent.stats),
+                        TestimonialsSection(
+                          testimonials: mockContent.testimonials,
+                        ),
+                      ],
                       const MobileAppPromoSection(),
                       const NewsletterSection(),
                       const AppFooter(),

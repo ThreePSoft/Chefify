@@ -60,11 +60,13 @@ class RecipeDetailsPage extends StatefulWidget {
     required this.recipeId,
     this.initialRecipe,
     this.recipeRepository = const ApiRecipeRepository(),
+    this.usesMockData = false,
   });
 
   final String recipeId;
   final RecipeModel? initialRecipe;
   final RecipeRepository recipeRepository;
+  final bool usesMockData;
 
   @override
   State<RecipeDetailsPage> createState() => _RecipeDetailsPageState();
@@ -81,6 +83,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       repository: widget.recipeRepository,
       recipeId: widget.recipeId,
       initialRecipe: widget.initialRecipe,
+      usesMockData: widget.usesMockData,
     )..addListener(_handleControllerChanged);
     _updateSeo();
     if (widget.initialRecipe == null) {
@@ -202,6 +205,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                                 comment: comment,
                               );
                             },
+                            showDemoReviews: widget.usesMockData,
                           ),
                   ),
                 ),

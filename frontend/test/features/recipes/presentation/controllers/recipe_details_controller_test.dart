@@ -57,6 +57,7 @@ void main() {
       repository: _RecipeRepository(recipes: const [_recipe]),
       recipeId: _recipe.id,
       initialRecipe: _recipe,
+      usesMockData: true,
     );
 
     controller.addReview(rating: 5, comment: 'Excellent.');
@@ -64,6 +65,29 @@ void main() {
     expect(controller.reviews.first.author, 'You');
     expect(controller.reviews.first.rating, 5);
     expect(controller.reviews.first.comment, 'Excellent.');
+  });
+
+  test('does not invent reviews or likes in API mode', () {
+    const recipeWithoutMetrics = RecipeModel(
+      id: 'new-recipe',
+      title: 'New Recipe',
+      categoryId: 'soups',
+      categoryName: 'Soups',
+      author: 'Ana Cook',
+      minutes: 15,
+      rating: 4.8,
+      accentColor: Color(0xFFAA0000),
+    );
+    final controller = RecipeDetailsController(
+      repository: _RecipeRepository(recipes: const [recipeWithoutMetrics]),
+      recipeId: recipeWithoutMetrics.id,
+      initialRecipe: recipeWithoutMetrics,
+    );
+
+    controller.addReview(rating: 5, comment: 'Local-only review.');
+
+    expect(controller.likesCount, 0);
+    expect(controller.reviews, isEmpty);
   });
 }
 

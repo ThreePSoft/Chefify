@@ -6,7 +6,10 @@ import 'package:frontend/shared/models/home_models.dart';
 class RecipeFormOptions {
   RecipeFormOptions._();
 
-  static List<String> get availableTags {
+  static List<String> availableTags({required bool usesMockData}) {
+    if (!usesMockData) {
+      return const [];
+    }
     final tags = <String>{};
     for (final recipe in RecipeCatalog.items) {
       tags.addAll(recipe.tags);

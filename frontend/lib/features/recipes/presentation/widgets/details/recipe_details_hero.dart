@@ -6,12 +6,14 @@ class _RecipeDetailsContent extends StatelessWidget {
     required this.likesCount,
     required this.reviews,
     required this.onReviewSubmitted,
+    required this.showDemoReviews,
   });
 
   final RecipeModel recipe;
   final int likesCount;
   final List<RecipeReview> reviews;
   final void Function(int rating, String comment) onReviewSubmitted;
+  final bool showDemoReviews;
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +24,14 @@ class _RecipeDetailsContent extends StatelessWidget {
         _RecipeHeroPanel(recipe: recipe, likesCount: likesCount),
         const SizedBox(height: AppSpacing.lg),
         _RecipeOverviewPanel(recipe: recipe),
-        const SizedBox(height: AppSpacing.lg),
-        _RecipeReviewsSection(
-          recipe: recipe,
-          reviews: reviews,
-          onReviewSubmitted: onReviewSubmitted,
-        ),
+        if (showDemoReviews) ...[
+          const SizedBox(height: AppSpacing.lg),
+          _RecipeReviewsSection(
+            recipe: recipe,
+            reviews: reviews,
+            onReviewSubmitted: onReviewSubmitted,
+          ),
+        ],
       ],
     );
   }

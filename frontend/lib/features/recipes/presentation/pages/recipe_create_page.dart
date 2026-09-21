@@ -111,7 +111,9 @@ class _RecipeDurationValue {
 }
 
 class RecipeCreatePage extends StatefulWidget {
-  const RecipeCreatePage({super.key});
+  const RecipeCreatePage({super.key, this.usesMockData = false});
+
+  final bool usesMockData;
 
   @override
   State<RecipeCreatePage> createState() => _RecipeCreatePageState();
@@ -348,21 +350,24 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     }
 
     final query = RecipeFormOptions.slug(_tagController.text);
-    final suggestions = RecipeFormOptions.availableTags
-        .where((tag) {
-          if (_tags.contains(tag)) {
-            return false;
-          }
+    final suggestions =
+        RecipeFormOptions.availableTags(usesMockData: widget.usesMockData)
+            .where((tag) {
+              if (_tags.contains(tag)) {
+                return false;
+              }
 
-          if (query.isEmpty) {
-            return true;
-          }
+              if (query.isEmpty) {
+                return true;
+              }
 
-          final label = RecipeFormOptions.readableTagLabel(tag).toLowerCase();
-          return tag.contains(query) ||
-              label.contains(query.replaceAll('-', ' '));
-        })
-        .take(6);
+              final label = RecipeFormOptions.readableTagLabel(
+                tag,
+              ).toLowerCase();
+              return tag.contains(query) ||
+                  label.contains(query.replaceAll('-', ' '));
+            })
+            .take(6);
 
     return suggestions.toList(growable: false);
   }

@@ -32,6 +32,7 @@ class AppRouter {
   static Route<dynamic> onGenerateRoute(
     RouteSettings settings, {
     RecipeRepository recipeRepository = const ApiRecipeRepository(),
+    bool usesMockData = false,
   }) {
     final routeName = settings.name ?? home;
     final recipeId = routeName == recipeCreate
@@ -49,6 +50,7 @@ class AppRouter {
           recipeRepository: recipeRepository,
           recipeId: arguments.recipeId,
           initialRecipe: arguments.initialRecipe,
+          usesMockData: usesMockData,
         ),
         settings: settings,
       );
@@ -72,7 +74,10 @@ class AppRouter {
     switch (routeName) {
       case home:
         return MaterialPageRoute<void>(
-          builder: (_) => HomePage(recipeRepository: recipeRepository),
+          builder: (_) => HomePage(
+            recipeRepository: recipeRepository,
+            usesMockData: usesMockData,
+          ),
           settings: settings,
         );
       case recipes:
@@ -89,7 +94,7 @@ class AppRouter {
         );
       case recipeCreate:
         return MaterialPageRoute<void>(
-          builder: (_) => const RecipeCreatePage(),
+          builder: (_) => RecipeCreatePage(usesMockData: usesMockData),
           settings: settings,
         );
       case categories:
@@ -114,7 +119,10 @@ class AppRouter {
         );
       default:
         return MaterialPageRoute<void>(
-          builder: (_) => HomePage(recipeRepository: recipeRepository),
+          builder: (_) => HomePage(
+            recipeRepository: recipeRepository,
+            usesMockData: usesMockData,
+          ),
           settings: settings,
         );
     }

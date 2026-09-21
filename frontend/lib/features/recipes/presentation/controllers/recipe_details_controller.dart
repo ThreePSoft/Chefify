@@ -29,12 +29,15 @@ final class RecipeDetailsController extends ChangeNotifier {
     required RecipeRepository repository,
     required String recipeId,
     RecipeModel? initialRecipe,
+    this.usesMockData = false,
   }) : _repository = repository,
        _recipeId = recipeId,
        _recipe = initialRecipe,
        _status = initialRecipe == null
            ? RecipeDetailsStatus.initial
            : RecipeDetailsStatus.ready;
+
+  final bool usesMockData;
 
   RecipeRepository _repository;
   String _recipeId;
@@ -59,7 +62,8 @@ final class RecipeDetailsController extends ChangeNotifier {
     if (currentRecipe == null) {
       return 0;
     }
-    return _baseLikesCount(currentRecipe) + (_isLiked ? 1 : 0);
+    return _baseLikesCount(currentRecipe, usesMockData: usesMockData) +
+        (_isLiked ? 1 : 0);
   }
 
   List<RecipeReview> get reviews {
@@ -71,7 +75,7 @@ final class RecipeDetailsController extends ChangeNotifier {
     return List.unmodifiable(
       _reviewsByRecipeId.putIfAbsent(
         currentRecipe.id,
-        () => _seedReviewsFor(currentRecipe),
+        () => usesMockData ? _seedReviewsFor(currentRecipe) : const [],
       ),
     );
   }
@@ -155,6 +159,9 @@ final class RecipeDetailsController extends ChangeNotifier {
   }
 
   void addReview({required int rating, required String comment}) {
+    if (!usesMockData) {
+      return;
+    }
     final currentRecipe = _recipe;
     if (currentRecipe == null) {
       return;
@@ -198,9 +205,13 @@ final class RecipeDetailsController extends ChangeNotifier {
   }
 }
 
-int _baseLikesCount(RecipeModel recipe) {
+int _baseLikesCount(RecipeModel recipe, {required bool usesMockData}) {
   if (recipe.likesCount > 0) {
     return recipe.likesCount;
+  }
+
+  if (!usesMockData) {
+    return 0;
   }
 
   final popularityBoost = recipe.popularityScore > 0
