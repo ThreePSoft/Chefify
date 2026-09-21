@@ -67,6 +67,16 @@ cd frontend
 
 Port `8089` is already allowed by the current local API CORS configuration. `CHEFIFY_API_BASE_URL` is a compile-time value; restart or rebuild the application after changing it.
 
+### Backend-free test mode
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=mock
+Pop-Location
+```
+
+The normal launch uses `api` and never replaces server failures with demo records. `mock` must be selected explicitly; it restores the complete local demo catalog and standalone test authentication.
+
 ## Common frontend commands
 
 Run these from `frontend/` through the wrapper or resolved Flutter executable:

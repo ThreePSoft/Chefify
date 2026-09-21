@@ -43,8 +43,10 @@ RUN flutter --disable-analytics \
 COPY --chown=flutter:flutter . .
 
 ARG CHEFIFY_API_BASE_URL=/api
+ARG CHEFIFY_DATA_MODE=api
 RUN flutter build web --release --no-pub \
-  --dart-define=CHEFIFY_API_BASE_URL=${CHEFIFY_API_BASE_URL}
+  --dart-define=CHEFIFY_API_BASE_URL=${CHEFIFY_API_BASE_URL} \
+  --dart-define=CHEFIFY_DATA_MODE=${CHEFIFY_DATA_MODE}
 
 FROM nginx:1.27-alpine AS runtime
 

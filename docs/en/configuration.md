@@ -38,6 +38,7 @@ Docker Compose automatically reads only the root `.env`. Flutter receives its AP
 | `FRONTEND_HTTP_PORT` | `8088` | Production-like frontend host port |
 | `FRONTEND_PREVIEW_PORT` | `8089` | Local-build preview host port |
 | `CHEFIFY_API_BASE_URL` | `/api` | Compile-time Flutter web API URL |
+| `CHEFIFY_DATA_MODE` | `api` | Frontend data source: `api` or `mock` |
 
 ## Frontend API URL
 
@@ -48,6 +49,19 @@ flutter run -d chrome --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/a
 ```
 
 The Docker web build uses `/api`, which nginx proxies to `http://api:8080`. Do not use `localhost` in a container-oriented web build: the browser would interpret it as the user's machine, not the Compose service.
+
+## Frontend data mode
+
+`CHEFIFY_DATA_MODE=api` is the default: recipes, authentication, likes, and other server-owned data come only from the API. An API failure is displayed as an error; mock records, generated reviews and counters, and demo-catalog suggestions are never substituted.
+
+Explicitly enable `mock` to test the interface without a backend:
+
+```powershell
+cd frontend
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=mock
+```
+
+This mode enables the complete demo catalog, homepage demo sections, local demo reviews, and standalone authentication. Any valid email and password accepted by the form can be used to sign in. The value is compile-time configuration, so fully restart the app after changing modes.
 
 ## CORS
 

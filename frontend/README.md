@@ -17,3 +17,13 @@ Push-Location frontend
 ..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
 Pop-Location
 ```
+
+Backend-free mock mode for UI and QA work:
+
+```powershell
+Push-Location frontend
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=mock
+Pop-Location
+```
+
+The default mode is `api`; it never silently substitutes demo data when the backend is unavailable.

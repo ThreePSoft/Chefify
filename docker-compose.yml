@@ -53,6 +53,7 @@ services:
       dockerfile: Dockerfile.web
       args:
         CHEFIFY_API_BASE_URL: ${CHEFIFY_API_BASE_URL:-/api}
+        CHEFIFY_DATA_MODE: ${CHEFIFY_DATA_MODE:-api}
     image: chefify/frontend-web:local
     ports:
       - "${FRONTEND_HTTP_PORT:-8088}:80"
