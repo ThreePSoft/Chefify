@@ -6,7 +6,6 @@ import 'package:frontend/app/router.dart';
 import 'package:frontend/app/theme.dart';
 import 'package:frontend/core/seo/seo_navigator_observer.dart';
 import 'package:frontend/features/auth/data/api_auth_repository.dart';
-import 'package:frontend/features/auth/data/mock_auth_repository.dart';
 import 'package:frontend/features/auth/domain/auth_repository.dart';
 import 'package:frontend/features/auth/presentation/auth_controller.dart';
 import 'package:frontend/features/recipes/data/recipe_repository.dart';
@@ -49,15 +48,11 @@ class _ChefifyAppState extends State<ChefifyApp> {
     _settingsController.load();
     _recipeRepository =
         widget.recipeRepository ??
-        (widget.config.usesMockData
-            ? const MockRecipeRepository()
+        (widget.config.includesMockData
+            ? TestRecipeRepository()
             : const ApiRecipeRepository());
     _authController = AuthController(
-      repository:
-          widget.authRepository ??
-          (widget.config.usesMockData
-              ? MockAuthRepository()
-              : ApiAuthRepository()),
+      repository: widget.authRepository ?? ApiAuthRepository(),
     );
     _authController.restore();
     _seoNavigatorObserver = SeoNavigatorObserver();
@@ -106,7 +101,7 @@ class _ChefifyAppState extends State<ChefifyApp> {
                 onGenerateRoute: (settings) => AppRouter.onGenerateRoute(
                   settings,
                   recipeRepository: _recipeRepository,
-                  usesMockData: widget.config.usesMockData,
+                  usesMockData: widget.config.includesMockData,
                 ),
               );
             },

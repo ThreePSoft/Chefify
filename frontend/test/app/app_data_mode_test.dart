@@ -8,10 +8,13 @@ import 'package:frontend/shared/models/home_models.dart';
 import '../support/widget_test_harness.dart';
 
 void main() {
-  test('uses API data unless mock mode is explicitly selected', () {
+  test('uses API data unless test mode is explicitly selected', () {
     expect(const AppConfig().dataMode, AppDataMode.api);
-    expect(const AppConfig().usesMockData, isFalse);
-    expect(const AppConfig(dataMode: AppDataMode.mock).usesMockData, isTrue);
+    expect(const AppConfig().includesMockData, isFalse);
+    expect(
+      const AppConfig(dataMode: AppDataMode.test).includesMockData,
+      isTrue,
+    );
   });
 
   testWidgets('API mode never renders homepage mock records', (tester) async {
@@ -36,7 +39,7 @@ void main() {
     );
   });
 
-  testWidgets('mock mode restores the complete demo homepage', (tester) async {
+  testWidgets('test mode adds the complete demo homepage', (tester) async {
     tester.view.physicalSize = const Size(1440, 1000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);

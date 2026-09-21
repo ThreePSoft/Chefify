@@ -67,7 +67,7 @@ void main() {
     expect(controller.reviews.first.comment, 'Excellent.');
   });
 
-  test('does not invent reviews or likes in API mode', () {
+  test('does not invent reviews or likes for API records in test mode', () {
     const recipeWithoutMetrics = RecipeModel(
       id: 'new-recipe',
       title: 'New Recipe',
@@ -82,6 +82,7 @@ void main() {
       repository: _RecipeRepository(recipes: const [recipeWithoutMetrics]),
       recipeId: recipeWithoutMetrics.id,
       initialRecipe: recipeWithoutMetrics,
+      usesMockData: true,
     );
 
     controller.addReview(rating: 5, comment: 'Local-only review.');
@@ -92,6 +93,7 @@ void main() {
 }
 
 const _recipe = RecipeModel(
+  isDemo: true,
   id: 'tomato-soup',
   title: 'Tomato Soup',
   categoryId: 'soups',

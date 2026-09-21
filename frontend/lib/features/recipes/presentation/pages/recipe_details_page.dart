@@ -205,7 +205,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                                 comment: comment,
                               );
                             },
-                            showDemoReviews: widget.usesMockData,
+                            showDemoReviews:
+                                widget.usesMockData && recipe.isDemo,
                           ),
                   ),
                 ),

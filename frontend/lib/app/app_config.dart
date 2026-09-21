@@ -1,4 +1,4 @@
-enum AppDataMode { api, mock }
+enum AppDataMode { api, test }
 
 class AppConfig {
   const AppConfig({this.dataMode = AppDataMode.api});
@@ -9,11 +9,13 @@ class AppConfig {
       defaultValue: 'api',
     );
     return const AppConfig(
-      dataMode: value == 'mock' ? AppDataMode.mock : AppDataMode.api,
+      dataMode: value == 'test' || value == 'mock'
+          ? AppDataMode.test
+          : AppDataMode.api,
     );
   }
 
   final AppDataMode dataMode;
 
-  bool get usesMockData => dataMode == AppDataMode.mock;
+  bool get includesMockData => dataMode == AppDataMode.test;
 }

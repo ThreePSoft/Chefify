@@ -21,7 +21,7 @@ void main() {
 
     await tester.pumpWidget(
       ChefifyApp(
-        config: const AppConfig(dataMode: AppDataMode.mock),
+        config: const AppConfig(dataMode: AppDataMode.test),
         bookmarkStore: bookmarks,
         settingsStorage: MemoryAppSettingsStorage(),
       ),

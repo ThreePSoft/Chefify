@@ -59,6 +59,7 @@ class RecipeModel {
     this.likesCount = 0,
     this.popularityScore = 0,
     this.isSaved = false,
+    this.isDemo = false,
   });
 
   factory RecipeModel.fromJson(Map<String, dynamic> json) {
@@ -130,6 +131,29 @@ class RecipeModel {
   final int likesCount;
   final int popularityScore;
   final bool isSaved;
+  final bool isDemo;
+
+  RecipeModel copyWith({bool? isDemo}) {
+    return RecipeModel(
+      id: id,
+      title: title,
+      categoryId: categoryId,
+      categoryName: categoryName,
+      author: author,
+      minutes: minutes,
+      rating: rating,
+      accentColor: accentColor,
+      difficulty: difficulty,
+      description: description,
+      imageUrl: imageUrl,
+      thumbnailUrl: thumbnailUrl,
+      tags: tags,
+      likesCount: likesCount,
+      popularityScore: popularityScore,
+      isSaved: isSaved,
+      isDemo: isDemo ?? this.isDemo,
+    );
+  }
 
   String get tag => categoryName;
 

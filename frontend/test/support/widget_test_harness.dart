@@ -22,6 +22,7 @@ import 'package:frontend/shared/bookmarks/bookmark_store.dart';
 import 'package:frontend/shared/models/home_models.dart';
 
 const featuredRecipe = RecipeModel(
+  isDemo: true,
   id: 'citrus-herb-chicken-quinoa',
   title: 'Citrus Herb Chicken with Warm Quinoa',
   categoryId: 'healthy',

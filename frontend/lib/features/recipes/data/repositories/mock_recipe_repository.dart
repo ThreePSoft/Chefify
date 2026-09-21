@@ -6,14 +6,18 @@ final class MockRecipeRepository implements RecipeRepository {
   const MockRecipeRepository();
 
   @override
-  Future<List<RecipeModel>> fetchRecipes() async => RecipeCatalog.items;
+  Future<List<RecipeModel>> fetchRecipes() async => RecipeCatalog.items
+      .map((recipe) => recipe.copyWith(isDemo: true))
+      .toList(growable: false);
 
   @override
   Future<List<RecipeModel>> fetchPopularRecipes({int take = 4}) async {
     if (take <= 0) {
       return const [];
     }
-    return RecipeCatalog.popular(take: take);
+    return RecipeCatalog.popular(
+      take: take,
+    ).map((recipe) => recipe.copyWith(isDemo: true)).toList(growable: false);
   }
 
   @override

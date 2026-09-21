@@ -13,6 +13,7 @@ class HomeMockData {
     categories: CategoryCatalog.items,
     trendingRecipes: [
       RecipeModel(
+        isDemo: true,
         id: 'roasted-tomato-pasta',
         title: 'Roasted Tomato Pasta',
         categoryId: 'italian',
@@ -26,6 +27,7 @@ class HomeMockData {
         tags: ['pasta', 'vegetarian', 'weeknight'],
       ),
       RecipeModel(
+        isDemo: true,
         id: 'miso-glazed-salmon',
         title: 'Miso Glazed Salmon',
         categoryId: 'japanese',
@@ -39,6 +41,7 @@ class HomeMockData {
         tags: ['seafood', 'high-protein', 'asian-fusion'],
       ),
       RecipeModel(
+        isDemo: true,
         id: 'spiced-chickpea-bowl',
         title: 'Spiced Chickpea Bowl',
         categoryId: 'healthy',
@@ -52,6 +55,7 @@ class HomeMockData {
         tags: ['salads', 'plant-based', 'vegan'],
       ),
       RecipeModel(
+        isDemo: true,
         id: 'lemon-ricotta-pancakes',
         title: 'Lemon Ricotta Pancakes',
         categoryId: 'breakfast',
@@ -85,6 +89,7 @@ class HomeMockData {
       ),
     ],
     featuredRecipe: RecipeModel(
+      isDemo: true,
       id: 'citrus-herb-chicken-quinoa',
       title: 'Citrus Herb Chicken with Warm Quinoa',
       categoryId: 'healthy',

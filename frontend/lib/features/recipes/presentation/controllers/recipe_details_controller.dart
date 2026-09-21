@@ -62,7 +62,10 @@ final class RecipeDetailsController extends ChangeNotifier {
     if (currentRecipe == null) {
       return 0;
     }
-    return _baseLikesCount(currentRecipe, usesMockData: usesMockData) +
+    return _baseLikesCount(
+          currentRecipe,
+          usesMockData: usesMockData && currentRecipe.isDemo,
+        ) +
         (_isLiked ? 1 : 0);
   }
 
@@ -75,7 +78,9 @@ final class RecipeDetailsController extends ChangeNotifier {
     return List.unmodifiable(
       _reviewsByRecipeId.putIfAbsent(
         currentRecipe.id,
-        () => usesMockData ? _seedReviewsFor(currentRecipe) : const [],
+        () => usesMockData && currentRecipe.isDemo
+            ? _seedReviewsFor(currentRecipe)
+            : const [],
       ),
     );
   }
@@ -159,7 +164,7 @@ final class RecipeDetailsController extends ChangeNotifier {
   }
 
   void addReview({required int rating, required String comment}) {
-    if (!usesMockData) {
+    if (!usesMockData || _recipe?.isDemo != true) {
       return;
     }
     final currentRecipe = _recipe;
