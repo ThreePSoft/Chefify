@@ -17,6 +17,7 @@ class _RecipeCreateHeroPanel extends StatefulWidget {
     required this.onEditDifficulty,
     required this.onEditCategory,
     required this.onSubmitTag,
+    required this.onSelectTagSuggestion,
     required this.onRemoveTag,
     required this.onAddTagPressed,
     required this.onCancelTagInput,
@@ -41,6 +42,7 @@ class _RecipeCreateHeroPanel extends StatefulWidget {
   final VoidCallback onEditDifficulty;
   final VoidCallback onEditCategory;
   final ValueChanged<String> onSubmitTag;
+  final ValueChanged<String> onSelectTagSuggestion;
   final ValueChanged<String> onRemoveTag;
   final VoidCallback onAddTagPressed;
   final VoidCallback onCancelTagInput;
@@ -119,6 +121,7 @@ class _RecipeCreateHeroPanelState extends State<_RecipeCreateHeroPanel> {
                         onEditDifficulty: widget.onEditDifficulty,
                         onEditCategory: widget.onEditCategory,
                         onSubmitTag: widget.onSubmitTag,
+                        onSelectTagSuggestion: widget.onSelectTagSuggestion,
                         onRemoveTag: widget.onRemoveTag,
                         onAddTagPressed: widget.onAddTagPressed,
                         onCancelTagInput: widget.onCancelTagInput,
@@ -171,6 +174,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
     required this.onEditDifficulty,
     required this.onEditCategory,
     required this.onSubmitTag,
+    required this.onSelectTagSuggestion,
     required this.onRemoveTag,
     required this.onAddTagPressed,
     required this.onCancelTagInput,
@@ -190,6 +194,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
   final VoidCallback onEditDifficulty;
   final VoidCallback onEditCategory;
   final ValueChanged<String> onSubmitTag;
+  final ValueChanged<String> onSelectTagSuggestion;
   final ValueChanged<String> onRemoveTag;
   final VoidCallback onAddTagPressed;
   final VoidCallback onCancelTagInput;
@@ -252,6 +257,7 @@ class _RecipeCreateHeroEditor extends StatelessWidget {
                   tagFocusNode: tagFocusNode,
                   tagSuggestions: tagSuggestions,
                   onSubmitTag: onSubmitTag,
+                  onSelectTagSuggestion: onSelectTagSuggestion,
                   onRemoveTag: onRemoveTag,
                   onAddTagPressed: onAddTagPressed,
                   onCancelTagInput: onCancelTagInput,

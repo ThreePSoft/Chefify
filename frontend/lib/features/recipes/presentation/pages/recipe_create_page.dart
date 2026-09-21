@@ -207,6 +207,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
                           onEditDifficulty: _editDifficulty,
                           onEditCategory: _editCategory,
                           onSubmitTag: _submitTag,
+                          onSelectTagSuggestion: _selectTagSuggestion,
                           onRemoveTag: _removeTag,
                           onAddTagPressed: _startAddingTag,
                           onCancelTagInput: _cancelTagInput,
@@ -247,7 +248,12 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
 
   void _handleTagFocusChange() {
     if (!_tagFocusNode.hasFocus && _isAddingTag) {
-      _submitTag(_tagController.text);
+      final pendingValue = _tagController.text;
+      scheduleMicrotask(() {
+        if (mounted && _isAddingTag) {
+          _submitTag(pendingValue);
+        }
+      });
     }
   }
 
@@ -274,6 +280,11 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
   }
 
   void _submitTag(String value) {
+    if (value.trim().isEmpty) {
+      _cancelTagInput();
+      return;
+    }
+
     final slug = RecipeFormOptions.slug(value);
     if (slug.isEmpty) {
       _cancelTagInput();
@@ -287,6 +298,10 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
       _isAddingTag = false;
     });
     _tagController.clear();
+  }
+
+  void _selectTagSuggestion(String value) {
+    _submitTag(value);
   }
 
   void _cancelTagInput() {
@@ -391,6 +406,7 @@ class _RecipeCreateContent extends StatelessWidget {
     required this.onEditDifficulty,
     required this.onEditCategory,
     required this.onSubmitTag,
+    required this.onSelectTagSuggestion,
     required this.onRemoveTag,
     required this.onAddTagPressed,
     required this.onCancelTagInput,
@@ -413,6 +429,7 @@ class _RecipeCreateContent extends StatelessWidget {
   final VoidCallback onEditDifficulty;
   final VoidCallback onEditCategory;
   final ValueChanged<String> onSubmitTag;
+  final ValueChanged<String> onSelectTagSuggestion;
   final ValueChanged<String> onRemoveTag;
   final VoidCallback onAddTagPressed;
   final VoidCallback onCancelTagInput;
@@ -439,6 +456,7 @@ class _RecipeCreateContent extends StatelessWidget {
           onEditDifficulty: onEditDifficulty,
           onEditCategory: onEditCategory,
           onSubmitTag: onSubmitTag,
+          onSelectTagSuggestion: onSelectTagSuggestion,
           onRemoveTag: onRemoveTag,
           onAddTagPressed: onAddTagPressed,
           onCancelTagInput: onCancelTagInput,

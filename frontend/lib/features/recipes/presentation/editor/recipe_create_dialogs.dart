@@ -247,9 +247,9 @@ class _RecipeDurationPickerDialogState
                       label: strings.days,
                       value: _value.days,
                       onIncrement: () =>
-                          _setDays(_nextCyclic(_value.days, 0, 30)),
+                          _setDays(_nextCyclic(_value.days, 0, 7)),
                       onDecrement: () =>
-                          _setDays(_previousCyclic(_value.days, 0, 30)),
+                          _setDays(_previousCyclic(_value.days, 0, 7)),
                     ),
                     _RecipeDurationStepper(
                       label: strings.hours,

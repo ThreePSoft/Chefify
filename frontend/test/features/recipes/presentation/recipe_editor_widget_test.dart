@@ -78,6 +78,84 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('limits cooking time to seven days', (tester) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const PageTestApp(child: RecipeCreatePage()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('recipe-duration-chip')));
+    await tester.pumpAndSettle();
+    for (var day = 0; day < 7; day++) {
+      await tester.tap(find.byTooltip('Increase Days'));
+    }
+    await tester.pump();
+    expect(find.text('07'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Increase Days'));
+    await tester.pump();
+    expect(find.text('00'), findsWidgets);
+    expect(find.text('08'), findsNothing);
+  });
+
+  testWidgets('creates only the selected non-empty tag with compact input', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      const PageTestApp(child: RecipeCreatePage(usesMockData: true)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('recipe-create-add-tag-chip')));
+    await tester.pump();
+    final input = find.byKey(const ValueKey('recipe-create-tag-input'));
+    await tester.enterText(input, 'veg');
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Vegan'), findsOneWidget);
+    await tester.tap(find.text('Vegan').last);
+    await tester.pumpAndSettle();
+
+    final veganChip = find.byKey(
+      const ValueKey('recipe-create-tag-chip-vegan'),
+    );
+    expect(veganChip, findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('recipe-create-tag-chip-veg')),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('recipe-create-add-tag-chip')));
+    await tester.pump();
+    expect(
+      tester
+          .getSize(find.byKey(const ValueKey('recipe-create-tag-input-shell')))
+          .height,
+      tester.getSize(veganChip).height,
+    );
+    expect(
+      tester.widget<TextField>(input).decoration?.hoverColor,
+      Colors.transparent,
+    );
+
+    await tester.enterText(input, '   ');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('recipe-create-tag-chip-item')),
+      findsNothing,
+    );
+    expect(find.text('Item'), findsNothing);
+  });
+
   testWidgets('adds recipe body blocks from create editor palette', (
     tester,
   ) async {

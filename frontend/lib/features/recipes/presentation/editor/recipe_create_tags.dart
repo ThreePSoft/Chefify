@@ -8,6 +8,7 @@ class _RecipeCreateTagRow extends StatefulWidget {
     required this.tagFocusNode,
     required this.tagSuggestions,
     required this.onSubmitTag,
+    required this.onSelectTagSuggestion,
     required this.onRemoveTag,
     required this.onAddTagPressed,
     required this.onCancelTagInput,
@@ -19,6 +20,7 @@ class _RecipeCreateTagRow extends StatefulWidget {
   final FocusNode tagFocusNode;
   final List<String> tagSuggestions;
   final ValueChanged<String> onSubmitTag;
+  final ValueChanged<String> onSelectTagSuggestion;
   final ValueChanged<String> onRemoveTag;
   final VoidCallback onAddTagPressed;
   final VoidCallback onCancelTagInput;
@@ -258,7 +260,7 @@ class _RecipeCreateTagRowState extends State<_RecipeCreateTagRow> {
             top: anchorRect.bottom + AppSpacing.xs,
             child: _RecipeCreateTagSuggestions(
               tags: widget.tagSuggestions,
-              onSelected: widget.onSubmitTag,
+              onSelected: widget.onSelectTagSuggestion,
             ),
           );
         },
@@ -329,6 +331,8 @@ class _RecipeCreateTagChip extends StatelessWidget {
     final palette = context.palette;
 
     return Container(
+      key: ValueKey('recipe-create-tag-chip-$tag'),
+      height: 40,
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
@@ -445,8 +449,10 @@ class _RecipeCreateTagInputChip extends StatelessWidget {
     final palette = context.palette;
 
     return Container(
+      key: const ValueKey('recipe-create-tag-input-shell'),
       alignment: Alignment.center,
       width: width,
+      height: 40,
       padding: const EdgeInsets.only(left: AppSpacing.md, right: AppSpacing.xs),
       decoration: BoxDecoration(
         color: palette.searchBarBackground.withValues(alpha: 0.92),
@@ -475,6 +481,8 @@ class _RecipeCreateTagInputChip extends StatelessWidget {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
+                hoverColor: Colors.transparent,
+                isDense: true,
                 contentPadding: EdgeInsets.zero,
               ),
               onSubmitted: onSubmitted,
