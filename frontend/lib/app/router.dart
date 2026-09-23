@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/features/auth/presentation/pages/auth_pages.dart';
 import 'package:frontend/features/auth/presentation/pages/profile_page.dart';
 import 'package:frontend/features/authors/presentation/pages/author_profile_page.dart';
@@ -24,8 +25,8 @@ class AppRouter {
     return '$recipes/${Uri.encodeComponent(recipeId)}';
   }
 
-  static String authorProfilePath(String authorId) {
-    return '$authors/${Uri.encodeComponent(authorId)}';
+  static String authorProfilePath(String authorKey) {
+    return '$authors/${Uri.encodeComponent(createSlug(authorKey))}';
   }
 
   static Route<dynamic> onGenerateRoute(
