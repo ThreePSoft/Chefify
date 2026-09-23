@@ -41,7 +41,6 @@ docker compose --profile frontend down --remove-orphans
 | Configuration | [Конфігурація](docs/uk/configuration.md) | [Configuration](docs/en/configuration.md) |
 | Architecture | [Архітектура](docs/uk/architecture.md) | [Architecture](docs/en/architecture.md) |
 | API | [API](docs/uk/api.md) | [API](docs/en/api.md) |
-| Frontend/backend contract | [Вимоги до backend](docs/uk/frontend-backend-contract.md) | [Backend requirements](docs/en/frontend-backend-contract.md) |
 | Testing and QA | [Тестування](docs/uk/testing.md) | [Testing](docs/en/testing.md) |
 | Troubleshooting | [Вирішення проблем](docs/uk/troubleshooting.md) | [Troubleshooting](docs/en/troubleshooting.md) |
 

@@ -12,7 +12,6 @@ This documentation is intended for developers, testers, and new project contribu
 - [Configuration](configuration.md) — environment variables, ports, secrets, API URL, CORS, and S3.
 - [Architecture](architecture.md) — repository layout, frontend layers, backend, and data flows.
 - [API](api.md) — endpoint groups, authorization, Swagger, and current limitations.
-- [Frontend → backend contract](frontend-backend-contract.md) — exact data and API changes required by the prepared profile and recipe screens.
 - [Testing and QA](testing.md) — automated checks, smoke checklist, and defect reporting.
 - [Troubleshooting](troubleshooting.md) — common Docker, Flutter, API, database, and network issues.
 
