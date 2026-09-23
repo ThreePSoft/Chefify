@@ -42,6 +42,7 @@ public class UserService(AppDbContext context)
     {
         var userDto = new UserDto
         {
+            Id = user.Id,
             Username = user.Username,
             ProfilePictureRef = user.ProfilePictureRef
         };
@@ -51,17 +52,31 @@ public class UserService(AppDbContext context)
 
     public async Task<User?> GetUserEntity(int id)
     {
-        return await context.Users.Include(u => u.Recipes).FirstOrDefaultAsync(u => u.Id == id);
+        return await context.Users
+            .Include(u => u.Recipes)
+                .ThenInclude(r => r.Creator)
+            .Include(u => u.Recipes)
+                .ThenInclude(r => r.Category)
+            .Include(u => u.Recipes)
+                .ThenInclude(r => r.Tags)
+            .Include(u => u.Recipes)
+                .ThenInclude(r => r.Rating)
+            .FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public IEnumerable<RecipePreviewDto> GetUserRecipes(User user)
     {
         var recipes = user.Recipes.Select(r => new RecipePreviewDto
             {
+                Id = r.Id,
                 Title = r.Title,
                 Description = r.Description,
                 CookingTime = r.CookingTime,
                 Difficulty = r.Difficulty,
+                Rating = r.Rating.Avg,
+                CategoryName = r.Category != null ? r.Category.Name : null,
+                Tags = r.Tags.Select(t => t.Name).ToList(),
+                CreatorId = r.CreatorId,
                 CreatorUsername = r.Creator.Username
             })
             .ToList();

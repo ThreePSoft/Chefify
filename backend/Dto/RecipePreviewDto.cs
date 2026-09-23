@@ -12,6 +12,6 @@ public class RecipePreviewDto
     public float Rating { get; set; }
     public string? CategoryName { get; set; } = "";
     public List<string> Tags { get; set; } = [];
-    
+    public int CreatorId { get; set; }
     public required string CreatorUsername { get; set; }
 }

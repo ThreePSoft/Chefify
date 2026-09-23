@@ -5,6 +5,7 @@ namespace backend.Dto;
 
 public class UserDto
 {
+    public int Id { get; set; }
     public required string Username { get; set; }
     //  TO DO
     //

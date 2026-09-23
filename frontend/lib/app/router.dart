@@ -25,8 +25,8 @@ class AppRouter {
     return '$recipes/${Uri.encodeComponent(recipeId)}';
   }
 
-  static String authorProfilePath(String authorName) {
-    return '$authors/${Uri.encodeComponent(createSlug(authorName))}';
+  static String authorProfilePath(String authorId) {
+    return '$authors/${Uri.encodeComponent(authorId)}';
   }
 
   static Route<dynamic> onGenerateRoute(
@@ -65,6 +65,7 @@ class AppRouter {
         builder: (_) => AuthorProfilePage(
           recipeRepository: recipeRepository,
           authorSlug: arguments.authorSlug,
+          authorId: arguments.authorId,
           authorName: arguments.authorName,
         ),
         settings: settings,

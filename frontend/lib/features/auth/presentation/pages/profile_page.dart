@@ -6,7 +6,6 @@ import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
-import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/auth/domain/auth_session.dart';
@@ -85,9 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final ownRecipes = user == null
         ? const <RecipeModel>[]
         : _allRecipes
-              .where(
-                (recipe) => createSlug(recipe.author) == createSlug(user.name),
-              )
+              .where((recipe) => recipe.authorId == user.id)
               .toList(growable: false);
     final bookmarks = BookmarkScope.of(context);
     final favoriteRecipes = _allRecipes

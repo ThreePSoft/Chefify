@@ -19,6 +19,7 @@ public class RecipeQueryService(AppDbContext context)
                 Difficulty = r.Difficulty,
                 CategoryName = r.Category != null ? r.Category.Name : null,
                 Tags = r.Tags.Select(t => t.Name).ToList(),
+                CreatorId = r.CreatorId,
                 CreatorUsername = r.Creator.Username
             })
             .ToListAsync(); 

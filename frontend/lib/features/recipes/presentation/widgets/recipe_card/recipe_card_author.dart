@@ -52,13 +52,21 @@ class _RecipeAuthorChipState extends State<_RecipeAuthorChip> {
               final auth = AuthScope.maybeOf(context);
               final isOwnProfile =
                   auth?.isAuthenticated == true &&
-                  createSlug(auth!.user!.name) ==
-                      createSlug(widget.recipe.author);
+                  widget.recipe.authorId != null &&
+                  auth!.user!.id == widget.recipe.authorId;
+              final authorRouteKey =
+                  widget.recipe.authorId ?? createSlug(widget.recipe.author);
               Navigator.of(context).pushNamed(
                 isOwnProfile
                     ? AppRouter.profile
-                    : AppRouter.authorProfilePath(widget.recipe.author),
-                arguments: isOwnProfile ? null : widget.recipe.author,
+                    : AppRouter.authorProfilePath(authorRouteKey),
+                arguments: isOwnProfile
+                    ? null
+                    : AuthorProfilePageArguments(
+                        authorSlug: createSlug(widget.recipe.author),
+                        authorId: widget.recipe.authorId,
+                        authorName: widget.recipe.author,
+                      ),
               );
             },
             borderRadius: BorderRadius.circular(999),

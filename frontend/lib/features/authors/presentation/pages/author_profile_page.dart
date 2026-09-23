@@ -16,7 +16,11 @@ import 'package:frontend/features/recipes/presentation/widgets/recipe_collection
 import 'package:frontend/shared/models/home_models.dart';
 
 class AuthorProfilePageArguments {
-  const AuthorProfilePageArguments({required this.authorSlug, this.authorName});
+  const AuthorProfilePageArguments({
+    required this.authorSlug,
+    this.authorId,
+    this.authorName,
+  });
 
   factory AuthorProfilePageArguments.from(
     Object? arguments, {
@@ -37,6 +41,7 @@ class AuthorProfilePageArguments {
   }
 
   final String authorSlug;
+  final String? authorId;
   final String? authorName;
 }
 
@@ -44,11 +49,13 @@ class AuthorProfilePage extends StatefulWidget {
   const AuthorProfilePage({
     super.key,
     required this.authorSlug,
+    this.authorId,
     this.authorName,
     this.recipeRepository = const ApiRecipeRepository(),
   });
 
   final String authorSlug;
+  final String? authorId;
   final String? authorName;
   final RecipeRepository recipeRepository;
 
@@ -73,6 +80,7 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
   void didUpdateWidget(covariant AuthorProfilePage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.authorSlug != widget.authorSlug ||
+        oldWidget.authorId != widget.authorId ||
         oldWidget.recipeRepository != widget.recipeRepository) {
       if (oldWidget.recipeRepository != widget.recipeRepository) {
         _recipesController.replaceRepository(widget.recipeRepository);
@@ -101,7 +109,11 @@ class _AuthorProfilePageState extends State<AuthorProfilePage> {
 
     setState(() {
       _recipes = _recipesController.recipes
-          .where((recipe) => _slug(recipe.author) == widget.authorSlug)
+          .where(
+            (recipe) => widget.authorId != null
+                ? recipe.authorId == widget.authorId
+                : _slug(recipe.author) == widget.authorSlug,
+          )
           .toList(growable: false);
     });
   }

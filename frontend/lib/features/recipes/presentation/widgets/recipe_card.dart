@@ -6,6 +6,7 @@ import 'package:frontend/core/images/optimized_network_image.dart';
 import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/auth/presentation/auth_controller.dart';
+import 'package:frontend/features/authors/presentation/pages/author_profile_page.dart';
 import 'package:frontend/features/recipes/domain/recipes_page_arguments.dart';
 import 'package:frontend/shared/bookmarks/bookmark_button.dart';
 import 'package:frontend/shared/bookmarks/bookmark_store.dart';

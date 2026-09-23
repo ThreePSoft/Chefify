@@ -48,6 +48,7 @@ class RecipeModel {
     required this.categoryId,
     required this.categoryName,
     required this.author,
+    this.authorId,
     required this.minutes,
     required this.rating,
     required this.accentColor,
@@ -82,6 +83,7 @@ class RecipeModel {
       categoryId: categoryId,
       categoryName: categoryName,
       author: _authorValue(json),
+      authorId: _optionalStringValue(_jsonValue(json, 'creatorId')),
       minutes: _intValue(
         _jsonValue(json, 'cookingTime') ?? _jsonValue(json, 'minutes'),
         fallback: 30,
@@ -120,6 +122,7 @@ class RecipeModel {
   final String categoryId;
   final String categoryName;
   final String author;
+  final String? authorId;
   final int minutes;
   final double rating;
   final Color accentColor;
@@ -140,6 +143,7 @@ class RecipeModel {
       categoryId: categoryId,
       categoryName: categoryName,
       author: author,
+      authorId: authorId,
       minutes: minutes,
       rating: rating,
       accentColor: accentColor,
@@ -235,6 +239,11 @@ class RecipeModel {
 
     final stringValue = value.toString().trim();
     return stringValue.isEmpty ? fallback : stringValue;
+  }
+
+  static String? _optionalStringValue(Object? value) {
+    final normalized = value?.toString().trim() ?? '';
+    return normalized.isEmpty ? null : normalized;
   }
 
   static int _intValue(Object? value, {int fallback = 0}) {
