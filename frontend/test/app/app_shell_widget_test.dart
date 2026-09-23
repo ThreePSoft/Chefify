@@ -212,6 +212,7 @@ void main() {
 
     final bookmarks = BookmarkStore.memory(
       const BookmarkSnapshot(recipeIds: {'citrus-herb-chicken-quinoa'}),
+      '7',
     );
     addTearDown(bookmarks.dispose);
     await tester.pumpWidget(

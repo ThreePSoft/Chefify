@@ -143,4 +143,19 @@ void main() {
       isNot(contains('citrus-herb-chicken-quinoa')),
     );
   });
+
+  test('keeps bookmarks isolated between authenticated users', () async {
+    final bookmarks = BookmarkStore(storage: MemoryBookmarkStorage());
+    addTearDown(bookmarks.dispose);
+
+    await bookmarks.useOwner('user-a');
+    await bookmarks.setRecipeSaved(featuredRecipe, true);
+    expect(bookmarks.isRecipeSaved(featuredRecipe), isTrue);
+
+    await bookmarks.useOwner('user-b');
+    expect(bookmarks.isRecipeSaved(featuredRecipe), isFalse);
+
+    await bookmarks.useOwner('user-a');
+    expect(bookmarks.isRecipeSaved(featuredRecipe), isTrue);
+  });
 }

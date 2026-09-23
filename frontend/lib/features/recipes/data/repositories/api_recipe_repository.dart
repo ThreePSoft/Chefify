@@ -22,6 +22,10 @@ final class ApiRecipeRepository implements RecipeRepository {
   @override
   Future<List<RecipeModel>> fetchRecipes() => _fetchRecipes(path: 'Recipes');
 
+  Future<List<RecipeModel>> fetchUserRecipes(String userId) {
+    return _fetchRecipes(path: 'Users/${Uri.encodeComponent(userId)}/recipes');
+  }
+
   @override
   Future<List<RecipeModel>> fetchPopularRecipes({int take = 4}) async {
     if (take <= 0) {

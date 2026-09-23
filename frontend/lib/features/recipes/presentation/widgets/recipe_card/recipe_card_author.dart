@@ -52,8 +52,10 @@ class _RecipeAuthorChipState extends State<_RecipeAuthorChip> {
               final auth = AuthScope.maybeOf(context);
               final isOwnProfile =
                   auth?.isAuthenticated == true &&
-                  widget.recipe.authorId != null &&
-                  auth!.user!.id == widget.recipe.authorId;
+                  (widget.recipe.authorId != null
+                      ? auth!.user!.id == widget.recipe.authorId
+                      : createSlug(auth!.user!.name) ==
+                            createSlug(widget.recipe.author));
               final authorRouteKey =
                   widget.recipe.authorId ?? createSlug(widget.recipe.author);
               Navigator.of(context).pushNamed(

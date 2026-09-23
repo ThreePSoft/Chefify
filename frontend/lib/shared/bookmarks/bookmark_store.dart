@@ -5,6 +5,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _recipeIdsKey = 'chefify.bookmarks.recipeIds';
 const _categoryIdsKey = 'chefify.bookmarks.categoryIds';
 
+String _storageKey(String base, String? ownerId) {
+  final owner = ownerId?.trim();
+  return owner == null || owner.isEmpty
+      ? base
+      : '$base.${Uri.encodeComponent(owner)}';
+}
+
 class BookmarkSnapshot {
   const BookmarkSnapshot({
     this.recipeIds = const <String>{},
@@ -23,9 +30,9 @@ class BookmarkSnapshot {
 }
 
 abstract class BookmarkStorage {
-  Future<BookmarkSnapshot> load();
+  Future<BookmarkSnapshot> load({String? ownerId});
 
-  Future<void> save(BookmarkSnapshot snapshot);
+  Future<void> save(BookmarkSnapshot snapshot, {String? ownerId});
 }
 
 class SharedPreferencesBookmarkStorage implements BookmarkStorage {
@@ -35,9 +42,13 @@ class SharedPreferencesBookmarkStorage implements BookmarkStorage {
   final SharedPreferencesAsync _preferences;
 
   @override
-  Future<BookmarkSnapshot> load() async {
-    final recipeIds = await _preferences.getStringList(_recipeIdsKey);
-    final categoryIds = await _preferences.getStringList(_categoryIdsKey);
+  Future<BookmarkSnapshot> load({String? ownerId}) async {
+    final recipeIds = await _preferences.getStringList(
+      _storageKey(_recipeIdsKey, ownerId),
+    );
+    final categoryIds = await _preferences.getStringList(
+      _storageKey(_categoryIdsKey, ownerId),
+    );
 
     return BookmarkSnapshot(
       recipeIds: recipeIds?.toSet() ?? const <String>{},
@@ -46,11 +57,14 @@ class SharedPreferencesBookmarkStorage implements BookmarkStorage {
   }
 
   @override
-  Future<void> save(BookmarkSnapshot snapshot) async {
+  Future<void> save(BookmarkSnapshot snapshot, {String? ownerId}) async {
     await Future.wait(<Future<void>>[
-      _preferences.setStringList(_recipeIdsKey, _sorted(snapshot.recipeIds)),
       _preferences.setStringList(
-        _categoryIdsKey,
+        _storageKey(_recipeIdsKey, ownerId),
+        _sorted(snapshot.recipeIds),
+      ),
+      _preferences.setStringList(
+        _storageKey(_categoryIdsKey, ownerId),
         _sorted(snapshot.categoryIds),
       ),
     ]);
@@ -58,21 +72,24 @@ class SharedPreferencesBookmarkStorage implements BookmarkStorage {
 }
 
 class MemoryBookmarkStorage implements BookmarkStorage {
-  MemoryBookmarkStorage([BookmarkSnapshot initial = const BookmarkSnapshot()])
-    : _snapshot = initial.copy();
+  MemoryBookmarkStorage([
+    BookmarkSnapshot initial = const BookmarkSnapshot(),
+    String? ownerId,
+  ]) : _snapshots = <String, BookmarkSnapshot>{ownerId ?? '': initial.copy()};
 
-  BookmarkSnapshot _snapshot;
+  final Map<String, BookmarkSnapshot> _snapshots;
 
-  BookmarkSnapshot get snapshot => _snapshot.copy();
+  BookmarkSnapshot get snapshot =>
+      (_snapshots[''] ?? const BookmarkSnapshot()).copy();
 
   @override
-  Future<BookmarkSnapshot> load() async {
-    return _snapshot.copy();
+  Future<BookmarkSnapshot> load({String? ownerId}) async {
+    return (_snapshots[ownerId ?? ''] ?? const BookmarkSnapshot()).copy();
   }
 
   @override
-  Future<void> save(BookmarkSnapshot snapshot) async {
-    _snapshot = snapshot.copy();
+  Future<void> save(BookmarkSnapshot snapshot, {String? ownerId}) async {
+    _snapshots[ownerId ?? ''] = snapshot.copy();
   }
 }
 
@@ -80,8 +97,11 @@ class BookmarkStore extends ChangeNotifier {
   BookmarkStore({BookmarkStorage? storage})
     : _storage = storage ?? SharedPreferencesBookmarkStorage();
 
-  BookmarkStore.memory([BookmarkSnapshot initial = const BookmarkSnapshot()])
-    : _storage = MemoryBookmarkStorage(initial) {
+  BookmarkStore.memory([
+    BookmarkSnapshot initial = const BookmarkSnapshot(),
+    String? ownerId,
+  ]) : _storage = MemoryBookmarkStorage(initial, ownerId),
+       _ownerId = ownerId {
     _applySnapshot(initial);
     _isLoaded = true;
   }
@@ -94,6 +114,7 @@ class BookmarkStore extends ChangeNotifier {
   bool _isDirty = false;
   int _version = 0;
   Future<void>? _loadFuture;
+  String? _ownerId;
 
   bool get isLoaded => _isLoaded;
   int get version => _version;
@@ -103,6 +124,26 @@ class BookmarkStore extends ChangeNotifier {
       return Future<void>.value();
     }
     return _loadFuture ??= _load();
+  }
+
+  Future<void> useOwner(String? ownerId) async {
+    final normalized = ownerId?.trim();
+    final nextOwner = normalized == null || normalized.isEmpty
+        ? null
+        : normalized;
+    if (_ownerId == nextOwner) {
+      return load();
+    }
+
+    _ownerId = nextOwner;
+    _isLoaded = false;
+    _isDirty = false;
+    _loadFuture = null;
+    _recipeIds.clear();
+    _categoryIds.clear();
+    _version++;
+    notifyListeners();
+    await load();
   }
 
   bool isRecipeSaved(RecipeModel recipe) {
@@ -142,7 +183,11 @@ class BookmarkStore extends ChangeNotifier {
   }
 
   Future<void> _load() async {
-    final snapshot = await _storage.load();
+    final ownerAtStart = _ownerId;
+    final snapshot = await _storage.load(ownerId: ownerAtStart);
+    if (ownerAtStart != _ownerId) {
+      return;
+    }
     if (!_isDirty) {
       _applySnapshot(snapshot);
     }
@@ -179,6 +224,7 @@ class BookmarkStore extends ChangeNotifier {
         recipeIds: Set<String>.of(_recipeIds),
         categoryIds: Set<String>.of(_categoryIds),
       ),
+      ownerId: _ownerId,
     );
   }
 

@@ -6,6 +6,7 @@ import 'package:frontend/app/router.dart';
 import 'package:frontend/core/constants/app_colors.dart';
 import 'package:frontend/core/constants/app_spacing.dart';
 import 'package:frontend/core/localization/app_strings.dart';
+import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/core/widgets/app_button.dart';
 import 'package:frontend/core/widgets/app_card.dart';
 import 'package:frontend/features/auth/domain/auth_session.dart';
@@ -41,6 +42,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late final RecipeCollectionController _recipesController;
   List<RecipeModel> _allRecipes = const [];
+  List<RecipeModel>? _apiOwnRecipes;
+  String? _loadedOwnRecipesForUserId;
   _ProfileTab _selectedTab = _ProfileTab.recipes;
 
   @override
@@ -56,6 +59,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void didUpdateWidget(covariant ProfilePage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.recipeRepository != widget.recipeRepository) {
+      _apiOwnRecipes = null;
+      _loadedOwnRecipesForUserId = null;
       _recipesController.replaceRepository(widget.recipeRepository);
       unawaited(_recipesController.load());
     }
@@ -77,15 +82,44 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final userId = AuthScope.of(context).user?.id;
+    if (userId != null &&
+        userId != _loadedOwnRecipesForUserId &&
+        widget.recipeRepository is ApiRecipeRepository) {
+      _loadedOwnRecipesForUserId = userId;
+      unawaited(_loadOwnRecipes(userId));
+    }
+  }
+
+  Future<void> _loadOwnRecipes(String userId) async {
+    try {
+      final recipes = await (widget.recipeRepository as ApiRecipeRepository)
+          .fetchUserRecipes(userId);
+      if (!mounted || _loadedOwnRecipesForUserId != userId) return;
+      setState(() => _apiOwnRecipes = recipes);
+    } on Object {
+      // Keep the compatible username-based view until the backend contract
+      // exposes creatorId in recipe previews.
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final auth = AuthScope.of(context);
     final strings = AppStrings.of(context);
     final user = auth.user;
-    final ownRecipes = user == null
+    final fallbackOwnRecipes = user == null
         ? const <RecipeModel>[]
         : _allRecipes
-              .where((recipe) => recipe.authorId == user.id)
+              .where(
+                (recipe) => recipe.authorId != null
+                    ? recipe.authorId == user.id
+                    : createSlug(recipe.author) == createSlug(user.name),
+              )
               .toList(growable: false);
+    final ownRecipes = _apiOwnRecipes ?? fallbackOwnRecipes;
     final bookmarks = BookmarkScope.of(context);
     final favoriteRecipes = _allRecipes
         .where(bookmarks.isRecipeSaved)

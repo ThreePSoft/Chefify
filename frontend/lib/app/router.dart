@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/routing/slug.dart';
 import 'package:frontend/features/auth/presentation/pages/auth_pages.dart';
 import 'package:frontend/features/auth/presentation/pages/profile_page.dart';
 import 'package:frontend/features/authors/presentation/pages/author_profile_page.dart';

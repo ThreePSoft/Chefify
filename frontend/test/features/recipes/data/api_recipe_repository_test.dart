@@ -31,6 +31,25 @@ void main() {
       expect(await repository.fetchRecipes(), isEmpty);
     });
 
+    test('loads the authenticated user recipe endpoint', () async {
+      Uri? requestedUri;
+      final repository = ApiRecipeRepository(
+        client: MockClient((request) async {
+          requestedUri = request.url;
+          return http.Response(
+            '[{"id":42,"title":"Soup","creatorId":7,"creatorUsername":"Chef Aria"}]',
+            200,
+          );
+        }),
+      );
+
+      final recipes = await repository.fetchUserRecipes('7');
+
+      expect(requestedUri?.path, '/api/Users/7/recipes');
+      expect(recipes.single.authorId, '7');
+      expect(recipes.single.author, 'Chef Aria');
+    });
+
     test('reports a non-success response instead of returning mock data', () {
       final repository = ApiRecipeRepository(
         client: MockClient((_) async => http.Response('Unavailable', 503)),

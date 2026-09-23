@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:frontend/app/app_settings.dart';
@@ -59,16 +61,22 @@ class _ChefifyAppState extends State<ChefifyApp> {
     _ownsBookmarkStore = widget.bookmarkStore == null;
     _bookmarkStore = widget.bookmarkStore ?? BookmarkStore();
     _bookmarkStore.load();
+    _authController.addListener(_handleAuthChanged);
   }
 
   @override
   void dispose() {
     _settingsController.dispose();
+    _authController.removeListener(_handleAuthChanged);
     _authController.dispose();
     if (_ownsBookmarkStore) {
       _bookmarkStore.dispose();
     }
     super.dispose();
+  }
+
+  void _handleAuthChanged() {
+    unawaited(_bookmarkStore.useOwner(_authController.user?.id));
   }
 
   @override
