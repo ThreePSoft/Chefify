@@ -88,6 +88,20 @@ http://localhost:8080/api
 
 After changing `--dart-define`, perform a full restart rather than only hot reload.
 
+## `AppInspector` reports `Cannot find context with specified id`
+
+This Flutter/Chrome DevTools message means that the inspector queried a stale JavaScript execution context after a reload, hot restart, navigation, or closing the debug tab. By itself, it is not an API or database failure.
+
+1. Stop the current `flutter run` with `q`.
+2. Close the application tab and the DevTools window created for that run.
+3. Start the application again with the full command instead of hot reload:
+
+```powershell
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=test --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
+```
+
+If the application page still crashes after a clean run, capture the first exception from `flutter run` or the browser console. Repeated `AppInspector` lines are usually a consequence of the lost context rather than the root cause.
+
 ## Browser reports a CORS error
 
 Check the frontend origin. The backend allows `localhost:8088`, `8089`, and `8090`. Run Flutter with `--web-port 8089` or add the exact origin to `Cors:AllowedOrigins`.

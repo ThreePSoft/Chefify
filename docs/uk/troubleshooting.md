@@ -88,6 +88,20 @@ http://localhost:8080/api
 
 Після зміни `--dart-define` виконай повний перезапуск, а не лише гаряче перезавантаження.
 
+## `AppInspector` повідомляє `Cannot find context with specified id`
+
+Це повідомлення Flutter/Chrome DevTools означає, що інспектор звернувся до старого JavaScript execution context після перезавантаження, hot restart, навігації або закриття debug-вкладки. Воно саме по собі не означає помилку API чи бази даних.
+
+1. Зупини поточний `flutter run` клавішею `q`.
+2. Закрий вкладку застосунку та окреме вікно DevTools, яке належало цьому запуску.
+3. Запусти застосунок знову повною командою, а не hot reload:
+
+```powershell
+..\tools\flutter\flutterw.ps1 run -d chrome --web-port 8089 --dart-define=CHEFIFY_DATA_MODE=test --dart-define=CHEFIFY_API_BASE_URL=http://localhost:8080/api
+```
+
+Якщо сторінка застосунку продовжує падати після чистого запуску, зафіксуй перший exception із консолі `flutter run` або браузера. Повторні рядки `AppInspector` зазвичай є наслідком втрати context, а не першопричиною.
+
 ## Помилка CORS у браузері
 
 Перевір джерело фронтенду. Бекенд дозволяє `localhost:8088`, `8089`, `8090`. Запусти Flutter із `--web-port 8089` або додай точне джерело до `Cors:AllowedOrigins`.
