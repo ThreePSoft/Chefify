@@ -24,7 +24,6 @@ public static class RecipeMapper
             CreatorId = recipe.Creator.Id,
             Creator = new UserDto
             {
-                Id = recipe.Creator.Id,
                 Username = recipe.Creator.Username,
                 //ProfilePictureRef = recipe.Creator.ProfilePictureRef
             }
